@@ -156,11 +156,11 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 		listPlayer = new ArrayList<Player>();
 
-		comboBoxPlayerActionListener = new PlayerComboBoxActionListener();
+		comboBoxPlayerActionListener = (final ActionEvent e) -> displayPlayer();
 		comboBoxPlayer.addActionListener(comboBoxPlayerActionListener);
-		buttonAddPlayer.addActionListener(new AddPlayerButtonActionListener());
-		buttonModifyPlayer.addActionListener(new ModifyPlayerButtonActionListener());
-		buttonDeletePlayer.addActionListener(new DeletePlayerButtonActionListener());
+		buttonAddPlayer.addActionListener((final ActionEvent e) -> addPlayer());
+		buttonModifyPlayer.addActionListener((final ActionEvent e) -> modifyPlayer());
+		buttonDeletePlayer.addActionListener((final ActionEvent e) -> deletePlayer());
 	}
 
 	@Override
@@ -198,13 +198,6 @@ public class UITabPanelManagePlayer extends UITabPanel {
 		}
 	}
 
-	private class AddPlayerButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			addPlayer();
-		}
-	}
-
 	private void addPlayer() {
 		final String playerName = textNewPlayerName.getText();
 		final String playerDisplayName = textNewPlayerDisplayName.getText();
@@ -221,13 +214,6 @@ public class UITabPanelManagePlayer extends UITabPanel {
 		}
 	}
 
-	private class PlayerComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			displayPlayer();
-		}
-	}
-
 	private void displayPlayer() {
 		final int selectedPlayerIndex = comboBoxPlayer.getSelectedIndex();
 		if (selectedPlayerIndex != -1) {
@@ -237,13 +223,6 @@ public class UITabPanelManagePlayer extends UITabPanel {
 		} else {
 			textModifyPlayerName.setText("");
 			textModifyPlayerDisplayName.setText("");
-		}
-	}
-
-	private class ModifyPlayerButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			modifyPlayer();
 		}
 	}
 
@@ -264,13 +243,6 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			} else {
 				JOptionPane.showMessageDialog(this, "Le nom et le pseudo ne peuvent pas être vides", "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
-	}
-
-	private class DeletePlayerButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			deletePlayer();
 		}
 	}
 

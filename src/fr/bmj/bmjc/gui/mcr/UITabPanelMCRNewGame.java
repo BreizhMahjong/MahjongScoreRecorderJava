@@ -28,7 +28,6 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
@@ -37,7 +36,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -79,7 +77,9 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 
 	private static final int NUMBER_OF_PLAYERS = 4;
 
-	private static final int FINAL_SCORES[] = { 48, 24, 12, 0 };
+	private static final int FINAL_SCORES[] = {
+		48, 24, 12, 0
+	};
 
 	private boolean displayFullName;
 	private final DataAccessMCR dataAccess;
@@ -161,7 +161,7 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 			comboBoxModels = new ArrayList<ComboBoxModel<String>>(NUMBER_OF_PLAYERS);
 			spinnerPlayerGameScores = new ArrayList<JSpinner>(NUMBER_OF_PLAYERS);
 			labelPlayerFinalScores = new ArrayList<JLabel>(NUMBER_OF_PLAYERS);
-			final ChangeListener scoreSpinnerChangeListener = new GameScoreSpinnerChangeListener();
+			final ChangeListener scoreSpinnerChangeListener = (final ChangeEvent e) -> disableSaveButton();
 
 			for (int playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
 				centerC.y = 1 + playerIndex;
@@ -214,19 +214,19 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 			southPanel.add(new JPanel());
 
 			buttonCalculate = new JButton("Calculer");
-			buttonCalculate.addActionListener(new ButtonCalculateActionListener());
+			buttonCalculate.addActionListener((final ActionEvent e) -> calculateFinalScore());
 			southPanel.add(buttonCalculate);
 
 			southPanel.add(new JPanel());
 
 			buttonSave = new JButton("Enregistrer");
-			buttonSave.addActionListener(new ButtonSaveActionListener());
+			buttonSave.addActionListener((final ActionEvent e) -> saveScore());
 			southPanel.add(buttonSave);
 
 			southPanel.add(new JPanel());
 
 			buttonReset = new JButton("Réinitialiser");
-			buttonReset.addActionListener(new ButtonResetActionListener());
+			buttonReset.addActionListener((final ActionEvent e) -> reset());
 			southPanel.add(buttonReset);
 
 			southPanel.add(new JPanel());
@@ -405,22 +405,8 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 
 	private final List<PlayerScore> playerScoreList;
 
-	private class PlayerScoreComparator implements Comparator<PlayerScore> {
-		@Override
-		public int compare(final PlayerScore o1, final PlayerScore o2) {
-			return -Integer.compare(o1.gameScore, o2.gameScore);
-		}
-	}
-
-	private class ButtonCalculateActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			calculateFinalScore();
-		}
-	}
-
 	private void calculateFinalScore() {
-		buttonSave.setEnabled(false);
+		disableSaveButton();
 
 		playerScoreList.clear();
 		int totalScore = 0;
@@ -458,7 +444,9 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 		}
 
 		// Sort score list
-		Collections.sort(playerScoreList, new PlayerScoreComparator());
+		Collections.sort(playerScoreList, (final PlayerScore o1, final PlayerScore o2) -> {
+			return -Integer.compare(o1.gameScore, o2.gameScore);
+		});
 		int playerIndex = 0;
 		while (playerIndex < NUMBER_OF_PLAYERS) {
 			int equalityPlayerIndex = playerIndex;
@@ -488,18 +476,8 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 		buttonSave.setEnabled(true);
 	}
 
-	private class GameScoreSpinnerChangeListener implements ChangeListener {
-		@Override
-		public void stateChanged(final ChangeEvent e) {
-			buttonSave.setEnabled(false);
-		}
-	}
-
-	private class ButtonSaveActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			saveScore();
-		}
+	public void disableSaveButton() {
+		buttonSave.setEnabled(false);
 	}
 
 	private void saveScore() {
@@ -531,13 +509,6 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 		}
 	}
 
-	private class ButtonResetActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			reset();
-		}
-	}
-
 	private void reset() {
 		for (int playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
 			labelPlayerRankings.get(playerIndex).setText("?");
@@ -546,7 +517,7 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 			labelPlayerFinalScores.get(playerIndex).setText(STRING_EMPTY);
 		}
 		labelScoreError.setText(STRING_SPACE);
-		buttonSave.setEnabled(false);
+		disableSaveButton();
 	}
 
 	private class AddScoreFocusTransversalPolicy extends FocusTraversalPolicy {

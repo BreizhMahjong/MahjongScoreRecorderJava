@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -65,6 +64,7 @@ import fr.bmj.bmjc.enums.EnumRankingMode;
 import fr.bmj.bmjc.enums.EnumSortingMode;
 import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;
+import fr.bmj.bmjc.swing.ComponentShownListener;
 import fr.bmj.bmjc.swing.JDialogWithProgress;
 import fr.bmj.bmjc.swing.ProportionalGridLayout;
 import fr.bmj.bmjc.swing.ProportionalGridLayoutConstraint;
@@ -73,7 +73,9 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 	private static final long serialVersionUID = 862214639563775184L;
 
 	private final int NB_COLUMNS = 4;
-	private final int COLUMN_WIDTH[] = new int[] { 80, 144, 96, 112 };
+	private final int COLUMN_WIDTH[] = new int[] {
+		80, 144, 96, 112
+	};
 	private final int LABEL_HEIGHT = 18;
 
 	private static final int COMBOBOX_NUMBER = 4;
@@ -85,7 +87,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 	private boolean displayFullName;
 	private final DataAccessMCR dataAccess;
 	private final JDialogWithProgress waitingDialog;
-	private final ComponentAdapter waitingDialogAdapter;
+	private final ComponentShownListener waitingDialogShowListener;
 
 	private final EnumRankingMode rankingModes[];
 	private final JComboBox<String> comboRankingMode;
@@ -114,7 +116,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 	public UITabPanelMCRClubRanking(final DataAccessMCR dataAccess, final JDialogWithProgress waitingDialog) {
 		this.dataAccess = dataAccess;
 		this.waitingDialog = waitingDialog;
-		waitingDialogAdapter = new WaitingDialogComponentListener();
+		waitingDialogShowListener = (final ComponentEvent e) -> new Thread(() -> displayRun()).start();
 
 		setLayout(new BorderLayout());
 		{
@@ -186,7 +188,9 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 
 				c.x = 4;
 				panelNorth.add(new JLabel("Trimestre :", JLabel.RIGHT), c);
-				final String trimesters[] = { EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString() };
+				final String trimesters[] = {
+					EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString()
+				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
 				comboTrimester.setSelectedIndex(0);
@@ -265,17 +269,17 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 		listTournament = new ArrayList<Tournament>();
 		displayFullName = false;
 
-		tournamentComboBoxActionListener = new TournamentComboActionListener();
-		comboPeriodMode.addActionListener(new PeriodModeComboBoxActionListener());
-		periodParametersComboBoxActionListener = new PeriodParametersComboBoxActionListener();
+		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
+		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
+		periodParametersComboBoxActionListener = (final ActionEvent e) -> display();
 		comboTrimester.addActionListener(periodParametersComboBoxActionListener);
 		comboMonth.addActionListener(periodParametersComboBoxActionListener);
 
-		final ActionListener rankingModeActionListener = new RankingModeComboBoxActionListener();
+		final ActionListener rankingModeActionListener = (final ActionEvent e) -> togglePeriodMode(true);
 		comboSortingMode.addActionListener(rankingModeActionListener);
 		comboRankingMode.addActionListener(rankingModeActionListener);
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
-		togglePeriodMode();
+		togglePeriodMode(false);
 	}
 
 	@Override
@@ -312,13 +316,6 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 		}
 	}
 
-	private class TournamentComboActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			refreshYear();
-		}
-	}
-
 	private void refreshYear() {
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
 		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
@@ -342,15 +339,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 		}
 	}
 
-	private class RankingModeComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			togglePeriodMode();
-			display();
-		}
-	}
-
-	private void togglePeriodMode() {
+	private void togglePeriodMode(final boolean refresh) {
 		final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
 		switch (rankingMode) {
 			case TOTAL_SCORE:
@@ -360,29 +349,20 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 			case MEAN_GAME_SCORE:
 				comboBoxActivated[COMBOBOX_PERIOD] = true;
 				comboPeriodMode.setEnabled(true);
-				changePeriodParameters();
 				break;
 			case ANNUAL_SCORE:
 			case TRIMESTRIAL_SCORE:
 			case MENSUAL_SCORE:
 				comboBoxActivated[COMBOBOX_PERIOD] = false;
 				comboPeriodMode.setEnabled(false);
-				changePeriodParameters();
 				break;
 			default:
 				break;
 		}
+		changePeriodParameters(refresh);
 	}
 
-	private class PeriodModeComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			changePeriodParameters();
-			display();
-		}
-	}
-
-	private void changePeriodParameters() {
+	private void changePeriodParameters(final boolean refresh) {
 		final EnumPeriodMode periodMode = comboBoxActivated[COMBOBOX_PERIOD] ? periodModes[comboPeriodMode.getSelectedIndex()] : EnumPeriodMode.ALL;
 		switch (periodMode) {
 			case ALL:
@@ -409,6 +389,9 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 				break;
 		}
 		enableComboBoxes();
+		if (refresh) {
+			display();
+		}
 	}
 
 	private void disableComboBoxes() {
@@ -431,13 +414,6 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
 	}
 
-	private class PeriodParametersComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			display();
-		}
-	}
-
 	private void display() {
 		disableComboBoxes();
 		panelRanking.removeAll();
@@ -447,133 +423,123 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 		final Point location = getLocationOnScreen();
 		final Dimension size = getSize();
 		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.addComponentListener(waitingDialogAdapter);
+		waitingDialog.setComponentShownListener(waitingDialogShowListener);
 		waitingDialog.setVisible(true);
 	}
 
-	private class WaitingDialogComponentListener extends ComponentAdapter {
-		@Override
-		public void componentShown(final ComponentEvent e) {
-			new DisplayThread().start();
-		}
-	}
+	private void displayRun() {
+		final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
+		final EnumSortingMode sortingMode = sortingModes[comboSortingMode.getSelectedIndex()];
+		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
-	private class DisplayThread extends Thread {
-		@Override
-		public void run() {
-			final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
-			final EnumSortingMode sortingMode = sortingModes[comboSortingMode.getSelectedIndex()];
-			final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+		final int selectedYearIndex = comboYear.getSelectedIndex();
+		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+			final Tournament tournament = listTournament.get(selectedTournamentIndex);
+			final int year = (Integer) comboYear.getSelectedItem();
+			final int trimestral = comboTrimester.getSelectedIndex();
+			final int month = comboMonth.getSelectedIndex();
+			final List<MCRScoreTotal> scoreList = dataAccess.getMCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month);
 
-			final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-			final int selectedYearIndex = comboYear.getSelectedIndex();
-			if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-				final Tournament tournament = listTournament.get(selectedTournamentIndex);
-				final int year = (Integer) comboYear.getSelectedItem();
-				final int trimestral = comboTrimester.getSelectedIndex();
-				final int month = comboMonth.getSelectedIndex();
-				final List<MCRScoreTotal> scoreList = dataAccess.getMCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month);
-
-				if (scoreList != null && scoreList.size() > 0) {
-					labelTitles[0].setText("Classement");
-					labelTitles[1].setText("Nom du joueur");
-					final List<FieldAccessMCR> access = new ArrayList<>(3);
-					access.add(0, null);
-					if (displayFullName) {
-						access.add(1, new FieldAccessMCRScoreTotalPlayName());
-					} else {
-						access.add(1, new FieldAccessMCRScoreTotalDisplayName());
-					}
-					switch (rankingMode) {
-						case TOTAL_SCORE:
-							labelTitles[2].setText(rankingMode.toString());
-							labelTitles[3].setText("Nombre de parties");
-							access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-							access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
-							break;
-						case FINAL_SCORE:
-							labelTitles[2].setText(rankingMode.toString() + " (Uma)");
-							labelTitles[3].setText("Date");
-							access.add(2, new FieldAccessMCRScoreTotalFinalScore());
-							access.add(3, new FieldAccessMCRScoreTotalDay());
-							break;
-						case MEAN_FINAL_SCORE:
-							labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
-							labelTitles[3].setText("Nombre de parties");
-							access.add(2, new FieldAccessMCRScoreTotalFinalScore());
-							access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
-							break;
-						case GAME_SCORE:
-							labelTitles[2].setText(rankingMode.toString());
-							labelTitles[3].setText("Date");
-							access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-							access.add(3, new FieldAccessMCRScoreTotalDay());
-							break;
-						case MEAN_GAME_SCORE:
-							labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
-							labelTitles[3].setText("Nombre de parties");
-							access.add(2, new FieldAccessMCRScoreTotalMeanScore());
-							access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
-							break;
-						case ANNUAL_SCORE:
-							labelTitles[2].setText(rankingMode.toString());
-							labelTitles[3].setText("Date");
-							access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-							access.add(3, new FieldAccessMCRScoreTotalYear());
-							break;
-						case TRIMESTRIAL_SCORE:
-							labelTitles[2].setText(rankingMode.toString());
-							labelTitles[3].setText("Date");
-							access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-							access.add(3, new FieldAccessMCRScoreTotalTrimester());
-							break;
-						case MENSUAL_SCORE:
-							labelTitles[2].setText(rankingMode.toString());
-							labelTitles[3].setText("Date");
-							access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-							access.add(3, new FieldAccessMCRScoreTotalMonth());
-							break;
-						default:
-							break;
-					}
-
-					data = new String[scoreList.size()][NB_COLUMNS];
-					final JLabel labels[] = new JLabel[NB_COLUMNS];
-					final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 64, 2);
-					for (int index = 0; index < scoreList.size(); index++) {
-						final MCRScoreTotal record = scoreList.get(index);
-						data[index][0] = Integer.toString(index + 1);
-						for (int labelIndex = 1; labelIndex < labels.length; labelIndex++) {
-							data[index][labelIndex] = access.get(labelIndex).getDataString(record);
-						}
-
-						constraints.gridy = index;
-						for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
-							labels[labelIndex] = new JLabel(data[index][labelIndex], labelIndex == 1 ? JLabel.LEADING : JLabel.CENTER);
-							constraints.gridx = labelIndex;
-							labels[labelIndex].setPreferredSize(labelSizes[labelIndex]);
-							panelRanking.add(labels[labelIndex], constraints);
-						}
-
-						if (index % 2 == 0) {
-							for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
-								labels[labelIndex].setOpaque(true);
-								labels[labelIndex].setBackground(Color.LIGHT_GRAY);
-							}
-						}
-					}
+			if (scoreList != null && scoreList.size() > 0) {
+				labelTitles[0].setText("Classement");
+				labelTitles[1].setText("Nom du joueur");
+				final List<FieldAccessMCR> access = new ArrayList<>(3);
+				access.add(0, null);
+				if (displayFullName) {
+					access.add(1, new FieldAccessMCRScoreTotalPlayName());
 				} else {
-					data = null;
+					access.add(1, new FieldAccessMCRScoreTotalDisplayName());
 				}
-			}
-			validate();
-			scrollRanking.getVerticalScrollBar().setValue(0);
-			enableComboBoxes();
-			repaint();
+				switch (rankingMode) {
+					case TOTAL_SCORE:
+						labelTitles[2].setText(rankingMode.toString());
+						labelTitles[3].setText("Nombre de parties");
+						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
+						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
+						break;
+					case FINAL_SCORE:
+						labelTitles[2].setText(rankingMode.toString() + " (Uma)");
+						labelTitles[3].setText("Date");
+						access.add(2, new FieldAccessMCRScoreTotalFinalScore());
+						access.add(3, new FieldAccessMCRScoreTotalDay());
+						break;
+					case MEAN_FINAL_SCORE:
+						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
+						labelTitles[3].setText("Nombre de parties");
+						access.add(2, new FieldAccessMCRScoreTotalFinalScore());
+						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
+						break;
+					case GAME_SCORE:
+						labelTitles[2].setText(rankingMode.toString());
+						labelTitles[3].setText("Date");
+						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
+						access.add(3, new FieldAccessMCRScoreTotalDay());
+						break;
+					case MEAN_GAME_SCORE:
+						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
+						labelTitles[3].setText("Nombre de parties");
+						access.add(2, new FieldAccessMCRScoreTotalMeanScore());
+						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
+						break;
+					case ANNUAL_SCORE:
+						labelTitles[2].setText(rankingMode.toString());
+						labelTitles[3].setText("Date");
+						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
+						access.add(3, new FieldAccessMCRScoreTotalYear());
+						break;
+					case TRIMESTRIAL_SCORE:
+						labelTitles[2].setText(rankingMode.toString());
+						labelTitles[3].setText("Date");
+						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
+						access.add(3, new FieldAccessMCRScoreTotalTrimester());
+						break;
+					case MENSUAL_SCORE:
+						labelTitles[2].setText(rankingMode.toString());
+						labelTitles[3].setText("Date");
+						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
+						access.add(3, new FieldAccessMCRScoreTotalMonth());
+						break;
+					default:
+						break;
+				}
 
-			waitingDialog.removeComponentListener(waitingDialogAdapter);
-			waitingDialog.setVisible(false);
+				data = new String[scoreList.size()][NB_COLUMNS];
+				final JLabel labels[] = new JLabel[NB_COLUMNS];
+				final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 64, 2);
+				for (int index = 0; index < scoreList.size(); index++) {
+					final MCRScoreTotal record = scoreList.get(index);
+					data[index][0] = Integer.toString(index + 1);
+					for (int labelIndex = 1; labelIndex < labels.length; labelIndex++) {
+						data[index][labelIndex] = access.get(labelIndex).getDataString(record);
+					}
+
+					constraints.gridy = index;
+					for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
+						labels[labelIndex] = new JLabel(data[index][labelIndex], labelIndex == 1 ? JLabel.LEADING : JLabel.CENTER);
+						constraints.gridx = labelIndex;
+						labels[labelIndex].setPreferredSize(labelSizes[labelIndex]);
+						panelRanking.add(labels[labelIndex], constraints);
+					}
+
+					if (index % 2 == 0) {
+						for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
+							labels[labelIndex].setOpaque(true);
+							labels[labelIndex].setBackground(Color.LIGHT_GRAY);
+						}
+					}
+				}
+			} else {
+				data = null;
+			}
 		}
+		validate();
+		scrollRanking.getVerticalScrollBar().setValue(0);
+		enableComboBoxes();
+		repaint();
+
+		waitingDialog.removeComponentShownListener();
+		waitingDialog.setVisible(false);
 	}
 
 	@Override

@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -51,7 +50,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -63,6 +61,7 @@ import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.game.rcr.RCRScore;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
+import fr.bmj.bmjc.swing.ComponentShownListener;
 import fr.bmj.bmjc.swing.JDialogWithProgress;
 
 public class UITabPanelRCRGameHistory extends UITabPanel {
@@ -70,20 +69,22 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 	private final int NUMBER_OF_PLAYERS = 5;
 	private final int NUMBER_OF_COLUMNS = 5;
-	private final int COLUMN_WIDTH[] = new int[] { 96, 144, 96, 96, 96 };
+	private final int COLUMN_WIDTH[] = new int[] {
+		96, 144, 96, 96, 96
+	};
 	private final int LABEL_HEIGHT = 18;
 
 	private boolean displayFullName;
 	private final DataAccessRCR dataAccess;
 	private final JDialogWithProgress waitingDialog;
-	private final ComponentAdapter waitingDialogAdapter;
+	private final ComponentShownListener waitingDialogShowListener;
 
 	private final JLabel labelDate;
 	private final JLabel labelRounds;
 	private final JLabel labelGameInfos[][];
 
 	private final JComboBox<String> comboTournament;
-	private final TournamentComboActionListener tournamentComboBoxActionListener;
+	private final ActionListener tournamentComboBoxActionListener;
 	private final JTree treeIds;
 	private final DefaultTreeModel treeModel;
 	private TreePath selectedPath;
@@ -98,7 +99,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 	public UITabPanelRCRGameHistory(final DataAccessRCR dataAccess, final JDialogWithProgress waitingDialog) {
 		this.dataAccess = dataAccess;
 		this.waitingDialog = waitingDialog;
-		waitingDialogAdapter = new WaitingDialogComponentListener();
+		waitingDialogShowListener = (final ComponentEvent e) -> new Thread(() -> refreshTreeRun()).start();
 		displayFullName = false;
 
 		dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.FRANCE);
@@ -124,7 +125,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 			final JLabel labelTournament = new JLabel("Tournoi : ");
 			leftComponent.add(labelTournament, c);
 
-			tournamentComboBoxActionListener = new TournamentComboActionListener();
+			tournamentComboBoxActionListener = (final ActionEvent e) -> refreshTree();
 			comboTournament = new JComboBox<String>();
 			comboTournament.setEditable(false);
 			comboTournament.addActionListener(tournamentComboBoxActionListener);
@@ -137,7 +138,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 			treeIds = new JTree(treeModel);
 			treeIds.setRootVisible(true);
 			treeIds.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-			treeIds.getSelectionModel().addTreeSelectionListener(new IdTreeSelectionListener());
+			treeIds.getSelectionModel().addTreeSelectionListener((final TreeSelectionEvent e) -> selectGame());
 			final JScrollPane scrollList = new JScrollPane(treeIds, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			c.gridy = 1;
 			c.gridx = 0;
@@ -240,7 +241,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 		setLayout(new BorderLayout());
 		final JSplitPane centerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftComponent, rightComponent);
-		centerPane.setResizeWeight(1.0);
+		centerPane.setResizeWeight(0.5);
 		add(centerPane, BorderLayout.CENTER);
 
 		listTournament = new ArrayList<Tournament>();
@@ -283,98 +284,78 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 		}
 	}
 
-	private class TournamentComboActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			refreshTree();
-		}
-	}
-
 	private void refreshTree() {
 		final Point location = getLocationOnScreen();
 		final Dimension size = getSize();
 		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.addComponentListener(waitingDialogAdapter);
+		waitingDialog.setComponentShownListener(waitingDialogShowListener);
 		waitingDialog.setVisible(true);
 	}
 
-	private class WaitingDialogComponentListener extends ComponentAdapter {
-		@Override
-		public void componentShown(final ComponentEvent e) {
-			new RefreshTreeThread().start();
-		}
-	}
+	private void refreshTreeRun() {
+		invalidate();
+		final String monthStrings[] = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
+		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
+			final Tournament tournament = listTournament.get(selectedTournamentIndex);
+			final List<Integer> yearList = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
+			Collections.sort(yearList);
 
-	private class RefreshTreeThread extends Thread {
-		@Override
-		public void run() {
-			invalidate();
-			final String monthStrings[] = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
-			final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-			if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-				final Tournament tournament = listTournament.get(selectedTournamentIndex);
-				final List<Integer> yearList = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
-				Collections.sort(yearList);
+			final int totalSize = yearList.size() * 12;
+			final DefaultMutableTreeNode root = new DefaultMutableTreeNode(tournament.getName());
+			for (int index = 0; index < yearList.size(); index++) {
+				final int year = yearList.get(index);
+				final DefaultMutableTreeNode nodeYear = new DefaultMutableTreeNode(year);
+				root.add(nodeYear);
 
-				final int totalSize = yearList.size() * 12;
-				final DefaultMutableTreeNode root = new DefaultMutableTreeNode(tournament.getName());
-				for (int index = 0; index < yearList.size(); index++) {
-					final int year = yearList.get(index);
-					final DefaultMutableTreeNode nodeYear = new DefaultMutableTreeNode(year);
-					root.add(nodeYear);
+				for (int month = 0; month < 12; month++) {
+					final List<Integer> days = dataAccess.getRCRGameDays(tournament, year, month);
+					if (days.size() > 0) {
+						Collections.sort(days);
+						final DefaultMutableTreeNode nodeMonth = new DefaultMutableTreeNode(monthStrings[month]);
+						nodeYear.add(nodeMonth);
 
-					for (int month = 0; month < 12; month++) {
-						final List<Integer> days = dataAccess.getRCRGameDays(tournament, year, month);
-						if (days.size() > 0) {
-							Collections.sort(days);
-							final DefaultMutableTreeNode nodeMonth = new DefaultMutableTreeNode(monthStrings[month]);
-							nodeYear.add(nodeMonth);
+						for (int dayIndex = 0; dayIndex < days.size(); dayIndex++) {
+							final int day = days.get(dayIndex);
+							final List<Integer> idList = dataAccess.getRCRGameIds(tournament, year, month, day);
+							Collections.sort(idList);
+							final DefaultMutableTreeNode nodeDay = new DefaultMutableTreeNode(day);
+							nodeMonth.add(nodeDay);
 
-							for (int dayIndex = 0; dayIndex < days.size(); dayIndex++) {
-								final int day = days.get(dayIndex);
-								final List<Integer> idList = dataAccess.getRCRGameIds(tournament, year, month, day);
-								Collections.sort(idList);
-								final DefaultMutableTreeNode nodeDay = new DefaultMutableTreeNode(day);
-								nodeMonth.add(nodeDay);
-
-								for (int idIndex = 0; idIndex < idList.size(); idIndex++) {
-									final DefaultMutableTreeNode nodeId = new DefaultMutableTreeNode(idList.get(idIndex));
-									nodeDay.add(nodeId);
-								}
+							for (int idIndex = 0; idIndex < idList.size(); idIndex++) {
+								final DefaultMutableTreeNode nodeId = new DefaultMutableTreeNode(idList.get(idIndex));
+								nodeDay.add(nodeId);
 							}
 						}
-						waitingDialog.setProgress((index * 12 + month) * 100 / totalSize);
 					}
+					waitingDialog.setProgress((index * 12 + month) * 100 / totalSize);
 				}
-				treeModel.setRoot(root);
-			} else {
-				treeModel.setRoot(null);
 			}
-			selectedPath = null;
-			validate();
-			repaint();
-
-			waitingDialog.removeComponentListener(waitingDialogAdapter);
-			waitingDialog.setVisible(false);
+			treeModel.setRoot(root);
+		} else {
+			treeModel.setRoot(null);
 		}
+		selectedPath = null;
+		validate();
+		repaint();
+
+		waitingDialog.removeComponentShownListener();
+		waitingDialog.setVisible(false);
 	}
 
-	private class IdTreeSelectionListener implements TreeSelectionListener {
-		@Override
-		public void valueChanged(final TreeSelectionEvent e) {
-			selectedPath = treeIds.getSelectionPath();
-			if (selectedPath != null) {
-				final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
-				if (selectedNode.isLeaf()) {
-					selectedId = (Integer) selectedNode.getUserObject();
-				} else {
-					selectedId = null;
-				}
+	private void selectGame() {
+		selectedPath = treeIds.getSelectionPath();
+		if (selectedPath != null) {
+			final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
+			if (selectedNode.isLeaf()) {
+				selectedId = (Integer) selectedNode.getUserObject();
 			} else {
 				selectedId = null;
 			}
-			displayGame();
+		} else {
+			selectedId = null;
 		}
+		displayGame();
 	}
 
 	private void displayGame() {

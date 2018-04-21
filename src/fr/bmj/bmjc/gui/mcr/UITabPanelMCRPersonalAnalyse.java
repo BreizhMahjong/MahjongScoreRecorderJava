@@ -19,9 +19,12 @@ package fr.bmj.bmjc.gui.mcr;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -60,6 +63,7 @@ import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumScoreMode;
 import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;
+import fr.bmj.bmjc.swing.ComponentShownListener;
 import fr.bmj.bmjc.swing.JDialogWithProgress;
 import fr.bmj.bmjc.swing.ProportionalGridLayout;
 import fr.bmj.bmjc.swing.ProportionalGridLayoutConstraint;
@@ -81,6 +85,8 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 
 	private boolean displayFullName;
 	private final DataAccessMCR dataAccess;
+	private final JDialogWithProgress waitingDialog;
+	private final ComponentShownListener waitingDialogShowListener;
 	private final DecimalFormat format;
 
 	private final ActionListener comboActionListener;
@@ -118,6 +124,8 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 
 	public UITabPanelMCRPersonalAnalyse(final DataAccessMCR dataAccess, final JDialogWithProgress waitingDialog) {
 		this.dataAccess = dataAccess;
+		this.waitingDialog = waitingDialog;
+		waitingDialogShowListener = (final ComponentEvent e) -> new Thread(() -> displayRun()).start();
 
 		format = new DecimalFormat("#,###");
 		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
@@ -154,7 +162,9 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 				c.x = 6;
 				c.gridWidth = 1;
 				panelNorth.add(new JLabel("Score :", JLabel.RIGHT), c);
-				scoreModes = new EnumScoreMode[] { EnumScoreMode.FINAL_SCORE, EnumScoreMode.GAME_SCORE };
+				scoreModes = new EnumScoreMode[] {
+					EnumScoreMode.FINAL_SCORE, EnumScoreMode.GAME_SCORE
+				};
 				final String scoreModeStrings[] = new String[scoreModes.length];
 				for (int index = 0; index < scoreModes.length; index++) {
 					scoreModeStrings[index] = scoreModes[index].toString();
@@ -190,7 +200,9 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 
 				c.x = 4;
 				panelNorth.add(new JLabel("Trimestre :", JLabel.RIGHT), c);
-				final String trimesters[] = { EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString() };
+				final String trimesters[] = {
+					EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString()
+				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
 				comboTrimester.setSelectedIndex(0);
@@ -292,15 +304,15 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 		listPlayers = new ArrayList<Player>();
 		listTournament = new ArrayList<Tournament>();
 
-		tournamentComboBoxActionListener = new TournamentComboActionListener();
-		comboActionListener = new ComboBoxActionListener();
+		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
+		comboActionListener = (final ActionEvent e) -> changePeriodParameters(true);
 		comboPeriodMode.addActionListener(comboActionListener);
 		comboScoreMode.addActionListener(comboActionListener);
 		comboTrimester.addActionListener(comboActionListener);
 		comboMonth.addActionListener(comboActionListener);
 
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
-		changePeriodParameters();
+		changePeriodParameters(false);
 	}
 
 	@Override
@@ -356,13 +368,6 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 		}
 	}
 
-	private class TournamentComboActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			refreshYear();
-		}
-	}
-
 	private void refreshYear() {
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
 		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
@@ -386,15 +391,7 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 		}
 	}
 
-	private class ComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			changePeriodParameters();
-			display();
-		}
-	}
-
-	private void changePeriodParameters() {
+	private void changePeriodParameters(final boolean refresh) {
 		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 		switch (periodMode) {
 			case ALL:
@@ -421,6 +418,9 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 				break;
 		}
 		enableComboBoxes();
+		if (refresh) {
+			display();
+		}
 	}
 
 	private void disableComboBoxes() {
@@ -449,142 +449,147 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 		panelLineChart.removeAll();
 		validate();
 		repaint();
-		new DisplayThread().start();
+
+		final Point location = getLocationOnScreen();
+		final Dimension size = getSize();
+		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
+		waitingDialog.setComponentShownListener(waitingDialogShowListener);
+		waitingDialog.setVisible(true);
 	}
 
-	private class DisplayThread extends Thread {
-		@Override
-		public void run() {
-			final int selectedPlayerIndex = comboPlayerNames.getSelectedIndex();
-			final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-			final int selectedYearIndex = comboYear.getSelectedIndex();
+	private void displayRun() {
+		final int selectedPlayerIndex = comboPlayerNames.getSelectedIndex();
+		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+		final int selectedYearIndex = comboYear.getSelectedIndex();
 
-			if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-				final Player player = listPlayers.get(selectedPlayerIndex);
-				final Tournament tournament = listTournament.get(selectedTournamentIndex);
-				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
-				final EnumScoreMode scoreMode = scoreModes[comboScoreMode.getSelectedIndex()];
-				final int year = (Integer) comboYear.getSelectedItem();
-				final int trimester = comboTrimester.getSelectedIndex();
-				final int month = comboMonth.getSelectedIndex();
-				final MCRDataPackageAnalyze dataPackage = dataAccess.getMCRDataPackageAnalyze(tournament, player.getPlayerID(), scoreMode, periodMode, year, trimester, month);
+		if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+			final Player player = listPlayers.get(selectedPlayerIndex);
+			final Tournament tournament = listTournament.get(selectedTournamentIndex);
+			final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+			final EnumScoreMode scoreMode = scoreModes[comboScoreMode.getSelectedIndex()];
+			final int year = (Integer) comboYear.getSelectedItem();
+			final int trimester = comboTrimester.getSelectedIndex();
+			final int month = comboMonth.getSelectedIndex();
+			final MCRDataPackageAnalyze dataPackage = dataAccess.getMCRDataPackageAnalyze(tournament, player.getPlayerID(), scoreMode, periodMode, year, trimester, month);
 
-				if (dataPackage != null && dataPackage.getNumberOfGames() > 0) {
-					final int numberOfGames = dataPackage.getNumberOfGames();
+			if (dataPackage != null && dataPackage.getNumberOfGames() > 0) {
+				final int numberOfGames = dataPackage.getNumberOfGames();
 
-					// Stats
-					{
-						labelNumberOfGames.setText(format.format(dataPackage.getNumberOfGames()));
-						labelMaxScore.setText(format.format(dataPackage.getScoreMax()));
-						labelMinScore.setText(format.format(dataPackage.getScoreMin()));
-						labelTotalScore.setText(format.format(dataPackage.getScoreTotal()));
-						labelMeanScore.setText(format.format(dataPackage.getScoreMean()) + PLUS_MINUS + format.format(dataPackage.getScoreStandardDeviation()));
-						labelMaxTotal.setText(format.format(dataPackage.getTotalMax()));
-						labelMinTotal.setText(format.format(dataPackage.getTotalMin()));
+				// Stats
+				{
+					labelNumberOfGames.setText(format.format(dataPackage.getNumberOfGames()));
+					labelMaxScore.setText(format.format(dataPackage.getScoreMax()));
+					labelMinScore.setText(format.format(dataPackage.getScoreMin()));
+					labelTotalScore.setText(format.format(dataPackage.getScoreTotal()));
+					labelMeanScore.setText(format.format(dataPackage.getScoreMean()) + PLUS_MINUS + format.format(dataPackage.getScoreStandardDeviation()));
+					labelMaxTotal.setText(format.format(dataPackage.getTotalMax()));
+					labelMinTotal.setText(format.format(dataPackage.getTotalMin()));
 
-						if (dataPackage.getNumberOfGames() > 0) {
-							for (int index = 0; index < 4; index++) {
-								labelPlaces[index].setText(format.format(dataPackage.getGamePlaces()[index]));
-								labelPlacesPercent[index].setText(format.format(dataPackage.getGamePlacePercent()[index]) + PERCENTAGE_STRING);
-							}
-						} else {
-							for (int index = 0; index < 4; index++) {
-								labelPlaces[index].setText(ZERO_STRING);
-								labelPlacesPercent[index].setText(ZERO_STRING + PERCENTAGE_STRING);
-							}
+					if (dataPackage.getNumberOfGames() > 0) {
+						for (int index = 0; index < 4; index++) {
+							labelPlaces[index].setText(format.format(dataPackage.getGamePlaces()[index]));
+							labelPlacesPercent[index].setText(format.format(dataPackage.getGamePlacePercent()[index]) + PERCENTAGE_STRING);
+						}
+					} else {
+						for (int index = 0; index < 4; index++) {
+							labelPlaces[index].setText(ZERO_STRING);
+							labelPlacesPercent[index].setText(ZERO_STRING + PERCENTAGE_STRING);
 						}
 					}
+				}
 
-					// Charts
-					{
-						int tickUnit;
-						if (numberOfGames < MAX_NUMBER_OF_TICKS) {
-							tickUnit = 1;
-						} else {
-							tickUnit = (numberOfGames / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
-						}
-						// Bar Chart
-						{
-							final XYSeries scoreSeries = new XYSeries("Score");
-							final List<Integer> listScore = dataPackage.getListScore();
-							final List<Integer> listGameID = dataPackage.getListGameID();
-							final List<String> listToolTipText = new ArrayList<String>();
-							for (int index = 0; index < numberOfGames; index++) {
-								scoreSeries.add(index + 1, listScore.get(index));
-								listToolTipText.add(index, "<html>Score : " + Integer.toString(listScore.get(index)) + "<br>ID : " + Integer.toString(listGameID.get(index)) + "</html>");
-							}
-							final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
-							toolTip.addToolTipSeries(listToolTipText);
-							final IntervalXYDataset scoreDateSet = new XYSeriesCollection(scoreSeries);
-							final NumberAxis scoreDomainAxis = new NumberAxis();
-							scoreDomainAxis.setRange(0, numberOfGames + 1);
-							scoreDomainAxis.setTickUnit(new NumberTickUnit(tickUnit));
-							scoreDomainAxis.setLowerMargin(0.0);
-							scoreDomainAxis.setUpperMargin(0.0);
-							final ValueAxis scoreRangeAxis = new NumberAxis("Score");
-							final XYBarRenderer scoreRender = new XYBarRenderer(0.5);
-							scoreRender.setSeriesPaint(0, Color.BLUE);
-							scoreRender.setSeriesToolTipGenerator(0, toolTip);
-							scoreRender.setShadowVisible(false);
-							final XYPlot scorePlot = new XYPlot(scoreDateSet, scoreDomainAxis, scoreRangeAxis, scoreRender);
-							scorePlot.setBackgroundPaint(new Color(255, 255, 255, 0));
-							scorePlot.setDomainGridlinePaint(Color.BLACK);
-							scorePlot.setRangeGridlinePaint(Color.BLACK);
-							final double makerValue = scoreMode == EnumScoreMode.FINAL_SCORE ? 0.0 : 30000.0;
-							final ValueMarker marker = new ValueMarker(makerValue, Color.RED, new BasicStroke(1), null, null, 1.0f);
-							scorePlot.addRangeMarker(marker);
-
-							final ChartPanel chartPanel = new ChartPanel(new JFreeChart(scorePlot));
-							chartPanel.setPopupMenu(null);
-							chartPanel.setMouseZoomable(false);
-							panelBarChart.add(chartPanel, BorderLayout.CENTER);
-						}
-						// Line Chart
-						if (scoreMode == EnumScoreMode.FINAL_SCORE) {
-							final XYSeries sumSeries = new XYSeries("Score total");
-							sumSeries.add(0, 0);
-							final List<Integer> listSum = dataPackage.getListSum();
-							final List<String> listToolTipText = new ArrayList<String>();
-							for (int index = 0; index < numberOfGames; index++) {
-								sumSeries.add(index + 1, listSum.get(index));
-								listToolTipText.add(index, Integer.toString(listSum.get(index)));
-							}
-							final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
-							toolTip.addToolTipSeries(listToolTipText);
-							final IntervalXYDataset sumDataSet = new XYSeriesCollection(sumSeries);
-							final NumberAxis sumDomainAxis = new NumberAxis();
-							sumDomainAxis.setRange(0, numberOfGames + 1);
-							sumDomainAxis.setTickUnit(new NumberTickUnit(tickUnit));
-							sumDomainAxis.setLowerMargin(0.0);
-							sumDomainAxis.setUpperMargin(0.0);
-							final NumberAxis sumRangeAxis = new NumberAxis("Score total");
-							final XYLineAndShapeRenderer sumRender = new XYLineAndShapeRenderer();
-							sumRender.setSeriesPaint(0, Color.BLUE);
-							sumRender.setSeriesToolTipGenerator(0, toolTip);
-							sumRender.setSeriesShapesVisible(0, false);
-							final XYPlot sumPlot = new XYPlot(sumDataSet, sumDomainAxis, sumRangeAxis, sumRender);
-							sumPlot.setBackgroundPaint(new Color(255, 255, 255, 0));
-							sumPlot.setDomainGridlinePaint(Color.BLACK);
-							sumPlot.setRangeGridlinePaint(Color.BLACK);
-							final ValueMarker marker = new ValueMarker(0.0, Color.RED, new BasicStroke(1), null, null, 1.0f);
-							sumPlot.addRangeMarker(marker);
-
-							final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
-							chartPanel.setPopupMenu(null);
-							chartPanel.setMouseZoomable(false);
-							panelLineChart.add(chartPanel, BorderLayout.CENTER);
-						}
+				// Charts
+				{
+					int tickUnit;
+					if (numberOfGames < MAX_NUMBER_OF_TICKS) {
+						tickUnit = 1;
+					} else {
+						tickUnit = (numberOfGames / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
 					}
-				} else {
-					clearGameInfo();
+					// Bar Chart
+					{
+						final XYSeries scoreSeries = new XYSeries("Score");
+						final List<Integer> listScore = dataPackage.getListScore();
+						final List<Integer> listGameID = dataPackage.getListGameID();
+						final List<String> listToolTipText = new ArrayList<String>();
+						for (int index = 0; index < numberOfGames; index++) {
+							scoreSeries.add(index + 1, listScore.get(index));
+							listToolTipText.add(index, "<html>Score : " + Integer.toString(listScore.get(index)) + "<br>ID : " + Integer.toString(listGameID.get(index)) + "</html>");
+						}
+						final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
+						toolTip.addToolTipSeries(listToolTipText);
+						final IntervalXYDataset scoreDateSet = new XYSeriesCollection(scoreSeries);
+						final NumberAxis scoreDomainAxis = new NumberAxis();
+						scoreDomainAxis.setRange(0, numberOfGames + 1);
+						scoreDomainAxis.setTickUnit(new NumberTickUnit(tickUnit));
+						scoreDomainAxis.setLowerMargin(0.0);
+						scoreDomainAxis.setUpperMargin(0.0);
+						final ValueAxis scoreRangeAxis = new NumberAxis("Score");
+						final XYBarRenderer scoreRender = new XYBarRenderer(0.5);
+						scoreRender.setSeriesPaint(0, Color.BLUE);
+						scoreRender.setSeriesToolTipGenerator(0, toolTip);
+						scoreRender.setShadowVisible(false);
+						final XYPlot scorePlot = new XYPlot(scoreDateSet, scoreDomainAxis, scoreRangeAxis, scoreRender);
+						scorePlot.setBackgroundPaint(new Color(255, 255, 255, 0));
+						scorePlot.setDomainGridlinePaint(Color.BLACK);
+						scorePlot.setRangeGridlinePaint(Color.BLACK);
+						final double makerValue = scoreMode == EnumScoreMode.FINAL_SCORE ? 0.0 : 30000.0;
+						final ValueMarker marker = new ValueMarker(makerValue, Color.RED, new BasicStroke(1), null, null, 1.0f);
+						scorePlot.addRangeMarker(marker);
+
+						final ChartPanel chartPanel = new ChartPanel(new JFreeChart(scorePlot));
+						chartPanel.setPopupMenu(null);
+						chartPanel.setMouseZoomable(false);
+						panelBarChart.add(chartPanel, BorderLayout.CENTER);
+					}
+					// Line Chart
+					if (scoreMode == EnumScoreMode.FINAL_SCORE) {
+						final XYSeries sumSeries = new XYSeries("Score total");
+						sumSeries.add(0, 0);
+						final List<Integer> listSum = dataPackage.getListSum();
+						final List<String> listToolTipText = new ArrayList<String>();
+						for (int index = 0; index < numberOfGames; index++) {
+							sumSeries.add(index + 1, listSum.get(index));
+							listToolTipText.add(index, Integer.toString(listSum.get(index)));
+						}
+						final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
+						toolTip.addToolTipSeries(listToolTipText);
+						final IntervalXYDataset sumDataSet = new XYSeriesCollection(sumSeries);
+						final NumberAxis sumDomainAxis = new NumberAxis();
+						sumDomainAxis.setRange(0, numberOfGames + 1);
+						sumDomainAxis.setTickUnit(new NumberTickUnit(tickUnit));
+						sumDomainAxis.setLowerMargin(0.0);
+						sumDomainAxis.setUpperMargin(0.0);
+						final NumberAxis sumRangeAxis = new NumberAxis("Score total");
+						final XYLineAndShapeRenderer sumRender = new XYLineAndShapeRenderer();
+						sumRender.setSeriesPaint(0, Color.BLUE);
+						sumRender.setSeriesToolTipGenerator(0, toolTip);
+						sumRender.setSeriesShapesVisible(0, false);
+						final XYPlot sumPlot = new XYPlot(sumDataSet, sumDomainAxis, sumRangeAxis, sumRender);
+						sumPlot.setBackgroundPaint(new Color(255, 255, 255, 0));
+						sumPlot.setDomainGridlinePaint(Color.BLACK);
+						sumPlot.setRangeGridlinePaint(Color.BLACK);
+						final ValueMarker marker = new ValueMarker(0.0, Color.RED, new BasicStroke(1), null, null, 1.0f);
+						sumPlot.addRangeMarker(marker);
+
+						final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
+						chartPanel.setPopupMenu(null);
+						chartPanel.setMouseZoomable(false);
+						panelLineChart.add(chartPanel, BorderLayout.CENTER);
+					}
 				}
 			} else {
 				clearGameInfo();
 			}
-			validate();
-			enableComboBoxes();
-			repaint();
+		} else {
+			clearGameInfo();
 		}
+		validate();
+		enableComboBoxes();
+		repaint();
+
+		waitingDialog.removeComponentShownListener();
+		waitingDialog.setVisible(false);
 	}
 
 	private void clearGameInfo() {

@@ -210,24 +210,24 @@ public class UITabPanelRCRManage extends UITabPanel {
 
 		listTournament = new ArrayList<Tournament>();
 
-		comboBoxTournamentActionListener = new TournamentComboBoxActionListener();
+		comboBoxTournamentActionListener = (final ActionEvent e) -> displayTournament();
 		comboBoxTournament.addActionListener(comboBoxTournamentActionListener);
-		buttonAddTournament.addActionListener(new AddTournamentButtonActionListener());
-		buttonModifyTournament.addActionListener(new ModifyTournamentButtonActionListener());
-		buttonDeleteTournament.addActionListener(new DeleteTournamentButtonActionListener());
+		buttonAddTournament.addActionListener((final ActionEvent e) -> addTournament());
+		buttonModifyTournament.addActionListener((final ActionEvent e) -> modifyTournament());
+		buttonDeleteTournament.addActionListener((final ActionEvent e) -> deleteTournament());
 
-		comboBoxGameTournamentActionListener = new GameTournamentComboBoxActionListener();
+		comboBoxGameTournamentActionListener = (final ActionEvent e) -> getYear();
 		comboBoxGameTournament.addActionListener(comboBoxGameTournamentActionListener);
-		comboBoxYearMonthActionListener = new GameYearMonthComboBoxActionListener();
+		comboBoxYearMonthActionListener = (final ActionEvent e) -> getDay();
 		comboBoxYear.addActionListener(comboBoxYearMonthActionListener);
 		final String monthStrings[] = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
 		for (int monthIndex = 0; monthIndex < 12; monthIndex++) {
 			comboBoxMonth.addItem(monthStrings[monthIndex]);
 		}
 		comboBoxMonth.addActionListener(comboBoxYearMonthActionListener);
-		comboBoxDayActionListener = new GameDayComboBoxActionListener();
+		comboBoxDayActionListener = (final ActionEvent e) -> getId();
 		comboBoxDay.addActionListener(comboBoxDayActionListener);
-		buttonDeleteGame.addActionListener(new DeleteGameButtonActionListener());
+		buttonDeleteGame.addActionListener((final ActionEvent e) -> deleteGame());
 	}
 
 	@Override
@@ -269,13 +269,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 		}
 	}
 
-	private class AddTournamentButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			addTournament();
-		}
-	}
-
 	private void addTournament() {
 		final String tournamentName = textNewTournamentName.getText();
 		if (tournamentName != null && tournamentName.length() > 0) {
@@ -291,13 +284,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 		}
 	}
 
-	private class TournamentComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			displayTournament();
-		}
-	}
-
 	private void displayTournament() {
 		final int selectedTournamentIndex = comboBoxTournament.getSelectedIndex();
 		if (selectedTournamentIndex != -1) {
@@ -305,13 +291,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 			textModifyTournamentName.setText(tournament.getName());
 		} else {
 			textModifyTournamentName.setText("");
-		}
-	}
-
-	private class ModifyTournamentButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			modifyTournament();
 		}
 	}
 
@@ -334,13 +313,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 		}
 	}
 
-	private class DeleteTournamentButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			deleteTournament();
-		}
-	}
-
 	private void deleteTournament() {
 		final int selectedTournamentIndex = comboBoxTournament.getSelectedIndex();
 		if (selectedTournamentIndex != -1) {
@@ -352,13 +324,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 			} else {
 				JOptionPane.showMessageDialog(this, "Le tournoi n'a pas été supprimé", "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
-	}
-
-	private class GameTournamentComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			getYear();
 		}
 	}
 
@@ -381,13 +346,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 			} else {
 				comboBoxYear.setSelectedIndex(-1);
 			}
-		}
-	}
-
-	private class GameYearMonthComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			getDay();
 		}
 	}
 
@@ -416,13 +374,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 		}
 	}
 
-	private class GameDayComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			getId();
-		}
-	}
-
 	private void getId() {
 		final int selectedTournamentIndex = comboBoxGameTournament.getSelectedIndex();
 		final Integer selectedYear = (Integer) comboBoxYear.getSelectedItem();
@@ -442,13 +393,6 @@ public class UITabPanelRCRManage extends UITabPanel {
 			if (ids.size() > 0) {
 				comboBoxId.setSelectedIndex(0);
 			}
-		}
-	}
-
-	private class DeleteGameButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			deleteGame();
 		}
 	}
 

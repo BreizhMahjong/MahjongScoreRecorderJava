@@ -28,7 +28,6 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
@@ -37,7 +36,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -180,7 +178,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			northPanel.add(new JLabel("Joueur: ", JLabel.RIGHT), c);
 			comboBoxNumberPlayers = new JComboBox<String>(NUMBER_OF_PLAYERS_STRINGS);
 			comboBoxNumberPlayers.setSelectedIndex(DEFAULT_NUMBER_OF_PLAYERS_INDEX);
-			comboBoxNumberPlayers.addActionListener(new PlayersComboBoxActionListener());
+			comboBoxNumberPlayers.addActionListener((final ActionEvent e) -> toggleFifthPlayer());
 			c.x = 1;
 			northPanel.add(comboBoxNumberPlayers, c);
 
@@ -188,7 +186,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			northPanel.add(new JLabel("Manche: ", JLabel.RIGHT), c);
 			comboBoxNumberRounds = new JComboBox<String>(NUMBER_OF_ROUNDS_STRINGS);
 			comboBoxNumberRounds.setSelectedIndex(DEFAULT_NUMBER_OF_ROUNDS_INDEX);
-			comboBoxNumberRounds.addActionListener(new RoundsComboBoxActionListener());
+			comboBoxNumberRounds.addActionListener((final ActionEvent e) -> disableSaveButton());
 			c.x = 3;
 			northPanel.add(comboBoxNumberRounds, c);
 
@@ -203,7 +201,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			northPanel.add(new JLabel("Uma: ", JLabel.RIGHT), c);
 			comboBoxUma = new JComboBox<>(UMA_SET_NAMES);
 			comboBoxUma.setSelectedIndex(DEFAULT_UMA_SET_INDEX);
-			comboBoxUma.addActionListener(new UmaComboBoxActionListener());
+			comboBoxUma.addActionListener((final ActionEvent e) -> disableSaveButton());
 			c.x = 7;
 			northPanel.add(comboBoxUma, c);
 
@@ -241,7 +239,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			spinnerPlayerGameScores = new ArrayList<JSpinner>(MAX_NUMBER_OF_PLAYERS);
 			labelPlayerUmaScores = new ArrayList<JLabel>(MAX_NUMBER_OF_PLAYERS);
 			labelPlayerFinalScores = new ArrayList<JLabel>(MAX_NUMBER_OF_PLAYERS);
-			final ChangeListener scoreSpinnerChangeListener = new GameScoreSpinnerChangeListener();
+			final ChangeListener scoreSpinnerChangeListener = (final ChangeEvent e) -> disableSaveButton();
 
 			for (int playerIndex = 0; playerIndex < MAX_NUMBER_OF_PLAYERS; playerIndex++) {
 				centerC.y = 1 + playerIndex;
@@ -303,19 +301,19 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			southPanel.add(new JPanel());
 
 			buttonCalculate = new JButton("Calculer");
-			buttonCalculate.addActionListener(new ButtonCalculateActionListener());
+			buttonCalculate.addActionListener((final ActionEvent e) -> calculateFinalScore());
 			southPanel.add(buttonCalculate);
 
 			southPanel.add(new JPanel());
 
 			buttonSave = new JButton("Enregistrer");
-			buttonSave.addActionListener(new ButtonSaveActionListener());
+			buttonSave.addActionListener((final ActionEvent e) -> saveScore());
 			southPanel.add(buttonSave);
 
 			southPanel.add(new JPanel());
 
 			buttonReset = new JButton("Réinitialiser");
-			buttonReset.addActionListener(new ButtonResetActionListener());
+			buttonReset.addActionListener((final ActionEvent e) -> reset());
 			southPanel.add(buttonReset);
 
 			southPanel.add(new JPanel());
@@ -438,18 +436,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 		}
 	}
 
-	private class RoundsComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			buttonSave.setEnabled(false);
-		}
-	}
-
-	private class UmaComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			buttonSave.setEnabled(false);
-		}
+	private void disableSaveButton() {
+		buttonSave.setEnabled(false);
 	}
 
 	private class WebPageKeySelectionManager implements KeySelectionManager {
@@ -513,22 +501,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 
 	private final List<PlayerScore> playerScoreList;
 
-	private class PlayerScoreComparator implements Comparator<PlayerScore> {
-		@Override
-		public int compare(final PlayerScore o1, final PlayerScore o2) {
-			return -Integer.compare(o1.gameScore, o2.gameScore);
-		}
-	}
-
-	private class ButtonCalculateActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			calculateFinalScore();
-		}
-	}
-
 	private void calculateFinalScore() {
-		buttonSave.setEnabled(false);
+		disableSaveButton();
 		final int nbPlayersIndex = comboBoxNumberPlayers.getSelectedIndex();
 		final int nbPlayers = NUMBER_OF_PLAYERS[nbPlayersIndex];
 
@@ -586,7 +560,9 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 		}
 
 		// Sort score list
-		Collections.sort(playerScoreList, new PlayerScoreComparator());
+		Collections.sort(playerScoreList, (final PlayerScore o1, final PlayerScore o2) -> {
+			return -Integer.compare(o1.gameScore, o2.gameScore);
+		});
 		final int uma[] = UMA[umaSetIndex][nbPlayersIndex];
 		int playerIndex = 0;
 		while (playerIndex < nbPlayers) {
@@ -606,17 +582,10 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			}
 			playerIndex = equalityPlayerIndex;
 		}
-		switch (comboBoxNumberRounds.getSelectedIndex()) {
-			case 0:
-				for (int index = 0; index < playerScoreList.size(); index++) {
-					playerScoreList.get(index).finalScore /= 2;
-				}
-				break;
-			// case 2:
-			// for (int index = 0; index < playerScoreList.size(); index++) {
-			// playerScoreList.get(index).finalScore *= 2;
-			// }
-			// break;
+		if (comboBoxNumberRounds.getSelectedIndex() == 0) {
+			for (int index = 0; index < playerScoreList.size(); index++) {
+				playerScoreList.get(index).finalScore /= 2;
+			}
 		}
 
 		// Update display
@@ -631,20 +600,6 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 		buttonSave.setEnabled(true);
 	}
 
-	private class GameScoreSpinnerChangeListener implements ChangeListener {
-		@Override
-		public void stateChanged(final ChangeEvent e) {
-			buttonSave.setEnabled(false);
-		}
-	}
-
-	private class PlayersComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			toggleFifthPlayer();
-		}
-	}
-
 	private void toggleFifthPlayer() {
 		final boolean lastPlayerPresent = comboBoxNumberPlayers.getSelectedIndex() != DEFAULT_NUMBER_OF_PLAYERS_INDEX;
 		final int lastPlayerIndex = MAX_NUMBER_OF_PLAYERS - 1;
@@ -653,13 +608,6 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 		spinnerPlayerGameScores.get(lastPlayerIndex).setEnabled(lastPlayerPresent);
 		labelPlayerFinalScores.get(lastPlayerIndex).setEnabled(lastPlayerPresent);
 		buttonSave.setEnabled(false);
-	}
-
-	private class ButtonSaveActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			saveScore();
-		}
 	}
 
 	private void saveScore() {
@@ -689,13 +637,6 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			}
 		} else {
 			JOptionPane.showMessageDialog(this, "Veuillez créer d'abord un tournoi.", "Erreur", JOptionPane.ERROR_MESSAGE);
-		}
-	}
-
-	private class ButtonResetActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			reset();
 		}
 	}
 

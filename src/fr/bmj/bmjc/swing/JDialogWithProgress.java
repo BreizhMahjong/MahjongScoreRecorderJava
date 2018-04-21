@@ -23,13 +23,15 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.Window;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
-public class JDialogWithProgress extends JDialog {
+public class JDialogWithProgress extends JDialog implements ComponentListener {
 
 	private static final long serialVersionUID = 4668215293557400804L;
 
@@ -41,11 +43,16 @@ public class JDialogWithProgress extends JDialog {
 		super(owner, title, modal, gc);
 		super.getContentPane().setLayout(new BorderLayout());
 		textLabel = new JLabel("Reading. Please wait...", JLabel.CENTER);
+		textLabel.setOpaque(true);
+		textLabel.setBackground(Color.WHITE);
 		textLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
 		progressBar.setStringPainted(true);
+		progressBar.setOpaque(true);
 		super.getContentPane().add(textLabel, BorderLayout.CENTER);
 		super.getContentPane().add(progressBar, BorderLayout.SOUTH);
+
+		addComponentListener(this);
 		setUndecorated(true);
 		pack();
 	}
@@ -78,6 +85,8 @@ public class JDialogWithProgress extends JDialog {
 		progressBar.setOpaque(true);
 		super.getContentPane().add(textLabel, BorderLayout.CENTER);
 		super.getContentPane().add(progressBar, BorderLayout.SOUTH);
+
+		addComponentListener(this);
 		setUndecorated(true);
 		pack();
 	}
@@ -98,24 +107,30 @@ public class JDialogWithProgress extends JDialog {
 		this(owner, null, false, null);
 	}
 
-	public JDialogWithProgress(final Window owner, final String title, final ModalityType modalityType, final GraphicsConfiguration gc) {
-		super(owner, title, modalityType, gc);
+	public JDialogWithProgress(final Window owner, final String title, final ModalityType modal, final GraphicsConfiguration gc) {
+		super(owner, title, modal, gc);
 		super.getContentPane().setLayout(new BorderLayout());
-		textLabel = new JLabel("", JLabel.CENTER);
+		textLabel = new JLabel("Reading. Please wait...", JLabel.CENTER);
+		textLabel.setOpaque(true);
+		textLabel.setBackground(Color.WHITE);
 		textLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
 		progressBar.setStringPainted(true);
+		progressBar.setOpaque(true);
 		super.getContentPane().add(textLabel, BorderLayout.CENTER);
 		super.getContentPane().add(progressBar, BorderLayout.SOUTH);
+
+		addComponentListener(this);
 		setUndecorated(true);
+		pack();
 	}
 
-	public JDialogWithProgress(final Window owner, final String title, final ModalityType modalityType) {
-		this(owner, title, modalityType, null);
+	public JDialogWithProgress(final Window owner, final String title, final ModalityType modal) {
+		this(owner, title, modal, null);
 	}
 
-	public JDialogWithProgress(final Window owner, final ModalityType modalityType) {
-		this(owner, null, modalityType, null);
+	public JDialogWithProgress(final Window owner, final ModalityType modal) {
+		this(owner, null, modal, null);
 	}
 
 	public JDialogWithProgress(final Window owner, final String title) {
@@ -144,6 +159,37 @@ public class JDialogWithProgress extends JDialog {
 			progressBar.setString(progress + "%");
 			repaint();
 		}
+	}
+
+	private ComponentShownListener listener;
+
+	public void setComponentShownListener(final ComponentShownListener l) {
+		if (l != null) {
+			listener = l;
+		}
+	}
+
+	public void removeComponentShownListener() {
+		listener = null;
+	}
+
+	@Override
+	public void componentResized(final ComponentEvent e) {
+	}
+
+	@Override
+	public void componentMoved(final ComponentEvent e) {
+	}
+
+	@Override
+	public void componentShown(final ComponentEvent e) {
+		if (listener != null) {
+			listener.componentShown(e);
+		}
+	}
+
+	@Override
+	public void componentHidden(final ComponentEvent e) {
 	}
 
 }

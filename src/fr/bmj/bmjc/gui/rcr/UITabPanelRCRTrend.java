@@ -26,7 +26,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -78,6 +77,7 @@ import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;
+import fr.bmj.bmjc.swing.ComponentShownListener;
 import fr.bmj.bmjc.swing.JDialogWithProgress;
 import fr.bmj.bmjc.swing.ProportionalGridLayout;
 import fr.bmj.bmjc.swing.ProportionalGridLayoutConstraint;
@@ -98,8 +98,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	private boolean displayFullName;
 	private final DataAccessRCR dataAccess;
 	private final JDialogWithProgress waitingDialog;
-	private final ComponentAdapter waitingDialogAdapterRefreshData;
-	private final ComponentAdapter waitingDialogAdapterDisplayData;
+	private final ComponentShownListener waitingDialogRefreshData;
+	private final ComponentShownListener waitingDialogDisplayData;
 
 	private final JComboBox<String> comboTournament;
 
@@ -128,8 +128,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	public UITabPanelRCRTrend(final DataAccessRCR dataAccess, final JDialogWithProgress waitingDialog) {
 		this.dataAccess = dataAccess;
 		this.waitingDialog = waitingDialog;
-		waitingDialogAdapterRefreshData = new WaitingDialogComponentRefreshDataListener();
-		waitingDialogAdapterDisplayData = new WaitingDialogComponentDisplayDataListener();
+		waitingDialogRefreshData = (final ComponentEvent e) -> new Thread(() -> refreshDataRun()).start();
+		waitingDialogDisplayData = (final ComponentEvent e) -> new Thread(() -> displayDataRun()).start();
 
 		setLayout(new BorderLayout());
 		{
@@ -175,7 +175,9 @@ public class UITabPanelRCRTrend extends UITabPanel {
 
 				c.x = 4;
 				panelNorth.add(new JLabel("Trimestre :", JLabel.RIGHT), c);
-				final String trimesters[] = { EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString() };
+				final String trimesters[] = {
+					EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString()
+				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
 				comboTrimester.setSelectedIndex(0);
@@ -209,7 +211,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 					panelCenterWestNorth.setMinimumSize(new Dimension(160, 0));
 					panelCenterWest.add(panelCenterWestNorth, BorderLayout.NORTH);
 					final GridBagConstraints constraintsCenterWestNorth = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-							0);
+						0);
 
 					buttonFilter = new JButton("Filtrer");
 					buttonFilter.setPreferredSize(new Dimension(80, 20));
@@ -244,19 +246,19 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		listTournament = new ArrayList<Tournament>();
 		listPlayers = new ArrayList<Player>();
 
-		selectAllCheckBoxActionListener = new SelectAllActionListener();
-		filterButtonActionListeneer = new ButtonFilterActionListener();
+		selectAllCheckBoxActionListener = (final ActionEvent e) -> selectAll();
+		filterButtonActionListeneer = (final ActionEvent e) -> displayData();
 
-		tournamentComboBoxActionListener = new TournamentComboActionListener();
+		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
 
-		comboPeriodMode.addActionListener(new PeriodModeComboBoxActionListener());
-		periodParametersComboBoxActionListener = new PeriodParametersComboBoxActionListener();
+		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
+		periodParametersComboBoxActionListener = (final ActionEvent e) -> refreshData();
 		comboTrimester.addActionListener(periodParametersComboBoxActionListener);
 		comboMonth.addActionListener(periodParametersComboBoxActionListener);
 
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
 		comboBoxActivated[COMBOBOX_PERIOD] = true;
-		changePeriodParameters();
+		changePeriodParameters(false);
 	}
 
 	@Override
@@ -335,13 +337,6 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		}
 	}
 
-	private class TournamentComboActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			refreshYear();
-		}
-	}
-
 	private void refreshYear() {
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
 		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
@@ -365,15 +360,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		}
 	}
 
-	private class PeriodModeComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			changePeriodParameters();
-			refreshData();
-		}
-	}
-
-	private void changePeriodParameters() {
+	private void changePeriodParameters(final boolean refresh) {
 		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 		switch (periodMode) {
 			case ALL:
@@ -404,11 +391,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		comboYear.setEnabled(comboBoxActivated[COMBOBOX_YEAR_INDEX]);
 		comboTrimester.setEnabled(comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
 		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
-	}
 
-	private class PeriodParametersComboBoxActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
+		if (refresh) {
 			refreshData();
 		}
 	}
@@ -417,55 +401,35 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		final Point location = getLocationOnScreen();
 		final Dimension size = getSize();
 		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.addComponentListener(waitingDialogAdapterRefreshData);
+		waitingDialog.setComponentShownListener(waitingDialogRefreshData);
 		waitingDialog.setVisible(true);
 	}
 
-	private class WaitingDialogComponentRefreshDataListener extends ComponentAdapter {
-		@Override
-		public void componentShown(final ComponentEvent e) {
-			new RefreshDataThread().start();
+	private void refreshDataRun() {
+		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+
+		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+		final int selectedYearIndex = comboYear.getSelectedIndex();
+		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+			final Tournament tournament = listTournament.get(selectedTournamentIndex);
+			final int year = (Integer) comboYear.getSelectedItem();
+			final int trimester = comboTrimester.getSelectedIndex();
+			final int month = comboMonth.getSelectedIndex();
+
+			trend = dataAccess.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month);
 		}
+		waitingDialog.removeComponentShownListener();
+		waitingDialog.setVisible(false);
+
+		displayData();
 	}
 
-	private class RefreshDataThread extends Thread {
-		@Override
-		public void run() {
-			final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
-
-			final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-			final int selectedYearIndex = comboYear.getSelectedIndex();
-			if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-				final Tournament tournament = listTournament.get(selectedTournamentIndex);
-				final int year = (Integer) comboYear.getSelectedItem();
-				final int trimester = comboTrimester.getSelectedIndex();
-				final int month = comboMonth.getSelectedIndex();
-
-				trend = dataAccess.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month);
-			}
-			waitingDialog.removeComponentListener(waitingDialogAdapterRefreshData);
-			waitingDialog.setVisible(false);
-
-			displayData();
+	private void selectAll() {
+		final boolean selected = checkBoxSelectAll.isSelected();
+		for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
+			listCheckBoxPlayerSelect.get(index).setSelected(selected);
 		}
-	}
-
-	private class SelectAllActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final boolean selected = checkBoxSelectAll.isSelected();
-			for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-				listCheckBoxPlayerSelect.get(index).setSelected(selected);
-			}
-			repaint();
-		}
-	}
-
-	private class ButtonFilterActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			displayData();
-		}
+		repaint();
 	}
 
 	private void displayData() {
@@ -476,88 +440,78 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		final Point location = getLocationOnScreen();
 		final Dimension size = getSize();
 		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.addComponentListener(waitingDialogAdapterDisplayData);
+		waitingDialog.setComponentShownListener(waitingDialogDisplayData);
 		waitingDialog.setVisible(true);
 	}
 
-	private class WaitingDialogComponentDisplayDataListener extends ComponentAdapter {
-		@Override
-		public void componentShown(final ComponentEvent e) {
-			new DisplayDataThread().start();
-		}
-	}
-
-	private class DisplayDataThread extends Thread {
-		@Override
-		public void run() {
-			if (trend.data.size() > 0) {
-				final Set<String> selectedNames = new HashSet<String>();
-				if (displayFullName) {
-					for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-						if (listCheckBoxPlayerSelect.get(index).isSelected()) {
-							selectedNames.add(listPlayers.get(index).getPlayerName());
-						}
-					}
-				} else {
-					for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-						if (listCheckBoxPlayerSelect.get(index).isSelected()) {
-							selectedNames.add(listPlayers.get(index).getDisplayName());
-						}
+	private void displayDataRun() {
+		if (trend.data.size() > 0) {
+			final Set<String> selectedNames = new HashSet<String>();
+			if (displayFullName) {
+				for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
+					if (listCheckBoxPlayerSelect.get(index).isSelected()) {
+						selectedNames.add(listPlayers.get(index).getPlayerName());
 					}
 				}
-
-				final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
-				final List<List<Integer>> scores = trend.data;
-				final List<Long> dates = trend.dates;
-
-				final TimeSeriesCollection series = new TimeSeriesCollection();
-				final XYItemRenderer sumRender = new XYLineAndShapeRenderer();
-				for (int playerIndex = 0; playerIndex < listName.size(); playerIndex++) {
-					final String playerName = listName.get(playerIndex);
-					if (selectedNames.contains(playerName)) {
-						final List<Integer> score = scores.get(playerIndex);
-						final TimeSeries sumSeries = new TimeSeries(playerName);
-						for (int index = 1; index < score.size(); index++) {
-							sumSeries.add(new Day(new Date(dates.get(index))), score.get(index));
-						}
-						series.addSeries(sumSeries);
+			} else {
+				for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
+					if (listCheckBoxPlayerSelect.get(index).isSelected()) {
+						selectedNames.add(listPlayers.get(index).getDisplayName());
 					}
 				}
-
-				int tickUnit;
-				final int numberOfDays = (int) ((dates.get(dates.size() - 1) - dates.get(1)) / MILLISECONDS_PER_DAY);
-				if (numberOfDays < MAX_NUMBER_OF_TICKS) {
-					tickUnit = 1;
-				} else {
-					tickUnit = (numberOfDays / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
-				}
-
-				final DateAxis sumDomainAxis = new DateAxis("Date");
-				sumDomainAxis.setRange(new Date(dates.get(1) - MILLISECONDS_PER_DAY), new Date(dates.get(dates.size() - 1) + MILLISECONDS_PER_DAY));
-				sumDomainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, tickUnit));
-				sumDomainAxis.setLowerMargin(0.0);
-				sumDomainAxis.setUpperMargin(0.0);
-
-				final NumberAxis sumRangeAxis = new NumberAxis("Score total");
-				final XYPlot sumPlot = new XYPlot(series, sumDomainAxis, sumRangeAxis, sumRender);
-				sumPlot.setBackgroundPaint(new Color(255, 255, 255, 0));
-				sumPlot.setDomainGridlinePaint(Color.BLACK);
-				sumPlot.setRangeGridlinePaint(Color.BLACK);
-				final ValueMarker marker = new ValueMarker(0.0, Color.RED, new BasicStroke(1), null, null, 1.0f);
-				sumPlot.addRangeMarker(marker);
-
-				final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
-				chartPanel.setPopupMenu(null);
-				chartPanel.setMouseZoomable(false);
-				panelChart.add(chartPanel, BorderLayout.CENTER);
 			}
 
-			validate();
-			repaint();
+			final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
+			final List<List<Integer>> scores = trend.data;
+			final List<Long> dates = trend.dates;
 
-			waitingDialog.removeComponentListener(waitingDialogAdapterDisplayData);
-			waitingDialog.setVisible(false);
+			final TimeSeriesCollection series = new TimeSeriesCollection();
+			final XYItemRenderer sumRender = new XYLineAndShapeRenderer();
+			for (int playerIndex = 0; playerIndex < listName.size(); playerIndex++) {
+				final String playerName = listName.get(playerIndex);
+				if (selectedNames.contains(playerName)) {
+					final List<Integer> score = scores.get(playerIndex);
+					final TimeSeries sumSeries = new TimeSeries(playerName);
+					for (int index = 1; index < score.size(); index++) {
+						sumSeries.add(new Day(new Date(dates.get(index))), score.get(index));
+					}
+					series.addSeries(sumSeries);
+				}
+			}
+
+			int tickUnit;
+			final int numberOfDays = (int) ((dates.get(dates.size() - 1) - dates.get(1)) / MILLISECONDS_PER_DAY);
+			if (numberOfDays < MAX_NUMBER_OF_TICKS) {
+				tickUnit = 1;
+			} else {
+				tickUnit = (numberOfDays / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
+			}
+
+			final DateAxis sumDomainAxis = new DateAxis("Date");
+			sumDomainAxis.setRange(new Date(dates.get(1) - MILLISECONDS_PER_DAY), new Date(dates.get(dates.size() - 1) + MILLISECONDS_PER_DAY));
+			sumDomainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, tickUnit));
+			sumDomainAxis.setLowerMargin(0.0);
+			sumDomainAxis.setUpperMargin(0.0);
+
+			final NumberAxis sumRangeAxis = new NumberAxis("Score total");
+			final XYPlot sumPlot = new XYPlot(series, sumDomainAxis, sumRangeAxis, sumRender);
+			sumPlot.setBackgroundPaint(new Color(255, 255, 255, 0));
+			sumPlot.setDomainGridlinePaint(Color.BLACK);
+			sumPlot.setRangeGridlinePaint(Color.BLACK);
+			final ValueMarker marker = new ValueMarker(0.0, Color.RED, new BasicStroke(1), null, null, 1.0f);
+			sumPlot.addRangeMarker(marker);
+
+			final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
+			chartPanel.setPopupMenu(null);
+			chartPanel.setMouseZoomable(false);
+			panelChart.add(chartPanel, BorderLayout.CENTER);
 		}
+
+		validate();
+		repaint();
+
+		waitingDialog.removeComponentShownListener();
+		waitingDialog.setVisible(false);
 	}
 
 	@Override

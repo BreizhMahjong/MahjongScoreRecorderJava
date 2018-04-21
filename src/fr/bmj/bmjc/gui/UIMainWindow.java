@@ -23,8 +23,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -55,7 +55,7 @@ import fr.bmj.bmjc.gui.rcr.UITabPanelRCRPersonalAnalyse;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRTrend;
 import fr.bmj.bmjc.swing.JDialogWithProgress;
 
-public class UIMainWindow extends JFrame {
+public class UIMainWindow extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 4639754313889847228L;
 
 	private static final int WINDOW_HEIGHT = 768;
@@ -132,7 +132,7 @@ public class UIMainWindow extends JFrame {
 		tabsMCR[4] = new UITabPanelMCRPersonalAnalyse(dataAccess, waitingDialog);
 		tabsMCR[5] = new UITabPanelMCRGameHistory(dataAccess, waitingDialog);
 
-		tabPaneChangeListener = new TabPaneChangeListener();
+		tabPaneChangeListener = (final ChangeEvent e) -> changeTab();
 		tabbedPane.addChangeListener(tabPaneChangeListener);
 
 		final JMenuBar menuBar = new JMenuBar();
@@ -144,13 +144,13 @@ public class UIMainWindow extends JFrame {
 
 		menuItemExport = new JMenuItem("Exporter");
 		menuItemExport.setMnemonic(KeyEvent.VK_E);
-		menuItemExport.addActionListener(new MenuFileExportActionListener());
+		menuItemExport.addActionListener((final ActionEvent e) -> export());
 		menuFile.add(menuItemExport);
 		menuFile.addSeparator();
 
 		final JMenuItem menuItemFileExit = new JMenuItem("Quitter");
 		menuItemFileExit.setMnemonic(KeyEvent.VK_X);
-		menuItemFileExit.addActionListener(new MenuFileExitActionListener());
+		menuItemFileExit.addActionListener((final ActionEvent e) -> exit());
 		menuFile.add(menuItemFileExit);
 
 		final JMenu menuSettings = new JMenu("Paramètres");
@@ -158,7 +158,7 @@ public class UIMainWindow extends JFrame {
 		menuBar.add(menuSettings);
 
 		final ButtonGroup nameModeMenuButtonGroup = new ButtonGroup();
-		final MenuSettingsNameActionListener nameModeActionListener = new MenuSettingsNameActionListener();
+		final ActionListener nameModeActionListener = (final ActionEvent e) -> setDisplayFullName();
 		menuSettingsFullName = new JRadioButtonMenuItem("Nom prénom");
 		menuSettingsFullName.setMnemonic(KeyEvent.VK_F);
 		menuSettingsFullName.setSelected(DISPLAY_REAL_NAME);
@@ -178,10 +178,10 @@ public class UIMainWindow extends JFrame {
 		menuSettingsUseMinGame = new JCheckBoxMenuItem("Min nb de parties");
 		menuSettingsUseMinGame.setMnemonic(KeyEvent.VK_M);
 		menuSettingsUseMinGame.setSelected(USE_MIN_GAME);
-		menuSettingsUseMinGame.addActionListener(new MenuSettingsMinGameActionListener());
+		menuSettingsUseMinGame.addActionListener((final ActionEvent e) -> setUseMinGame());
 		menuSettings.add(menuSettingsUseMinGame);
 
-		addWindowListener(new MainWindowListener());
+		addWindowListener(this);
 		setMinimumSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 		setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -191,13 +191,6 @@ public class UIMainWindow extends JFrame {
 		changeTab();
 		setUseMinGame();
 		setDisplayFullName();
-	}
-
-	private class TabPaneChangeListener implements ChangeListener {
-		@Override
-		public void stateChanged(final ChangeEvent e) {
-			changeTab();
-		}
 	}
 
 	private void changeTab() {
@@ -263,40 +256,16 @@ public class UIMainWindow extends JFrame {
 		}
 	}
 
-	private class MenuFileExportActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final UITabPanel tab = getCurrentTab();
-			if (tab != null && tab.canExport()) {
-				tab.export();
-			}
-		}
-	}
-
-	private class MenuFileExitActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			exit();
-		}
-	}
-
-	private class MainWindowListener extends WindowAdapter {
-		@Override
-		public void windowClosing(final WindowEvent e) {
-			exit();
+	private void export() {
+		final UITabPanel tab = getCurrentTab();
+		if (tab != null && tab.canExport()) {
+			tab.export();
 		}
 	}
 
 	private void exit() {
 		dataAccess.disconnect();
 		dispose();
-	}
-
-	private class MenuSettingsNameActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			setDisplayFullName();
-		}
 	}
 
 	private void setDisplayFullName() {
@@ -311,18 +280,40 @@ public class UIMainWindow extends JFrame {
 		}
 	}
 
-	private class MenuSettingsMinGameActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			setUseMinGame();
-		}
-	}
-
 	private void setUseMinGame() {
 		dataAccess.setRCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
 		dataAccess.setMCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		tab.refresh();
+	}
+
+	@Override
+	public void windowOpened(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(final WindowEvent e) {
+		exit();
+	}
+
+	@Override
+	public void windowClosed(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(final WindowEvent e) {
 	}
 
 }
