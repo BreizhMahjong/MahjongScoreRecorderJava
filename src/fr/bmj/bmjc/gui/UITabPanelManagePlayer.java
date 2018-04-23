@@ -74,7 +74,9 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final GridBagConstraints playerC = new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(8, 0, 8, 0), 0, 0);
 			{
 				final JPanel addPlayerPanel = new JPanel();
-				addPlayerPanel.setLayout(new ProportionalGridLayout(1, 5, 2, 2));
+				final ProportionalGridLayout layout = new ProportionalGridLayout(1, 5, 2, 2);
+				addPlayerPanel.setLayout(layout);
+				layout.setWeightX(1, 2, 1, 2, 1);
 				addPlayerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Ajouter joueur"));
 				final ProportionalGridLayoutConstraint addPlayerC = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
 
@@ -101,7 +103,9 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 			{
 				final JPanel modifyPlayerPanel = new JPanel();
-				modifyPlayerPanel.setLayout(new ProportionalGridLayout(2, 5, 2, 2));
+				final ProportionalGridLayout layout = new ProportionalGridLayout(2, 5, 2, 2);
+				modifyPlayerPanel.setLayout(layout);
+				layout.setWeightX(1, 2, 1, 2, 1);
 				modifyPlayerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Modifier joueur"));
 				final ProportionalGridLayoutConstraint modifyPlayerC = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
 
