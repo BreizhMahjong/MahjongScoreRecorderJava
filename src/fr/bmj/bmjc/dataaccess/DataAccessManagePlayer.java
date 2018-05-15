@@ -16,11 +16,19 @@
  */
 package fr.bmj.bmjc.dataaccess;
 
+import java.util.List;
+
+import fr.bmj.bmjc.data.game.Player;
+
 public interface DataAccessManagePlayer extends DataAccessCommon {
 
 	public UpdateResult addPlayer(String name, final String displayName);
 
+	public List<Player> getAllPlayers();
+
 	public UpdateResult modifyPlayer(final int id, String name, final String displayName);
+
+	public UpdateResult hidePlayer(final int id, boolean hidden);
 
 	public UpdateResult deletePlayer(final int id);
 

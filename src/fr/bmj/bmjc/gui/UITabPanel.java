@@ -25,6 +25,9 @@ import javax.swing.JPanel;
 public abstract class UITabPanel extends JPanel {
 	private static final long serialVersionUID = -784698626936944693L;
 
+	protected static final int BUTTON_MIN_WIDTH = 96;
+	protected static final int BUTTON_MIN_HEIGHT = 28;
+
 	abstract public String getTabName();
 
 	abstract public void refresh();
@@ -56,7 +59,7 @@ public abstract class UITabPanel extends JPanel {
 				final File selectedFile = fileChooser.getSelectedFile();
 				if (selectedFile.exists()) {
 					final int overwriteAnswer = JOptionPane.showConfirmDialog(this, "Le fichier existe déjà. Voulez-vous le remplacer ?", "Confirmer", JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.WARNING_MESSAGE);
+						JOptionPane.WARNING_MESSAGE);
 					if (overwriteAnswer == JOptionPane.CANCEL_OPTION) {
 						return null;
 					} else if (overwriteAnswer == JOptionPane.YES_OPTION) {

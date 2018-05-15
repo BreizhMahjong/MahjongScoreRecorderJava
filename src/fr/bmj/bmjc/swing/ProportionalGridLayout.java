@@ -119,8 +119,8 @@ public class ProportionalGridLayout implements LayoutManager2 {
 	public Dimension minimumLayoutSize(final Container parent) {
 		synchronized (parent.getTreeLock()) {
 			final Insets insets = parent.getInsets();
-			int minWidth = 0;
-			int minHeight = 0;
+			double minWidth = 0;
+			double minHeight = 0;
 			for (final Component component : constraints.keySet()) {
 				final ProportionalGridLayoutConstraint c = constraints.get(component);
 				final Dimension minSize = component.getMinimumSize();
@@ -129,13 +129,13 @@ public class ProportionalGridLayout implements LayoutManager2 {
 				for (int x = 0; x < c.gridWidth; x++) {
 					xParts += weightX[c.x + x];
 				}
-				final int gridWidth = (int) ((minSize.width - hgap * (c.gridWidth - 1)) / (xParts * c.gridWidth / totalWeightX));
+				final double gridWidth = (int) ((minSize.width - hgap * (c.gridWidth - 1)) / (xParts * c.gridWidth / totalWeightX));
 
 				double yParts = 0.0;
 				for (int y = 0; y < c.gridHeight; y++) {
 					yParts += weightY[c.y + y];
 				}
-				final int gridHeight = (int) ((minSize.height - vgap * (c.gridHeight - 1)) / (yParts * c.gridHeight / totalWeightY));
+				final double gridHeight = (int) ((minSize.height - vgap * (c.gridHeight - 1)) / (yParts * c.gridHeight / totalWeightY));
 
 				if (gridWidth > minWidth) {
 					minWidth = gridWidth;
@@ -144,7 +144,7 @@ public class ProportionalGridLayout implements LayoutManager2 {
 					minHeight = gridHeight;
 				}
 			}
-			return new Dimension(insets.left + insets.right + minWidth * colCount + hgap * (colCount - 1), insets.top + insets.bottom + minHeight * rowCount + vgap * (rowCount - 1));
+			return new Dimension(insets.left + insets.right + (int) (minWidth * colCount) + hgap * (colCount - 1), insets.top + insets.bottom + (int) (minHeight * rowCount) + vgap * (rowCount - 1));
 		}
 	}
 
@@ -157,8 +157,8 @@ public class ProportionalGridLayout implements LayoutManager2 {
 	public Dimension preferredLayoutSize(final Container parent) {
 		synchronized (parent.getTreeLock()) {
 			final Insets insets = parent.getInsets();
-			int minWidth = 0;
-			int minHeight = 0;
+			double minWidth = 0;
+			double minHeight = 0;
 			for (final Component component : constraints.keySet()) {
 				final ProportionalGridLayoutConstraint c = constraints.get(component);
 				final Dimension minSize = component.getPreferredSize();
@@ -167,13 +167,13 @@ public class ProportionalGridLayout implements LayoutManager2 {
 				for (int x = 0; x < c.gridWidth; x++) {
 					xParts += weightX[c.x + x];
 				}
-				final int gridWidth = (int) ((minSize.width - hgap * (c.gridWidth - 1)) / (xParts * colCount / totalWeightX));
+				final double gridWidth = (minSize.width - hgap * (c.gridWidth - 1)) / (xParts * colCount / totalWeightX);
 
 				double yParts = 0.0;
 				for (int y = 0; y < c.gridHeight; y++) {
 					yParts += weightY[c.y + y];
 				}
-				final int gridHeight = (int) ((minSize.height - vgap * (c.gridHeight - 1)) / (yParts * rowCount / totalWeightY));
+				final double gridHeight = (minSize.height - vgap * (c.gridHeight - 1)) / (yParts * rowCount / totalWeightY);
 
 				if (gridWidth > minWidth) {
 					minWidth = gridWidth;
@@ -182,7 +182,7 @@ public class ProportionalGridLayout implements LayoutManager2 {
 					minHeight = gridHeight;
 				}
 			}
-			return new Dimension(insets.left + insets.right + minWidth * colCount + hgap * (colCount - 1), insets.top + insets.bottom + minHeight * rowCount + vgap * (rowCount - 1));
+			return new Dimension(insets.left + insets.right + (int) (minWidth * colCount) + hgap * (colCount - 1), insets.top + insets.bottom + (int) (minHeight * rowCount) + vgap * (rowCount - 1));
 		}
 	}
 
@@ -190,8 +190,8 @@ public class ProportionalGridLayout implements LayoutManager2 {
 	public void layoutContainer(final Container parent) {
 		synchronized (parent.getTreeLock()) {
 			final Insets insets = parent.getInsets();
-
 			final int usableWidth = parent.getWidth() - (insets.left + insets.right) - hgap * (colCount - 1);
+
 			final int[] gridWidth = new int[colCount];
 			int totalWidth = 0;
 			for (int x = 0; x < colCount; x++) {

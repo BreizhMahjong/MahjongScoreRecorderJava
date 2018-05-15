@@ -55,9 +55,9 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 			try {
 				final Statement statement = dataBaseConnection.createStatement();
 				final ResultSet result = statement
-						.executeQuery("SELECT DISTINCT player.id, player.name, player.display_name FROM player, mcrgamescore WHERE player.id=mcrgamescore.player_id ORDER BY player.id");
+					.executeQuery("SELECT DISTINCT player.id, player.name, player.display_name FROM player, mcrgamescore WHERE player.id=mcrgamescore.player_id ORDER BY player.id");
 				while (result.next()) {
-					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3)));
+					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false));
 				}
 				result.close();
 				statement.close();
@@ -281,7 +281,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		if (isConnected()) {
 			try {
 				final PreparedStatement statement = dataBaseConnection
-						.prepareStatement("SELECT DISTINCT day(date) FROM mcrgameid WHERE mcr_tournament_id=? AND year(date)=? AND month(date)=? ORDER BY day(date)");
+					.prepareStatement("SELECT DISTINCT day(date) FROM mcrgameid WHERE mcr_tournament_id=? AND year(date)=? AND month(date)=? ORDER BY day(date)");
 				statement.setInt(1, tournament.getId());
 				statement.setInt(2, year);
 				statement.setInt(3, month + 1);
@@ -343,7 +343,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 				final List<MCRScore> scoreList = new ArrayList<MCRScore>(4);
 				statement = dataBaseConnection.prepareStatement(
-						"SELECT player.id, player.name, player.display_name, mcrgamescore.ranking, mcrgamescore.game_score, mcrgamescore.final_score FROM player, mcrgamescore WHERE player.id=mcrgamescore.player_id AND mcrgamescore.mcr_game_id=? ORDER BY mcrgamescore.ranking");
+					"SELECT player.id, player.name, player.display_name, mcrgamescore.ranking, mcrgamescore.game_score, mcrgamescore.final_score FROM player, mcrgamescore WHERE player.id=mcrgamescore.player_id AND mcrgamescore.mcr_game_id=? ORDER BY mcrgamescore.ranking");
 				statement.setInt(1, id);
 				result = statement.executeQuery();
 				while (result.next()) {
@@ -392,7 +392,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 	@Override
 	public MCRDataPackageAnalyze getMCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-			final int trimester, final int month) {
+		final int trimester, final int month) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		switch (periodMode) {
@@ -450,12 +450,12 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 			PreparedStatement statement = null;
 			if (periodMode == EnumPeriodMode.ALL) {
 				statement = dataBaseConnection.prepareStatement("SELECT mcrgameid.id, mcrgamescore.ranking, mcrgamescore." + fieldString
-						+ " FROM mcrgameid, mcrgamescore WHERE mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgamescore.player_id=? AND mcrgameid.rcr_mournament_id=? ORDER BY mcrgameid.id ASC");
+					+ " FROM mcrgameid, mcrgamescore WHERE mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgamescore.player_id=? AND mcrgameid.rcr_mournament_id=? ORDER BY mcrgameid.id ASC");
 				statement.setInt(1, playerId);
 				statement.setInt(2, tournament.getId());
 			} else {
 				statement = dataBaseConnection.prepareStatement("SELECT mcrgameid.id, mcrgamescore.ranking, mcrgamescore." + fieldString
-						+ " FROM mcrgameid, mcrgamescore WHERE mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgamescore.player_id=? AND mcrgameid.mcr_tournament_id=? AND mcrgameid.date>=? AND mcrgameid.date<? ORDER BY mcrgameid.id ASC");
+					+ " FROM mcrgameid, mcrgamescore WHERE mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgamescore.player_id=? AND mcrgameid.mcr_tournament_id=? AND mcrgameid.date>=? AND mcrgameid.date<? ORDER BY mcrgameid.id ASC");
 				statement.setInt(1, playerId);
 				statement.setInt(2, tournament.getId());
 				statement.setDate(3, new Date(calendarFrom.getTimeInMillis()));
@@ -546,7 +546,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 	@Override
 	public List<MCRScoreTotal> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-			final int year, final int trimester, final int month) {
+		final int year, final int trimester, final int month) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		int minimumGames = MINIMUM_GAME_ALL;

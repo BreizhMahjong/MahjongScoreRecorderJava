@@ -17,6 +17,7 @@
 package fr.bmj.bmjc.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -54,6 +56,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 	private final JComboBox<String> comboBoxPlayer;
 	private final ActionListener comboBoxPlayerActionListener;
+	private final JCheckBox checkBoxHide;
+	private final ActionListener checkBoxHideActionListener;
 	private final JTextField textModifyPlayerName;
 	private final JTextField textModifyPlayerDisplayName;
 	private final JButton buttonModifyPlayer;
@@ -64,6 +68,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 	public UITabPanelManagePlayer(final DataAccessManagePlayer dataAccess, final JDialogWithProgress waitingDialog) {
 		this.dataAccess = dataAccess;
 
+		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);
 		final JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new GridBagLayout());
 		final GridBagConstraints innerC = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(16, 8, 16, 8), 0, 0);
@@ -74,9 +79,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final GridBagConstraints playerC = new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(8, 0, 8, 0), 0, 0);
 			{
 				final JPanel addPlayerPanel = new JPanel();
-				final ProportionalGridLayout layout = new ProportionalGridLayout(1, 5, 2, 2);
+				final ProportionalGridLayout layout = new ProportionalGridLayout(1, 7, 2, 2);
 				addPlayerPanel.setLayout(layout);
-				layout.setWeightX(1, 2, 1, 2, 1);
 				addPlayerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Ajouter joueur"));
 				final ProportionalGridLayoutConstraint addPlayerC = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
 
@@ -85,16 +89,21 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				addPlayerPanel.add(new JLabel("Nom: ", JLabel.RIGHT), addPlayerC);
 				textNewPlayerName = new JTextField();
 				addPlayerC.x = 1;
+				addPlayerC.gridWidth = 2;
 				addPlayerPanel.add(textNewPlayerName, addPlayerC);
 
-				addPlayerC.x = 2;
+				addPlayerC.x = 3;
+				addPlayerC.gridWidth = 1;
 				addPlayerPanel.add(new JLabel("Pseudo: ", JLabel.RIGHT), addPlayerC);
 				textNewPlayerDisplayName = new JTextField();
-				addPlayerC.x = 3;
+				addPlayerC.x = 4;
+				addPlayerC.gridWidth = 2;
 				addPlayerPanel.add(textNewPlayerDisplayName, addPlayerC);
 
 				buttonAddPlayer = new JButton("Ajouter");
-				addPlayerC.x = 4;
+				buttonAddPlayer.setPreferredSize(buttonMinSize);
+				addPlayerC.x = 6;
+				addPlayerC.gridWidth = 1;
 				addPlayerPanel.add(buttonAddPlayer, addPlayerC);
 
 				playerC.gridy = 0;
@@ -103,40 +112,52 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 			{
 				final JPanel modifyPlayerPanel = new JPanel();
-				final ProportionalGridLayout layout = new ProportionalGridLayout(2, 5, 2, 2);
+				final ProportionalGridLayout layout = new ProportionalGridLayout(2, 7, 2, 2);
 				modifyPlayerPanel.setLayout(layout);
-				layout.setWeightX(1, 2, 1, 2, 1);
 				modifyPlayerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Modifier joueur"));
 				final ProportionalGridLayoutConstraint modifyPlayerC = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
 
 				modifyPlayerC.y = 0;
 				modifyPlayerC.x = 0;
+				modifyPlayerC.gridWidth = 1;
 				modifyPlayerPanel.add(new JLabel("Joueur: ", JLabel.RIGHT), modifyPlayerC);
 				comboBoxPlayer = new JComboBox<String>();
 				modifyPlayerC.x = 1;
-				modifyPlayerC.gridWidth = 3;
+				modifyPlayerC.gridWidth = 4;
 				modifyPlayerPanel.add(comboBoxPlayer, modifyPlayerC);
 
-				modifyPlayerC.x = 4;
+				modifyPlayerC.x = 5;
+				modifyPlayerC.gridWidth = 1;
+				checkBoxHide = new JCheckBox("Caché");
+				modifyPlayerPanel.add(checkBoxHide, modifyPlayerC);
+
+				modifyPlayerC.x = 6;
 				modifyPlayerC.gridWidth = 1;
 				buttonDeletePlayer = new JButton("Supprimer");
+				buttonDeletePlayer.setPreferredSize(buttonMinSize);
 				modifyPlayerPanel.add(buttonDeletePlayer, modifyPlayerC);
 
 				modifyPlayerC.y = 1;
 				modifyPlayerC.x = 0;
+				modifyPlayerC.gridWidth = 1;
 				modifyPlayerPanel.add(new JLabel("Nom: ", JLabel.RIGHT), modifyPlayerC);
 				textModifyPlayerName = new JTextField();
 				modifyPlayerC.x = 1;
+				modifyPlayerC.gridWidth = 2;
 				modifyPlayerPanel.add(textModifyPlayerName, modifyPlayerC);
 
-				modifyPlayerC.x = 2;
+				modifyPlayerC.x = 3;
+				modifyPlayerC.gridWidth = 1;
 				modifyPlayerPanel.add(new JLabel("Pseudo: ", JLabel.RIGHT), modifyPlayerC);
 				textModifyPlayerDisplayName = new JTextField();
-				modifyPlayerC.x = 3;
+				modifyPlayerC.x = 4;
+				modifyPlayerC.gridWidth = 2;
 				modifyPlayerPanel.add(textModifyPlayerDisplayName, modifyPlayerC);
 
-				modifyPlayerC.x = 4;
+				modifyPlayerC.x = 6;
+				modifyPlayerC.gridWidth = 1;
 				buttonModifyPlayer = new JButton("Modifier");
+				buttonModifyPlayer.setPreferredSize(buttonMinSize);
 				modifyPlayerPanel.add(buttonModifyPlayer, modifyPlayerC);
 
 				playerC.gridy = 1;
@@ -162,6 +183,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 		comboBoxPlayerActionListener = (final ActionEvent e) -> displayPlayer();
 		comboBoxPlayer.addActionListener(comboBoxPlayerActionListener);
+		checkBoxHideActionListener = (final ActionEvent e) -> hidePlayer();
+		checkBoxHide.addActionListener(checkBoxHideActionListener);
 		buttonAddPlayer.addActionListener((final ActionEvent e) -> addPlayer());
 		buttonModifyPlayer.addActionListener((final ActionEvent e) -> modifyPlayer());
 		buttonDeletePlayer.addActionListener((final ActionEvent e) -> deletePlayer());
@@ -186,7 +209,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 		comboBoxPlayer.removeAllItems();
 
 		listPlayer.clear();
-		listPlayer.addAll(dataAccess.getRegisteredPlayers());
+		listPlayer.addAll(dataAccess.getAllPlayers());
 		Collections.sort(listPlayer, new ComparatorAscendingPlayerDisplayName());
 		for (int playerIndex = 0; playerIndex < listPlayer.size(); playerIndex++) {
 			final Player player = listPlayer.get(playerIndex);
@@ -209,6 +232,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final UpdateResult result = dataAccess.addPlayer(playerName, playerDisplayName);
 			if (result.getResult()) {
 				JOptionPane.showMessageDialog(this, "Le joueur a été ajouté", "Succès", JOptionPane.INFORMATION_MESSAGE);
+				textNewPlayerName.setText("");
+				textNewPlayerDisplayName.setText("");
 				refreshPlayer();
 			} else {
 				JOptionPane.showMessageDialog(this, "Le pseudo est déjà utilisé", "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -224,9 +249,11 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final Player player = listPlayer.get(selectedPlayerIndex);
 			textModifyPlayerName.setText(player.getPlayerName());
 			textModifyPlayerDisplayName.setText(player.getDisplayName());
+			checkBoxHide.setSelected(player.isHidden());
 		} else {
 			textModifyPlayerName.setText("");
 			textModifyPlayerDisplayName.setText("");
+			checkBoxHide.setSelected(false);
 		}
 	}
 
@@ -246,6 +273,19 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Le nom et le pseudo ne peuvent pas être vides", "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private void hidePlayer() {
+		final int selectedPlayerIndex = comboBoxPlayer.getSelectedIndex();
+		if (selectedPlayerIndex != -1) {
+			final Player player = listPlayer.get(selectedPlayerIndex);
+			final boolean hidden = checkBoxHide.isSelected();
+			player.setHidden(hidden);
+			final UpdateResult result = dataAccess.hidePlayer(player.getPlayerID(), hidden);
+			if (!result.getResult()) {
+				JOptionPane.showMessageDialog(this, "Le joueur n'a pas été modifié", "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

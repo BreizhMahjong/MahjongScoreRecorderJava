@@ -17,6 +17,7 @@
 package fr.bmj.bmjc.gui.mcr;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -73,6 +74,7 @@ public class UITabPanelMCRManage extends UITabPanel {
 	public UITabPanelMCRManage(final DataAccessMCR dataAccess, final JDialogWithProgress waitingDialog) {
 		this.dataAccess = dataAccess;
 
+		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);
 		final JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new GridBagLayout());
 		final GridBagConstraints innerC = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(16, 8, 16, 8), 0, 0);
@@ -96,6 +98,7 @@ public class UITabPanelMCRManage extends UITabPanel {
 				addTournamentPanel.add(textNewTournamentName, addTournamentC);
 
 				buttonAddTournament = new JButton("Ajouter");
+				buttonAddTournament.setPreferredSize(buttonMinSize);
 				addTournamentC.x = 4;
 				addTournamentC.gridWidth = 1;
 				addTournamentPanel.add(buttonAddTournament, addTournamentC);
@@ -121,6 +124,7 @@ public class UITabPanelMCRManage extends UITabPanel {
 				modifyTournamentC.x = 4;
 				modifyTournamentC.gridWidth = 1;
 				buttonDeleteTournament = new JButton("Supprimer");
+				buttonDeleteTournament.setPreferredSize(buttonMinSize);
 				modifyTournamentPanel.add(buttonDeleteTournament, modifyTournamentC);
 
 				modifyTournamentC.y = 1;
@@ -135,6 +139,7 @@ public class UITabPanelMCRManage extends UITabPanel {
 				modifyTournamentC.x = 4;
 				modifyTournamentC.gridWidth = 1;
 				buttonModifyTournament = new JButton("Modifier");
+				buttonModifyTournament.setPreferredSize(buttonMinSize);
 				modifyTournamentPanel.add(buttonModifyTournament, modifyTournamentC);
 
 				tournamentC.gridy = 1;
@@ -188,6 +193,7 @@ public class UITabPanelMCRManage extends UITabPanel {
 			gamePanel.add(comboBoxId, deleteGameC);
 
 			buttonDeleteGame = new JButton("Supprimer");
+			buttonDeleteGame.setPreferredSize(buttonMinSize);
 			deleteGameC.x = 5;
 			deleteGameC.gridWidth = 1;
 			gamePanel.add(buttonDeleteGame, deleteGameC);
@@ -275,6 +281,7 @@ public class UITabPanelMCRManage extends UITabPanel {
 			final UpdateResult result = dataAccess.addMCRTournament(tournamentName);
 			if (result.getResult()) {
 				JOptionPane.showMessageDialog(this, "Le tournoi a été ajouté", "Succès", JOptionPane.INFORMATION_MESSAGE);
+				textNewTournamentName.setText("");
 				refreshTournament();
 			} else {
 				JOptionPane.showMessageDialog(this, "Le nom est déjà utilisé", "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -303,6 +310,7 @@ public class UITabPanelMCRManage extends UITabPanel {
 				final UpdateResult result = dataAccess.modifyMCRTournament(tournament.getId(), tournamentName);
 				if (result.getResult()) {
 					JOptionPane.showMessageDialog(this, "Le tournoi a été modifié", "Succès", JOptionPane.INFORMATION_MESSAGE);
+					textModifyTournamentName.setText("");
 					refreshTournament();
 				} else {
 					JOptionPane.showMessageDialog(this, "Le nom est déjà utilisé", "Erreur", JOptionPane.ERROR_MESSAGE);

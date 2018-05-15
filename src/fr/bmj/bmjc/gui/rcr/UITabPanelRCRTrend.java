@@ -214,7 +214,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 						0);
 
 					buttonFilter = new JButton("Filtrer");
-					buttonFilter.setPreferredSize(new Dimension(80, 20));
+					buttonFilter.setPreferredSize(new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT));
 					panelCenterWestNorth.add(buttonFilter, constraintsCenterWestNorth);
 
 					checkBoxSelectAll = new JCheckBox("Tous sélectionner", true);

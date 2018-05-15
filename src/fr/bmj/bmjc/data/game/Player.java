@@ -21,11 +21,13 @@ public class Player {
 	private final int playerID;
 	private final String playerName;
 	private final String displayName;
+	private boolean hidden;
 
-	public Player(final int playerID, final String playerName, final String displayName) {
+	public Player(final int playerID, final String playerName, final String displayName, final boolean hidden) {
 		this.playerID = playerID;
 		this.playerName = playerName;
 		this.displayName = displayName;
+		this.hidden = hidden;
 	}
 
 	public int getPlayerID() {
@@ -38,6 +40,14 @@ public class Player {
 
 	public String getDisplayName() {
 		return displayName;
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(final boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }

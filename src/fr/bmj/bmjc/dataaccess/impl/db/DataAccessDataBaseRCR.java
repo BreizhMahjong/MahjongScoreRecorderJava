@@ -55,9 +55,9 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			try {
 				final Statement statement = dataBaseConnection.createStatement();
 				final ResultSet result = statement
-						.executeQuery("SELECT DISTINCT player.id, player.name, player.display_name FROM player, rcrgamescore WHERE player.id=rcrgamescore.player_id ORDER BY player.id");
+					.executeQuery("SELECT DISTINCT player.id, player.name, player.display_name FROM player, rcrgamescore WHERE player.id=rcrgamescore.player_id ORDER BY player.id");
 				while (result.next()) {
-					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3)));
+					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false));
 				}
 				result.close();
 				statement.close();
@@ -283,7 +283,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		if (isConnected()) {
 			try {
 				final PreparedStatement statement = dataBaseConnection
-						.prepareStatement("SELECT DISTINCT day(date) FROM rcrgameid WHERE rcr_tournament_id=? AND year(date)=? AND month(date)=? ORDER BY day(date)");
+					.prepareStatement("SELECT DISTINCT day(date) FROM rcrgameid WHERE rcr_tournament_id=? AND year(date)=? AND month(date)=? ORDER BY day(date)");
 				statement.setInt(1, tournament.getId());
 				statement.setInt(2, year);
 				statement.setInt(3, month + 1);
@@ -350,7 +350,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				if (nbPlayers > 0) {
 					final List<RCRScore> scoreList = new ArrayList<RCRScore>(nbPlayers);
 					statement = dataBaseConnection.prepareStatement(
-							"SELECT player.id, player.name, player.display_name, rcrgamescore.ranking, rcrgamescore.game_score, rcrgamescore.uma_score, rcrgamescore.final_score FROM player, rcrgamescore WHERE player.id=rcrgamescore.player_id AND rcrgamescore.rcr_game_id=? ORDER BY rcrgamescore.ranking");
+						"SELECT player.id, player.name, player.display_name, rcrgamescore.ranking, rcrgamescore.game_score, rcrgamescore.uma_score, rcrgamescore.final_score FROM player, rcrgamescore WHERE player.id=rcrgamescore.player_id AND rcrgamescore.rcr_game_id=? ORDER BY rcrgamescore.ranking");
 					statement.setInt(1, id);
 					result = statement.executeQuery();
 					while (result.next()) {
@@ -402,7 +402,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 
 	@Override
 	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-			final int trimester, final int month) {
+		final int trimester, final int month) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		switch (periodMode) {
@@ -460,12 +460,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			PreparedStatement statement = null;
 			if (periodMode == EnumPeriodMode.ALL) {
 				statement = dataBaseConnection.prepareStatement("SELECT rcrgameid.id, rcrgameid.nb_players, rcrgamescore.ranking, rcrgamescore." + fieldString
-						+ " FROM rcrgameid, rcrgamescore WHERE rcrgameid.id=rcrgamescore.rcr_game_id AND rcrgamescore.player_id=? AND rcrgameid.rcr_tournament_id=? ORDER BY rcrgameid.id ASC");
+					+ " FROM rcrgameid, rcrgamescore WHERE rcrgameid.id=rcrgamescore.rcr_game_id AND rcrgamescore.player_id=? AND rcrgameid.rcr_tournament_id=? ORDER BY rcrgameid.id ASC");
 				statement.setInt(1, playerId);
 				statement.setInt(2, tournament.getId());
 			} else {
 				statement = dataBaseConnection.prepareStatement("SELECT rcrgameid.id, rcrgameid.nb_players, rcrgamescore.ranking, rcrgamescore." + fieldString
-						+ " FROM rcrgameid, rcrgamescore WHERE rcrgameid.id=rcrgamescore.rcr_game_id AND rcrgamescore.player_id=? AND rcrgameid.rcr_tournament_id=? AND rcrgameid.date>=? AND rcrgameid.date<? ORDER BY rcrgameid.id ASC");
+					+ " FROM rcrgameid, rcrgamescore WHERE rcrgameid.id=rcrgamescore.rcr_game_id AND rcrgamescore.player_id=? AND rcrgameid.rcr_tournament_id=? AND rcrgameid.date>=? AND rcrgameid.date<? ORDER BY rcrgameid.id ASC");
 				statement.setInt(1, playerId);
 				statement.setInt(2, tournament.getId());
 				statement.setDate(3, new Date(calendarFrom.getTimeInMillis()));
@@ -575,7 +575,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 
 	@Override
 	public List<RCRScoreTotal> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-			final int year, final int trimester, final int month) {
+		final int year, final int trimester, final int month) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		int minimumGames = MINIMUM_GAME_ALL;

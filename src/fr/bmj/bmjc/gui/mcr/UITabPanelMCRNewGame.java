@@ -108,6 +108,7 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 	public UITabPanelMCRNewGame(final DataAccessMCR dataAccess, final JDialogWithProgress waitingDialog) {
 		this.dataAccess = dataAccess;
 
+		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);
 		final JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new BorderLayout(12, 12));
 		innerPanel.setBorder(BorderFactory.createLineBorder(Color.CYAN));
@@ -214,18 +215,21 @@ public class UITabPanelMCRNewGame extends UITabPanel {
 			southPanel.add(new JPanel());
 
 			buttonCalculate = new JButton("Calculer");
+			buttonCalculate.setPreferredSize(buttonMinSize);
 			buttonCalculate.addActionListener((final ActionEvent e) -> calculateFinalScore());
 			southPanel.add(buttonCalculate);
 
 			southPanel.add(new JPanel());
 
 			buttonSave = new JButton("Enregistrer");
+			buttonSave.setPreferredSize(buttonMinSize);
 			buttonSave.addActionListener((final ActionEvent e) -> saveScore());
 			southPanel.add(buttonSave);
 
 			southPanel.add(new JPanel());
 
 			buttonReset = new JButton("Réinitialiser");
+			buttonReset.setPreferredSize(buttonMinSize);
 			buttonReset.addActionListener((final ActionEvent e) -> reset());
 			southPanel.add(buttonReset);
 

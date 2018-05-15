@@ -93,8 +93,18 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
+	public List<Player> getAllPlayers() {
+		return dataAccessManagePlayer.getAllPlayers();
+	}
+
+	@Override
 	public UpdateResult modifyPlayer(final int id, final String name, final String displayName) {
 		return dataAccessManagePlayer.modifyPlayer(id, name, displayName);
+	}
+
+	@Override
+	public UpdateResult hidePlayer(final int id, final boolean hidden) {
+		return dataAccessManagePlayer.hidePlayer(id, hidden);
 	}
 
 	@Override
@@ -169,13 +179,13 @@ public class DataAccessDataBase implements DataAccess {
 
 	@Override
 	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-			final int trimester, final int month) {
+		final int trimester, final int month) {
 		return dataAccessRCR.getRCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month);
 	}
 
 	@Override
 	public List<RCRScoreTotal> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-			final int year, final int trimester, final int month) {
+		final int year, final int trimester, final int month) {
 		return dataAccessRCR.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month);
 	}
 
@@ -246,13 +256,13 @@ public class DataAccessDataBase implements DataAccess {
 
 	@Override
 	public MCRDataPackageAnalyze getMCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-			final int trimester, final int month) {
+		final int trimester, final int month) {
 		return dataAccessMCR.getMCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month);
 	}
 
 	@Override
 	public List<MCRScoreTotal> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-			final int year, final int trimester, final int month) {
+		final int year, final int trimester, final int month) {
 		return dataAccessMCR.getMCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month);
 	}
 
