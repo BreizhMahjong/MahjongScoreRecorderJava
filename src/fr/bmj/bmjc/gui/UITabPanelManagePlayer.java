@@ -57,7 +57,6 @@ public class UITabPanelManagePlayer extends UITabPanel {
 	private final JComboBox<String> comboBoxPlayer;
 	private final ActionListener comboBoxPlayerActionListener;
 	private final JCheckBox checkBoxHide;
-	private final ActionListener checkBoxHideActionListener;
 	private final JTextField textModifyPlayerName;
 	private final JTextField textModifyPlayerDisplayName;
 	private final JButton buttonModifyPlayer;
@@ -183,8 +182,6 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 		comboBoxPlayerActionListener = (final ActionEvent e) -> displayPlayer();
 		comboBoxPlayer.addActionListener(comboBoxPlayerActionListener);
-		checkBoxHideActionListener = (final ActionEvent e) -> hidePlayer();
-		checkBoxHide.addActionListener(checkBoxHideActionListener);
 		buttonAddPlayer.addActionListener((final ActionEvent e) -> addPlayer());
 		buttonModifyPlayer.addActionListener((final ActionEvent e) -> modifyPlayer());
 		buttonDeletePlayer.addActionListener((final ActionEvent e) -> deletePlayer());
@@ -263,8 +260,9 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final Player player = listPlayer.get(selectedPlayerIndex);
 			final String playerName = textModifyPlayerName.getText();
 			final String playerDisplayName = textModifyPlayerDisplayName.getText();
+			final boolean hidden = checkBoxHide.isSelected();
 			if (playerName != null && playerName.length() > 0 && playerDisplayName != null && playerDisplayName.length() > 0) {
-				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName);
+				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName, hidden);
 				if (result.getResult()) {
 					JOptionPane.showMessageDialog(this, "Le joueur a été modifié", "Succès", JOptionPane.INFORMATION_MESSAGE);
 					refreshPlayer();
@@ -273,19 +271,6 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Le nom et le pseudo ne peuvent pas être vides", "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-
-	private void hidePlayer() {
-		final int selectedPlayerIndex = comboBoxPlayer.getSelectedIndex();
-		if (selectedPlayerIndex != -1) {
-			final Player player = listPlayer.get(selectedPlayerIndex);
-			final boolean hidden = checkBoxHide.isSelected();
-			player.setHidden(hidden);
-			final UpdateResult result = dataAccess.hidePlayer(player.getPlayerID(), hidden);
-			if (!result.getResult()) {
-				JOptionPane.showMessageDialog(this, "Le joueur n'a pas été modifié", "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

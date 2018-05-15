@@ -93,7 +93,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName) {
+	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean hidden) {
 		if (!isConnected()) {
 			return new UpdateResult(false, "Pas de connxion à la base de données");
 		}
@@ -103,11 +103,12 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 
 		boolean modified;
 		try {
-			final String query = "UPDATE player SET name=?, display_name=? WHERE id=?";
+			final String query = "UPDATE player SET name=?, display_name=?, hidden=? WHERE id=?";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setString(1, name);
 			statement.setString(2, displayName);
-			statement.setInt(3, id);
+			statement.setBoolean(3, hidden);
+			statement.setInt(4, id);
 			modified = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {
@@ -119,32 +120,6 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 			return new UpdateResult(true, "OK");
 		} else {
 			return new UpdateResult(false, "Le nom est déjà utilisé");
-		}
-	}
-
-	@Override
-	public UpdateResult hidePlayer(final int id, final boolean hidden) {
-		if (!isConnected()) {
-			return new UpdateResult(false, "Pas de connxion à la base de données");
-		}
-
-		boolean modified;
-		try {
-			final String query = "UPDATE player SET hidden=? WHERE id=?";
-			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
-			statement.setBoolean(1, hidden);
-			statement.setInt(2, id);
-			modified = statement.executeUpdate() == 1;
-			statement.close();
-		} catch (final SQLException e) {
-			e.printStackTrace();
-			return new UpdateResult(false, "Erreur de connexion de données");
-		}
-
-		if (modified) {
-			return new UpdateResult(true, "OK");
-		} else {
-			return new UpdateResult(false, "L'utilisateur n'existe pas");
 		}
 	}
 

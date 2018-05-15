@@ -98,13 +98,8 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName) {
-		return dataAccessManagePlayer.modifyPlayer(id, name, displayName);
-	}
-
-	@Override
-	public UpdateResult hidePlayer(final int id, final boolean hidden) {
-		return dataAccessManagePlayer.hidePlayer(id, hidden);
+	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean hidden) {
+		return dataAccessManagePlayer.modifyPlayer(id, name, displayName, hidden);
 	}
 
 	@Override
