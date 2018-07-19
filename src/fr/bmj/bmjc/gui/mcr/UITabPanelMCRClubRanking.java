@@ -50,7 +50,6 @@ import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCR;
 import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalDay;
 import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalDisplayName;
 import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalFinalScore;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalMeanScore;
 import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalMonth;
 import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalNumberOfGames;
 import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalPlayName;
@@ -459,9 +458,9 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
 						break;
 					case FINAL_SCORE:
-						labelTitles[2].setText(rankingMode.toString() + " (Uma)");
+						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessMCRScoreTotalFinalScore());
+						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
 						access.add(3, new FieldAccessMCRScoreTotalDay());
 						break;
 					case MEAN_FINAL_SCORE:
@@ -479,7 +478,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 					case MEAN_GAME_SCORE:
 						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 						labelTitles[3].setText("Nombre de parties");
-						access.add(2, new FieldAccessMCRScoreTotalMeanScore());
+						access.add(2, new FieldAccessMCRScoreTotalFinalScore());
 						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
 						break;
 					case ANNUAL_SCORE:
@@ -507,9 +506,17 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 				data = new String[scoreList.size()][NB_COLUMNS];
 				final JLabel labels[] = new JLabel[NB_COLUMNS];
 				final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 64, 2);
+				int lastIndex = 0;
+				MCRScoreTotal lastRecord = null;
 				for (int index = 0; index < scoreList.size(); index++) {
 					final MCRScoreTotal record = scoreList.get(index);
-					data[index][0] = Integer.toString(index + 1);
+					
+					if(lastRecord == null || lastRecord.totalScore != record.totalScore || lastRecord.totalScore2 != record.totalScore2) {
+						lastIndex = index;
+					}
+					lastRecord = record;
+					
+					data[index][0] = Integer.toString(lastIndex + 1);
 					for (int labelIndex = 1; labelIndex < labels.length; labelIndex++) {
 						data[index][labelIndex] = access.get(labelIndex).getDataString(record);
 					}
