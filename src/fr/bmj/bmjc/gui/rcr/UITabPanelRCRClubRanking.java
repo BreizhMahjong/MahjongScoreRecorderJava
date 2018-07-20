@@ -510,12 +510,12 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				RCRScoreTotal lastRecord = null;
 				for (int index = 0; index < scoreList.size(); index++) {
 					final RCRScoreTotal record = scoreList.get(index);
-					
-					if(lastRecord == null || lastRecord.totalScore != record.totalScore) {
+
+					if (lastRecord == null || lastRecord.totalScore != record.totalScore) {
 						lastIndex = index;
 					}
 					lastRecord = record;
-					
+
 					data[index][0] = Integer.toString(lastIndex + 1);
 					for (int labelIndex = 1; labelIndex < labels.length; labelIndex++) {
 						data[index][labelIndex] = access.get(labelIndex).getDataString(record);
