@@ -20,7 +20,7 @@ import fr.bmj.bmjc.enums.EnumTrimester;
 
 public class FieldAccessRCRScoreTotalTrimester implements FieldAccessRCR {
 
-	private static final String TRIMESTER_STRINGS[] = { EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString() };
+	private static final String TRIMESTER_STRINGS[] = { EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString() };
 
 	@Override
 	public String getDataString(final RCRScoreTotal data) {

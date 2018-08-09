@@ -210,7 +210,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				c.x = 4;
 				panelNorth.add(new JLabel("Trimestre :", JLabel.RIGHT), c);
 				final String trimesters[] = {
-					EnumTrimester.WINTER.toString(), EnumTrimester.SPRING.toString(), EnumTrimester.SUMMER.toString(), EnumTrimester.AUTUMN.toString()
+					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);

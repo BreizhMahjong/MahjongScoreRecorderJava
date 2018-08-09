@@ -2,28 +2,28 @@ package fr.bmj.bmjc.enums;
 
 public enum EnumTrimester {
 
-	WINTER {
+	TRIMESTER_1 {
 		@Override
 		public String toString() {
-			return "hiver";
+			return "1er";
 		}
 	},
-	SPRING {
+	TRIMESTER_2 {
 		@Override
 		public String toString() {
-			return "printemps";
+			return "2ème";
 		}
 	},
-	SUMMER {
+	TRIMESTER_3 {
 		@Override
 		public String toString() {
-			return "été";
+			return "3ème";
 		}
 	},
-	AUTUMN {
+	TRIMESTER_4 {
 		@Override
 		public String toString() {
-			return "automne";
+			return "4ème";
 		}
 	}
 }
