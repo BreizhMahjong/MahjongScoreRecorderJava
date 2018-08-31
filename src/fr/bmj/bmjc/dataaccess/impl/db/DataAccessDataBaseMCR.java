@@ -55,7 +55,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 			try {
 				final Statement statement = dataBaseConnection.createStatement();
 				final ResultSet result = statement
-					.executeQuery("SELECT DISTINCT player.id, player.name, player.display_name FROM player, mcrgamescore WHERE player.id=mcrgamescore.player_id ORDER BY player.id");
+					.executeQuery("SELECT DISTINCT player.id, player.name, player.display_name FROM player, mcr_game_score WHERE player.id=mcr_game_score.player_id ORDER BY player.id");
 				while (result.next()) {
 					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false));
 				}
@@ -80,7 +80,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		int newId;
 		boolean added;
 		try {
-			final String query = "SELECT id FROM mcrtournament ORDER BY id";
+			final String query = "SELECT id FROM mcr_tournament ORDER BY id";
 			final Statement statement = dataBaseConnection.createStatement();
 			final ResultSet result = statement.executeQuery(query);
 			newId = 1;
@@ -99,7 +99,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		}
 
 		try {
-			final String query = "INSERT INTO mcrtournament(id, name) VALUES(?, ?)";
+			final String query = "INSERT INTO mcr_tournament(id, name) VALUES(?, ?)";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setInt(1, newId);
 			statement.setString(2, tournamentName);
@@ -128,7 +128,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 		boolean modified;
 		try {
-			final String query = "UPDATE mcrtournament SET name=? WHERE id=?";
+			final String query = "UPDATE mcr_tournament SET name=? WHERE id=?";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setString(1, tournamentName);
 			statement.setInt(2, tournamentId);
@@ -152,7 +152,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		if (isConnected()) {
 			try {
 				final Statement statement = dataBaseConnection.createStatement();
-				final ResultSet result = statement.executeQuery("SELECT id, name FROM mcrtournament ORDER BY id DESC");
+				final ResultSet result = statement.executeQuery("SELECT id, name FROM mcr_tournament ORDER BY id DESC");
 				while (result.next()) {
 					tournamentList.add(new Tournament(result.getInt(1), result.getString(2)));
 				}
@@ -173,7 +173,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 		boolean modified;
 		try {
-			final String query = "DELETE FROM mcrtournament WHERE id=?";
+			final String query = "DELETE FROM mcr_tournament WHERE id=?";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setInt(1, tournamentId);
 			modified = statement.executeUpdate() == 1;
@@ -206,7 +206,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		final Date date = new Date(calendar.getTimeInMillis());
 		int newId;
 		try {
-			final String query = "SELECT id FROM mcrgameid WHERE date=? ORDER BY id";
+			final String query = "SELECT id FROM mcr_game_id WHERE date=? ORDER BY id";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setDate(1, date);
 			final ResultSet result = statement.executeQuery();
@@ -226,7 +226,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		}
 
 		try {
-			final String idTableQuery = "INSERT INTO mcrgameid(id, mcr_tournament_id, date) VALUES(?, ?, ?)";
+			final String idTableQuery = "INSERT INTO mcr_game_id(id, mcr_tournament_id, date) VALUES(?, ?, ?)";
 			final PreparedStatement idTableStatement = dataBaseConnection.prepareStatement(idTableQuery);
 
 			idTableStatement.setInt(1, newId);
@@ -235,7 +235,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 			idTableStatement.executeUpdate();
 			idTableStatement.close();
 
-			final String scoreTableQuery = "INSERT INTO mcrgamescore(mcr_game_id, player_id, ranking, game_score, final_score) values(?, ?, ?, ?, ?)";
+			final String scoreTableQuery = "INSERT INTO mcr_game_score(mcr_game_id, player_id, ranking, game_score, final_score) values(?, ?, ?, ?, ?)";
 			final PreparedStatement scoreTableStatement = dataBaseConnection.prepareStatement(scoreTableQuery);
 			for (int playerIndex = 0; playerIndex < game.getScores().size(); playerIndex++) {
 				final MCRScore score = game.getScores().get(playerIndex);
@@ -260,7 +260,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		final List<Integer> yearList = new ArrayList<Integer>();
 		if (isConnected()) {
 			try {
-				final PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT DISTINCT YEAR(date) FROM mcrgameid WHERE mcr_tournament_id=? ORDER BY YEAR(date) DESC");
+				final PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT DISTINCT YEAR(date) FROM mcr_game_id WHERE mcr_tournament_id=? ORDER BY YEAR(date) DESC");
 				statement.setInt(1, tournament.getId());
 				final ResultSet result = statement.executeQuery();
 				while (result.next()) {
@@ -281,7 +281,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		if (isConnected()) {
 			try {
 				final PreparedStatement statement = dataBaseConnection
-					.prepareStatement("SELECT DISTINCT day(date) FROM mcrgameid WHERE mcr_tournament_id=? AND year(date)=? AND month(date)=? ORDER BY day(date)");
+					.prepareStatement("SELECT DISTINCT day(date) FROM mcr_game_id WHERE mcr_tournament_id=? AND year(date)=? AND month(date)=? ORDER BY day(date)");
 				statement.setInt(1, tournament.getId());
 				statement.setInt(2, year);
 				statement.setInt(3, month + 1);
@@ -308,7 +308,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 				calendar.set(Calendar.YEAR, year);
 				calendar.set(Calendar.MONTH, month);
 				calendar.set(Calendar.DAY_OF_MONTH, day);
-				final PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT id FROM mcrgameid WHERE mcr_tournament_id=? AND date=? ORDER BY id");
+				final PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT id FROM mcr_game_id WHERE mcr_tournament_id=? AND date=? ORDER BY id");
 				statement.setInt(1, tournament.getId());
 				statement.setDate(2, new Date(calendar.getTimeInMillis()));
 
@@ -331,7 +331,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 			try {
 				final Calendar calendar = Calendar.getInstance();
 				int tournamentId = 0;
-				PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT mcr_tournament_id, date FROM mcrgameid WHERE id=?");
+				PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT mcr_tournament_id, date FROM mcr_game_id WHERE id=?");
 				statement.setInt(1, id);
 				ResultSet result = statement.executeQuery();
 				if (result.next()) {
@@ -343,7 +343,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 				final List<MCRScore> scoreList = new ArrayList<MCRScore>(4);
 				statement = dataBaseConnection.prepareStatement(
-					"SELECT player.id, player.name, player.display_name, mcrgamescore.ranking, mcrgamescore.game_score, mcrgamescore.final_score FROM player, mcrgamescore WHERE player.id=mcrgamescore.player_id AND mcrgamescore.mcr_game_id=? ORDER BY mcrgamescore.ranking");
+					"SELECT player.id, player.name, player.display_name, mcr_game_score.ranking, mcr_game_score.game_score, mcr_game_score.final_score FROM player, mcr_game_score WHERE player.id=mcr_game_score.player_id AND mcr_game_score.mcr_game_id=? ORDER BY mcr_game_score.ranking");
 				statement.setInt(1, id);
 				result = statement.executeQuery();
 				while (result.next()) {
@@ -368,7 +368,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 		boolean modified;
 		try {
-			final String query = "DELETE FROM mcrgameid WHERE id=?";
+			final String query = "DELETE FROM mcr_game_id WHERE id=?";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setInt(1, id);
 			modified = statement.executeUpdate() == 1;
@@ -449,13 +449,13 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 			PreparedStatement statement = null;
 			if (periodMode == EnumPeriodMode.ALL) {
-				statement = dataBaseConnection.prepareStatement("SELECT mcrgameid.id, mcrgamescore.ranking, mcrgamescore." + fieldString
-					+ " FROM mcrgameid, mcrgamescore WHERE mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgamescore.player_id=? AND mcrgameid.rcr_mournament_id=? ORDER BY mcrgameid.id ASC");
+				statement = dataBaseConnection.prepareStatement("SELECT mcr_game_id.id, mcr_game_score.ranking, mcr_game_score." + fieldString
+					+ " FROM mcr_game_id, mcr_game_score WHERE mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_score.player_id=? AND mcr_game_id.rcr_mournament_id=? ORDER BY mcr_game_id.id ASC");
 				statement.setInt(1, playerId);
 				statement.setInt(2, tournament.getId());
 			} else {
-				statement = dataBaseConnection.prepareStatement("SELECT mcrgameid.id, mcrgamescore.ranking, mcrgamescore." + fieldString
-					+ " FROM mcrgameid, mcrgamescore WHERE mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgamescore.player_id=? AND mcrgameid.mcr_tournament_id=? AND mcrgameid.date>=? AND mcrgameid.date<? ORDER BY mcrgameid.id ASC");
+				statement = dataBaseConnection.prepareStatement("SELECT mcr_game_id.id, mcr_game_score.ranking, mcr_game_score." + fieldString
+					+ " FROM mcr_game_id, mcr_game_score WHERE mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_score.player_id=? AND mcr_game_id.mcr_tournament_id=? AND mcr_game_id.date>=? AND mcr_game_id.date<? ORDER BY mcr_game_id.id ASC");
 				statement.setInt(1, playerId);
 				statement.setInt(2, tournament.getId());
 				statement.setDate(3, new Date(calendarFrom.getTimeInMillis()));
@@ -601,9 +601,9 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		try {
 			switch (rankingMode) {
 				case TOTAL_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, SUM(mcrgamescore.final_score) AS total, COUNT(*) AS nb_games FROM player, mcrgameid, mcrgamescore ";
-					final String queryWherePart = "WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=? ";
-					final String queryPeriodPart = "AND mcrgameid.date>=? AND mcrgameid.date<? ";
+					final String querySelectPart = "SELECT player.name, player.display_name, SUM(mcr_game_score.final_score) AS total, COUNT(*) AS nb_games FROM player, mcr_game_id, mcr_game_score ";
+					final String queryWherePart = "WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=? ";
+					final String queryPeriodPart = "AND mcr_game_id.date>=? AND mcr_game_id.date<? ";
 					final String queryGroupPart = "GROUP BY player.name, player.display_name ";
 					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
 					String queryOrderPart = null;
@@ -635,14 +635,14 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case FINAL_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(mcrgameid.date), MONTH(mcrgameid.date)-1, DAY(mcrgameid.date), mcrgamescore.final_score FROM player, mcrgameid, mcrgamescore ";
-					final String queryWherePart = "WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=? ";
-					final String queryPeriodPart = "AND mcrgameid.date>=? AND mcrgameid.date<? ";
+					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(mcr_game_id.date), MONTH(mcr_game_id.date)-1, DAY(mcr_game_id.date), mcr_game_score.final_score FROM player, mcr_game_id, mcr_game_score ";
+					final String queryWherePart = "WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=? ";
+					final String queryPeriodPart = "AND mcr_game_id.date>=? AND mcr_game_id.date<? ";
 					String queryOrderPart = null;
 					if (sortingMode == EnumSortingMode.DESCENDING) {
-						queryOrderPart = "ORDER BY mcrgamescore.final_score DESC ";
+						queryOrderPart = "ORDER BY mcr_game_score.final_score DESC ";
 					} else {
-						queryOrderPart = "ORDER BY mcrgamescore.final_score ASC ";
+						queryOrderPart = "ORDER BY mcr_game_score.final_score ASC ";
 					}
 					final String queryFetchPart = "FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					PreparedStatement statement = null;
@@ -667,9 +667,9 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case MEAN_FINAL_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, AVG(mcrgamescore.final_score) AS mean, STDDEV_POP(mcrgamescore.final_score) as stddev, COUNT(*) AS nb_games FROM player, mcrgameid, mcrgamescore ";
-					final String queryWherePart = "WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=? ";
-					final String queryPeriodPart = "AND mcrgameid.date>=? AND mcrgameid.date<? ";
+					final String querySelectPart = "SELECT player.name, player.display_name, AVG(mcr_game_score.final_score) AS mean, STDDEV_POP(mcr_game_score.final_score) as stddev, COUNT(*) AS nb_games FROM player, mcr_game_id, mcr_game_score ";
+					final String queryWherePart = "WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=? ";
+					final String queryPeriodPart = "AND mcr_game_id.date>=? AND mcr_game_id.date<? ";
 					final String queryGroupPart = "GROUP BY player.name, player.display_name ";
 					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
 					String queryOrderPart = null;
@@ -702,14 +702,14 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case GAME_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(mcrgameid.date), MONTH(mcrgameid.date)-1, DAY(mcrgameid.date), mcrgamescore.game_score FROM player, mcrgameid, mcrgamescore ";
-					final String queryWherePart = "WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=? ";
-					final String queryPeriodPart = "AND mcrgameid.date>=? AND mcrgameid.date<? ";
+					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(mcr_game_id.date), MONTH(mcr_game_id.date)-1, DAY(mcr_game_id.date), mcr_game_score.game_score FROM player, mcr_game_id, mcr_game_score ";
+					final String queryWherePart = "WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=? ";
+					final String queryPeriodPart = "AND mcr_game_id.date>=? AND mcr_game_id.date<? ";
 					String queryOrderPart = null;
 					if (sortingMode == EnumSortingMode.DESCENDING) {
-						queryOrderPart = "ORDER BY mcrgamescore.game_score DESC ";
+						queryOrderPart = "ORDER BY mcr_game_score.game_score DESC ";
 					} else {
-						queryOrderPart = "ORDER BY mcrgamescore.game_score ASC ";
+						queryOrderPart = "ORDER BY mcr_game_score.game_score ASC ";
 					}
 					final String queryFetchPart = "FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					PreparedStatement statement = null;
@@ -734,9 +734,9 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case MEAN_GAME_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, AVG(mcrgamescore.game_score) AS mean, STDDEV_POP(mcrgamescore.game_score) as stddev, COUNT(*) AS nb_games FROM player, mcrgameid, mcrgamescore ";
-					final String queryWherePart = "WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=? ";
-					final String queryPeriodPart = "AND mcrgameid.date>=? AND mcrgameid.date<? ";
+					final String querySelectPart = "SELECT player.name, player.display_name, AVG(mcr_game_score.game_score) AS mean, STDDEV_POP(mcr_game_score.game_score) as stddev, COUNT(*) AS nb_games FROM player, mcr_game_id, mcr_game_score ";
+					final String queryWherePart = "WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=? ";
+					final String queryPeriodPart = "AND mcr_game_id.date>=? AND mcr_game_id.date<? ";
 					final String queryGroupPart = "GROUP BY player.name, player.display_name ";
 					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
 					String queryOrderPart = null;
@@ -770,7 +770,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 					break;
 				case ANNUAL_SCORE: {
 					final String querySelectPart = "SELECT name, display_name, y, SUM(final_score) AS total, COUNT(*) AS nb_games FROM ";
-					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(mcrgameid.date) as y, mcrgamescore.final_score FROM player, mcrgameid, mcrgamescore WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=?) AS year_score ";
+					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(mcr_game_id.date) as y, mcr_game_score.final_score FROM player, mcr_game_id, mcr_game_score WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=?) AS year_score ";
 					final String queryGroupPart = "GROUP BY name, display_name, y ";
 					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_YEAR) + " ";
 					String queryOrderPart = null;
@@ -796,7 +796,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 					break;
 				case TRIMESTRIAL_SCORE: {
 					final String querySelectPart = "SELECT name, display_name, y, t, SUM(final_score) AS total, COUNT(*) AS nb_games FROM ";
-					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(mcrgameid.date) as Y, (MONTH(mcrgameid.date)-1)/3 as t, mcrgamescore.final_score FROM player, mcrgameid, mcrgamescore WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=?) AS trimester_score ";
+					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(mcr_game_id.date) as Y, (MONTH(mcr_game_id.date)-1)/3 as t, mcr_game_score.final_score FROM player, mcr_game_id, mcr_game_score WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=?) AS trimester_score ";
 					final String queryGroupPart = "GROUP BY name, display_name, y, t ";
 					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_TRIMESTER) + " ";
 					String queryOrderPart = null;
@@ -822,7 +822,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 					break;
 				case MENSUAL_SCORE: {
 					final String querySelectPart = "SELECT name, display_name, y, m, SUM(final_score) AS total, COUNT(*) AS nb_games FROM ";
-					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(mcrgameid.date) as y, MONTH(mcrgameid.date)-1 as m, mcrgamescore.final_score FROM player, mcrgameid, mcrgamescore WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=?) AS month_score ";
+					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(mcr_game_id.date) as y, MONTH(mcr_game_id.date)-1 as m, mcr_game_score.final_score FROM player, mcr_game_id, mcr_game_score WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=?) AS month_score ";
 					final String queryGroupPart = "GROUP BY name, display_name, y, m ";
 					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_MONTH) + " ";
 					String queryOrderPart = null;
@@ -908,9 +908,9 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 			final List<String> displayNames = new ArrayList<String>();
 			final Map<Integer, Integer> mapId2Index = new HashMap<Integer, Integer>();
 			{
-				final String querySelectPart = "SELECT DISTINCT player.id, player.name, player.display_name FROM player, mcrgameid, mcrgamescore ";
-				final String queryWherePart = "WHERE player.id=mcrgamescore.player_id AND mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=? ";
-				final String queryPeriodPart = "AND mcrgameid.date>=? AND mcrgameid.date<? ";
+				final String querySelectPart = "SELECT DISTINCT player.id, player.name, player.display_name FROM player, mcr_game_id, mcr_game_score ";
+				final String queryWherePart = "WHERE player.id=mcr_game_score.player_id AND mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=? ";
+				final String queryPeriodPart = "AND mcr_game_id.date>=? AND mcr_game_id.date<? ";
 				final String queryOrderPart = "ORDER BY player.id";
 				PreparedStatement statement = null;
 				if (periodMode == EnumPeriodMode.ALL) {
@@ -943,11 +943,11 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 				data.add(index, score);
 			}
 			{
-				final String querySelectPart = "SELECT mcrgameid.date, mcrgamescore.player_id, SUM(mcrgamescore.final_score) FROM mcrgameid, mcrgamescore ";
-				final String queryWherePart = "WHERE mcrgameid.id=mcrgamescore.mcr_game_id AND mcrgameid.mcr_tournament_id=? ";
-				final String queryPeriodPart = "AND mcrgameid.date>=? AND mcrgameid.date<? ";
-				final String queryGroupPart = "GROUP BY mcrgameid.date, mcrgamescore.player_id ";
-				final String queryOrderPart = "ORDER BY mcrgameid.date";
+				final String querySelectPart = "SELECT mcr_game_id.date, mcr_game_score.player_id, SUM(mcr_game_score.final_score) FROM mcr_game_id, mcr_game_score ";
+				final String queryWherePart = "WHERE mcr_game_id.id=mcr_game_score.mcr_game_id AND mcr_game_id.mcr_tournament_id=? ";
+				final String queryPeriodPart = "AND mcr_game_id.date>=? AND mcr_game_id.date<? ";
+				final String queryGroupPart = "GROUP BY mcr_game_id.date, mcr_game_score.player_id ";
+				final String queryOrderPart = "ORDER BY mcr_game_id.date";
 				PreparedStatement statement = null;
 				if (periodMode == EnumPeriodMode.ALL) {
 					statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryOrderPart);

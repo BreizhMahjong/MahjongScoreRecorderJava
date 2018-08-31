@@ -92,7 +92,8 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 	private final DateFormat dateFormat;
 	private final Calendar calendar;
-	private final DecimalFormat decimalFormat;
+	private final DecimalFormat normalDecimalFormat;
+	private final DecimalFormat finalScoreDecimalFormat;
 
 	private final List<Tournament> listTournament;
 
@@ -104,10 +105,15 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 		dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.FRANCE);
 		calendar = Calendar.getInstance();
-		decimalFormat = new DecimalFormat("#,###");
-		final DecimalFormatSymbols symbols = decimalFormat.getDecimalFormatSymbols();
-		symbols.setGroupingSeparator(' ');
-		decimalFormat.setDecimalFormatSymbols(symbols);
+		normalDecimalFormat = new DecimalFormat("#,###");
+		final DecimalFormatSymbols normalFormatSymbols = normalDecimalFormat.getDecimalFormatSymbols();
+		normalFormatSymbols.setGroupingSeparator(' ');
+		normalDecimalFormat.setDecimalFormatSymbols(normalFormatSymbols);
+
+		finalScoreDecimalFormat = new DecimalFormat("+#,###;-#,###");
+		final DecimalFormatSymbols finalScoreFormatSymbols = finalScoreDecimalFormat.getDecimalFormatSymbols();
+		finalScoreFormatSymbols.setGroupingSeparator(' ');
+		finalScoreDecimalFormat.setDecimalFormatSymbols(finalScoreFormatSymbols);
 
 		JPanel leftComponent;
 		JPanel rightComponent;
@@ -364,25 +370,37 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 			if (game != null) {
 				calendar.set(game.getYear(), game.getMonth(), game.getDay());
 				labelDate.setText(dateFormat.format(calendar.getTime()));
-				labelRounds.setText(decimalFormat.format(game.getNbRounds()));
+				labelRounds.setText(normalDecimalFormat.format(game.getNbRounds()));
 
 				if (displayFullName) {
 					for (int index = 0; index < game.getScores().size(); index++) {
 						final RCRScore score = game.getScores().get(index);
-						labelGameInfos[index][0].setText(decimalFormat.format(score.getPlace()));
+						labelGameInfos[index][0].setText(normalDecimalFormat.format(score.getPlace()));
 						labelGameInfos[index][1].setText(score.getPlayerName());
-						labelGameInfos[index][2].setText(decimalFormat.format(score.getGameScore()));
-						labelGameInfos[index][3].setText(decimalFormat.format(score.getUmaScore()));
-						labelGameInfos[index][4].setText(decimalFormat.format(score.getFinalScore()));
+						labelGameInfos[index][2].setText(normalDecimalFormat.format(score.getGameScore()));
+						labelGameInfos[index][3].setText(normalDecimalFormat.format(score.getUmaScore()));
+						final int finalScore = score.getFinalScore();
+						labelGameInfos[index][4].setText(finalScoreDecimalFormat.format(finalScore));
+						if (finalScore >= 0) {
+							labelGameInfos[index][4].setForeground(Color.BLACK);
+						} else {
+							labelGameInfos[index][4].setForeground(Color.RED);
+						}
 					}
 				} else {
 					for (int index = 0; index < game.getScores().size(); index++) {
 						final RCRScore score = game.getScores().get(index);
-						labelGameInfos[index][0].setText(decimalFormat.format(score.getPlace()));
+						labelGameInfos[index][0].setText(normalDecimalFormat.format(score.getPlace()));
 						labelGameInfos[index][1].setText(score.getDisplayName());
-						labelGameInfos[index][2].setText(decimalFormat.format(score.getGameScore()));
-						labelGameInfos[index][3].setText(decimalFormat.format(score.getUmaScore()));
-						labelGameInfos[index][4].setText(decimalFormat.format(score.getFinalScore()));
+						labelGameInfos[index][2].setText(normalDecimalFormat.format(score.getGameScore()));
+						labelGameInfos[index][3].setText(normalDecimalFormat.format(score.getUmaScore()));
+						final int finalScore = score.getFinalScore();
+						labelGameInfos[index][4].setText(finalScoreDecimalFormat.format(finalScore));
+						if (finalScore >= 0) {
+							labelGameInfos[index][4].setForeground(Color.BLACK);
+						} else {
+							labelGameInfos[index][4].setForeground(Color.RED);
+						}
 					}
 				}
 
@@ -465,7 +483,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 					writer.write(SEPARATOR);
 					writer.write("Manches");
 					writer.write(SEPARATOR);
-					writer.write(decimalFormat.format(game.getNbRounds()));
+					writer.write(normalDecimalFormat.format(game.getNbRounds()));
 					writer.newLine();
 
 					if (displayFullName) {
