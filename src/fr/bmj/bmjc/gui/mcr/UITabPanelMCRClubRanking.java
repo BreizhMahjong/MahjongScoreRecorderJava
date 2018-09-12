@@ -46,17 +46,20 @@ import javax.swing.JScrollPane;
 
 import fr.bmj.bmjc.data.game.ComparatorDescendingTournamentID;
 import fr.bmj.bmjc.data.game.Tournament;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCR;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalDay;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalDisplayName;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalFinalScore;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalMonth;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalNumberOfGames;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalPlayName;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalTotalScore;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalTrimester;
-import fr.bmj.bmjc.data.stat.mcr.FieldAccessMCRScoreTotalYear;
-import fr.bmj.bmjc.data.stat.mcr.MCRScoreTotal;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScore;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccess;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessDay;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessDisplayName;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessFinalScore;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessGameScore;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessMeanFinalScore;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessMeanGameScore;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessMonth;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessNumberOfGames;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessPlayName;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessTotalScore;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessTrimester;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScoreFieldAccessYear;
 import fr.bmj.bmjc.dataaccess.mcr.DataAccessMCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumRankingMode;
@@ -438,66 +441,66 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 			final int year = (Integer) comboYear.getSelectedItem();
 			final int trimestral = comboTrimester.getSelectedIndex();
 			final int month = comboMonth.getSelectedIndex();
-			final List<MCRScoreTotal> scoreList = dataAccess.getMCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month);
+			final List<MCRTotalScore> scoreList = dataAccess.getMCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month);
 
 			if (scoreList != null && scoreList.size() > 0) {
 				labelTitles[0].setText("Classement");
 				labelTitles[1].setText("Nom du joueur");
-				final List<FieldAccessMCR> access = new ArrayList<>(3);
+				final List<MCRTotalScoreFieldAccess> access = new ArrayList<>(3);
 				access.add(0, null);
 				if (displayFullName) {
-					access.add(1, new FieldAccessMCRScoreTotalPlayName());
+					access.add(1, new MCRTotalScoreFieldAccessPlayName());
 				} else {
-					access.add(1, new FieldAccessMCRScoreTotalDisplayName());
+					access.add(1, new MCRTotalScoreFieldAccessDisplayName());
 				}
 				switch (rankingMode) {
 					case TOTAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Nombre de parties");
-						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
+						access.add(2, new MCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new MCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case FINAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessMCRScoreTotalDay());
+						access.add(2, new MCRTotalScoreFieldAccessFinalScore());
+						access.add(3, new MCRTotalScoreFieldAccessDay());
 						break;
 					case MEAN_FINAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 						labelTitles[3].setText("Nombre de parties");
-						access.add(2, new FieldAccessMCRScoreTotalFinalScore());
-						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
+						access.add(2, new MCRTotalScoreFieldAccessMeanFinalScore());
+						access.add(3, new MCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case GAME_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessMCRScoreTotalDay());
+						access.add(2, new MCRTotalScoreFieldAccessGameScore());
+						access.add(3, new MCRTotalScoreFieldAccessDay());
 						break;
 					case MEAN_GAME_SCORE:
 						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 						labelTitles[3].setText("Nombre de parties");
-						access.add(2, new FieldAccessMCRScoreTotalFinalScore());
-						access.add(3, new FieldAccessMCRScoreTotalNumberOfGames());
+						access.add(2, new MCRTotalScoreFieldAccessMeanGameScore());
+						access.add(3, new MCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case ANNUAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessMCRScoreTotalYear());
+						access.add(2, new MCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new MCRTotalScoreFieldAccessYear());
 						break;
 					case TRIMESTRIAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessMCRScoreTotalTrimester());
+						access.add(2, new MCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new MCRTotalScoreFieldAccessTrimester());
 						break;
 					case MENSUAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessMCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessMCRScoreTotalMonth());
+						access.add(2, new MCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new MCRTotalScoreFieldAccessMonth());
 						break;
 					default:
 						break;
@@ -507,9 +510,9 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 				final JLabel labels[] = new JLabel[NB_COLUMNS];
 				final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 64, 2);
 				int lastIndex = 0;
-				MCRScoreTotal lastRecord = null;
+				MCRTotalScore lastRecord = null;
 				for (int index = 0; index < scoreList.size(); index++) {
-					final MCRScoreTotal record = scoreList.get(index);
+					final MCRTotalScore record = scoreList.get(index);
 
 					if (lastRecord == null || lastRecord.totalScore != record.totalScore || lastRecord.totalScore2 != record.totalScore2) {
 						lastIndex = index;

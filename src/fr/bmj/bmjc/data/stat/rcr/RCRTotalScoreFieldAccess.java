@@ -16,23 +16,8 @@
  */
 package fr.bmj.bmjc.data.stat.rcr;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+public interface RCRTotalScoreFieldAccess {
 
-public class FieldAccessRCRScoreTotalFinalScore implements FieldAccessRCR {
-
-	private final DecimalFormat format;
-
-	public FieldAccessRCRScoreTotalFinalScore() {
-		format = new DecimalFormat("#,###");
-		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
-		symbols.setGroupingSeparator(' ');
-		format.setDecimalFormatSymbols(symbols);
-	}
-
-	@Override
-	public String getDataString(final RCRScoreTotal data) {
-		return format.format(data.totalScore) + " (" + format.format(data.umaScore) + ")";
-	}
+	public String getDataString(RCRTotalScore data);
 
 }

@@ -18,7 +18,7 @@ import fr.bmj.bmjc.data.game.mcr.MCRGame;
 import fr.bmj.bmjc.data.game.mcr.MCRScore;
 import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageAnalyze;
 import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageTrend;
-import fr.bmj.bmjc.data.stat.mcr.MCRScoreTotal;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScore;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
 import fr.bmj.bmjc.dataaccess.mcr.DataAccessMCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
@@ -545,7 +545,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 	}
 
 	@Override
-	public List<MCRScoreTotal> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
+	public List<MCRTotalScore> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
 		final int year, final int trimester, final int month) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
@@ -597,7 +597,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 		}
 		minimumGames = useMinimumGame ? minimumGames : 0;
 
-		final List<MCRScoreTotal> rankingScores = new ArrayList<>();
+		final List<MCRTotalScore> rankingScores = new ArrayList<>();
 		try {
 			switch (rankingMode) {
 				case TOTAL_SCORE: {
@@ -625,7 +625,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), 0, 0, 0);
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
 						total.totalScore = result.getInt(3);
 						total.numberOfGame = result.getInt(4);
 						rankingScores.add(total);
@@ -658,7 +658,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), result.getInt(5));
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), result.getInt(5));
 						total.totalScore = result.getInt(6);
 						rankingScores.add(total);
 					}
@@ -691,7 +691,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), 0, 0, 0);
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
 						total.totalScore = result.getInt(3);
 						total.totalScore2 = (int) Math.round(result.getDouble(4));
 						total.numberOfGame = result.getInt(5);
@@ -725,7 +725,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), result.getInt(5));
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), result.getInt(5));
 						total.totalScore = result.getInt(6);
 						rankingScores.add(total);
 					}
@@ -758,7 +758,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), 0, 0, 0);
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
 						total.totalScore = result.getInt(3);
 						total.totalScore2 = (int) Math.round(result.getDouble(4));
 						total.numberOfGame = result.getInt(5);
@@ -785,7 +785,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), result.getInt(3), 0, 0);
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), 0, 0);
 						total.totalScore = result.getInt(4);
 						total.numberOfGame = result.getInt(5);
 						rankingScores.add(total);
@@ -811,7 +811,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), 0);
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), 0);
 						total.totalScore = result.getInt(5);
 						total.numberOfGame = result.getInt(6);
 						rankingScores.add(total);
@@ -837,7 +837,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
-						final MCRScoreTotal total = new MCRScoreTotal(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), 0);
+						final MCRTotalScore total = new MCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), 0);
 						total.totalScore = result.getInt(5);
 						total.numberOfGame = result.getInt(6);
 						rankingScores.add(total);

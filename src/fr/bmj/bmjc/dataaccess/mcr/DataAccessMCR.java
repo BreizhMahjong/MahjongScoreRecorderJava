@@ -23,7 +23,7 @@ import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.data.game.mcr.MCRGame;
 import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageAnalyze;
 import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageTrend;
-import fr.bmj.bmjc.data.stat.mcr.MCRScoreTotal;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScore;
 import fr.bmj.bmjc.dataaccess.DataAccessCommon;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
@@ -60,7 +60,7 @@ public interface DataAccessMCR extends DataAccessCommon {
 	public MCRDataPackageAnalyze getMCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
 			final int trimester, final int month);
 
-	public List<MCRScoreTotal> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
+	public List<MCRTotalScore> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
 			final int year, final int trimester, final int month);
 
 	public MCRDataPackageTrend getMCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month);

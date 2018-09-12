@@ -16,20 +16,19 @@
  */
 package fr.bmj.bmjc.data.stat.mcr;
 
-import java.text.DateFormatSymbols;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 
-public class FieldAccessMCRScoreTotalMonth implements FieldAccessMCR {
+public class MCRTotalScoreFieldAccessDay implements MCRTotalScoreFieldAccess {
 
-	private final String monthStrings[];
-
-	public FieldAccessMCRScoreTotalMonth() {
-		monthStrings = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
-	}
+	private final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
+	private final Calendar calendar = Calendar.getInstance();
 
 	@Override
-	public String getDataString(final MCRScoreTotal data) {
-		return monthStrings[data.month] + " " + Integer.toString(data.year);
+	public String getDataString(final MCRTotalScore data) {
+		calendar.set(data.year, data.month, data.day);
+		return dateFormat.format(calendar.getTime());
 	}
 
 }

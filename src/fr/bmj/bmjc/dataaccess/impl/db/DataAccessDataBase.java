@@ -27,10 +27,10 @@ import fr.bmj.bmjc.data.game.mcr.MCRGame;
 import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageAnalyze;
 import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageTrend;
-import fr.bmj.bmjc.data.stat.mcr.MCRScoreTotal;
+import fr.bmj.bmjc.data.stat.mcr.MCRTotalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageAnalyze;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageTrend;
-import fr.bmj.bmjc.data.stat.rcr.RCRScoreTotal;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScore;
 import fr.bmj.bmjc.dataaccess.DataAccess;
 import fr.bmj.bmjc.dataaccess.DataAccessManagePlayer;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
@@ -179,7 +179,7 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public List<RCRScoreTotal> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
+	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
 		final int year, final int trimester, final int month) {
 		return dataAccessRCR.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month);
 	}
@@ -256,7 +256,7 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public List<MCRScoreTotal> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
+	public List<MCRTotalScore> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
 		final int year, final int trimester, final int month) {
 		return dataAccessMCR.getMCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month);
 	}

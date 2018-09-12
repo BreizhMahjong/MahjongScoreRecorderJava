@@ -16,19 +16,11 @@
  */
 package fr.bmj.bmjc.data.stat.rcr;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
-public class FieldAccessRCRScoreTotalDay implements FieldAccessRCR {
-
-	private final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
-	private final Calendar calendar = Calendar.getInstance();
+public class RCRTotalScoreFieldAccessYear implements RCRTotalScoreFieldAccess {
 
 	@Override
-	public String getDataString(final RCRScoreTotal data) {
-		calendar.set(data.year, data.month, data.day);
-		return dateFormat.format(calendar.getTime());
+	public String getDataString(final RCRTotalScore data) {
+		return Integer.toString(data.year);
 	}
 
 }

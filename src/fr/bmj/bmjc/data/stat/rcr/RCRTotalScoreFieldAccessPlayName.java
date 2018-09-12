@@ -16,11 +16,11 @@
  */
 package fr.bmj.bmjc.data.stat.rcr;
 
-public class FieldAccessRCRScoreTotalDisplayName implements FieldAccessRCR {
+public class RCRTotalScoreFieldAccessPlayName implements RCRTotalScoreFieldAccess {
 
 	@Override
-	public String getDataString(final RCRScoreTotal data) {
-		return data.displayName;
+	public String getDataString(final RCRTotalScore data) {
+		return data.playerName;
 	}
 
 }

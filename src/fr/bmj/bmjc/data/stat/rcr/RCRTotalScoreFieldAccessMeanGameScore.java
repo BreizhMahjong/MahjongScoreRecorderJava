@@ -14,13 +14,24 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.data.stat.mcr;
+package fr.bmj.bmjc.data.stat.rcr;
 
-public class FieldAccessMCRScoreTotalYear implements FieldAccessMCR {
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
+public class RCRTotalScoreFieldAccessMeanGameScore implements RCRTotalScoreFieldAccess {
+	private final DecimalFormat format;
+
+	public RCRTotalScoreFieldAccessMeanGameScore() {
+		format = new DecimalFormat("#,000");
+		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+		symbols.setGroupingSeparator(' ');
+		format.setDecimalFormatSymbols(symbols);
+	}
 
 	@Override
-	public String getDataString(final MCRScoreTotal data) {
-		return Integer.toString(data.year);
+	public String getDataString(final RCRTotalScore data) {
+		return format.format(data.totalScore) + " (" + format.format(data.umaScore) + ")";
 	}
 
 }

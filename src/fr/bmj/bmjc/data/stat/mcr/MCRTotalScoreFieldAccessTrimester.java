@@ -14,29 +14,17 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.data.stat.rcr;
+package fr.bmj.bmjc.data.stat.mcr;
 
-public class RCRScoreTotal {
+import fr.bmj.bmjc.enums.EnumTrimester;
 
-	public final String playerName;
-	public final String displayName;
-	public int totalScore;
-	public int umaScore;
-	public int numberOfGame;
-	public final int year;
-	public final int month;
-	public final int day;
+public class MCRTotalScoreFieldAccessTrimester implements MCRTotalScoreFieldAccess {
 
-	public RCRScoreTotal(final String playerName, final String displayName, final int year, final int month, final int day) {
-		super();
-		this.playerName = playerName;
-		this.displayName = displayName;
-		this.year = year;
-		this.month = month;
-		this.day = day;
-		totalScore = 0;
-		umaScore = 0;
-		numberOfGame = 0;
+	private static final String TRIMESTER_STRINGS[] = { EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString() };
+
+	@Override
+	public String getDataString(final MCRTotalScore data) {
+		return Integer.toString(data.year) + " " + TRIMESTER_STRINGS[data.month];
 	}
 
 }

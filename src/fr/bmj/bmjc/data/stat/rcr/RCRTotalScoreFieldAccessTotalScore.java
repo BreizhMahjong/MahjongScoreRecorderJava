@@ -16,15 +16,22 @@
  */
 package fr.bmj.bmjc.data.stat.rcr;
 
-import fr.bmj.bmjc.enums.EnumTrimester;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
-public class FieldAccessRCRScoreTotalTrimester implements FieldAccessRCR {
+public class RCRTotalScoreFieldAccessTotalScore implements RCRTotalScoreFieldAccess {
+	private final DecimalFormat format;
 
-	private static final String TRIMESTER_STRINGS[] = { EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString() };
+	public RCRTotalScoreFieldAccessTotalScore() {
+		format = new DecimalFormat("+#,#00;-#,#00");
+		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+		symbols.setGroupingSeparator(' ');
+		format.setDecimalFormatSymbols(symbols);
+	}
 
 	@Override
-	public String getDataString(final RCRScoreTotal data) {
-		return Integer.toString(data.year) + " " + TRIMESTER_STRINGS[data.month];
+	public String getDataString(final RCRTotalScore data) {
+		return format.format(data.totalScore);
 	}
 
 }

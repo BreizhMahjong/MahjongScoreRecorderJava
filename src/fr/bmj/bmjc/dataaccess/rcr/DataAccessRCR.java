@@ -23,7 +23,7 @@ import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageAnalyze;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageTrend;
-import fr.bmj.bmjc.data.stat.rcr.RCRScoreTotal;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScore;
 import fr.bmj.bmjc.dataaccess.DataAccessCommon;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
@@ -60,7 +60,7 @@ public interface DataAccessRCR extends DataAccessCommon {
 	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
 			final int trimester, final int month);
 
-	public List<RCRScoreTotal> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
+	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
 			final int year, final int trimester, final int month);
 
 	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month);

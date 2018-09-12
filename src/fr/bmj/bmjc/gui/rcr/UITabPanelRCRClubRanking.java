@@ -46,17 +46,21 @@ import javax.swing.JScrollPane;
 
 import fr.bmj.bmjc.data.game.ComparatorDescendingTournamentID;
 import fr.bmj.bmjc.data.game.Tournament;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCR;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalDay;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalDisplayName;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalFinalScore;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalMonth;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalNumberOfGames;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalPlayName;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalTotalScore;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalTrimester;
-import fr.bmj.bmjc.data.stat.rcr.FieldAccessRCRScoreTotalYear;
-import fr.bmj.bmjc.data.stat.rcr.RCRScoreTotal;
+import fr.bmj.bmjc.data.stat.rcr.FieldHighlighted;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScore;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccess;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessDay;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessDisplayName;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessFinalScore;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessGameScore;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanFinalScore;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanGameScore;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMonth;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessNumberOfGames;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessPlayName;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTotalScore;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTrimester;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessYear;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumRankingMode;
@@ -438,66 +442,75 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 			final int year = (Integer) comboYear.getSelectedItem();
 			final int trimestral = comboTrimester.getSelectedIndex();
 			final int month = comboMonth.getSelectedIndex();
-			final List<RCRScoreTotal> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month);
+			final List<RCRTotalScore> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month);
 
 			if (scoreList != null && scoreList.size() > 0) {
 				labelTitles[0].setText("Classement");
 				labelTitles[1].setText("Nom du joueur");
-				final List<FieldAccessRCR> access = new ArrayList<>(3);
+				FieldHighlighted scoreFieldHighlighted = null;
+				final List<RCRTotalScoreFieldAccess> access = new ArrayList<>(3);
 				access.add(0, null);
 				if (displayFullName) {
-					access.add(1, new FieldAccessRCRScoreTotalPlayName());
+					access.add(1, new RCRTotalScoreFieldAccessPlayName());
 				} else {
-					access.add(1, new FieldAccessRCRScoreTotalDisplayName());
+					access.add(1, new RCRTotalScoreFieldAccessDisplayName());
 				}
 				switch (rankingMode) {
 					case TOTAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Nombre de parties");
-						access.add(2, new FieldAccessRCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessRCRScoreTotalNumberOfGames());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case FINAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString() + " (Uma)");
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessRCRScoreTotalFinalScore());
-						access.add(3, new FieldAccessRCRScoreTotalDay());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+						access.add(2, new RCRTotalScoreFieldAccessFinalScore());
+						access.add(3, new RCRTotalScoreFieldAccessDay());
 						break;
 					case MEAN_FINAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 						labelTitles[3].setText("Nombre de parties");
-						access.add(2, new FieldAccessRCRScoreTotalFinalScore());
-						access.add(3, new FieldAccessRCRScoreTotalNumberOfGames());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+						access.add(2, new RCRTotalScoreFieldAccessMeanFinalScore());
+						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case GAME_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessRCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessRCRScoreTotalDay());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
+						access.add(2, new RCRTotalScoreFieldAccessGameScore());
+						access.add(3, new RCRTotalScoreFieldAccessDay());
 						break;
 					case MEAN_GAME_SCORE:
 						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 						labelTitles[3].setText("Nombre de parties");
-						access.add(2, new FieldAccessRCRScoreTotalFinalScore());
-						access.add(3, new FieldAccessRCRScoreTotalNumberOfGames());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
+						access.add(2, new RCRTotalScoreFieldAccessMeanGameScore());
+						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case ANNUAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessRCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessRCRScoreTotalYear());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new RCRTotalScoreFieldAccessYear());
 						break;
 					case TRIMESTRIAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessRCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessRCRScoreTotalTrimester());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new RCRTotalScoreFieldAccessTrimester());
 						break;
 					case MENSUAL_SCORE:
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Date");
-						access.add(2, new FieldAccessRCRScoreTotalTotalScore());
-						access.add(3, new FieldAccessRCRScoreTotalMonth());
+						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+						access.add(3, new RCRTotalScoreFieldAccessMonth());
 						break;
 					default:
 						break;
@@ -507,9 +520,9 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				final JLabel labels[] = new JLabel[NB_COLUMNS];
 				final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 64, 2);
 				int lastIndex = 0;
-				RCRScoreTotal lastRecord = null;
+				RCRTotalScore lastRecord = null;
 				for (int index = 0; index < scoreList.size(); index++) {
-					final RCRScoreTotal record = scoreList.get(index);
+					final RCRTotalScore record = scoreList.get(index);
 
 					if (lastRecord == null || lastRecord.totalScore != record.totalScore) {
 						lastIndex = index;
@@ -520,12 +533,16 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 					for (int labelIndex = 1; labelIndex < labels.length; labelIndex++) {
 						data[index][labelIndex] = access.get(labelIndex).getDataString(record);
 					}
+					final boolean highlighted = scoreFieldHighlighted.highlighted(record);
 
 					constraints.gridy = index;
 					for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
 						labels[labelIndex] = new JLabel(data[index][labelIndex], labelIndex == 1 ? JLabel.LEADING : JLabel.CENTER);
 						constraints.gridx = labelIndex;
 						labels[labelIndex].setPreferredSize(labelSizes[labelIndex]);
+						if (labelIndex == 2 && highlighted) {
+							labels[labelIndex].setForeground(Color.RED);
+						}
 						panelRanking.add(labels[labelIndex], constraints);
 					}
 

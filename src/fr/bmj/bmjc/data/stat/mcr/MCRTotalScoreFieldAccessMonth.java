@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.data.stat.rcr;
+package fr.bmj.bmjc.data.stat.mcr;
 
 import java.text.DateFormatSymbols;
 import java.util.Locale;
 
-public class FieldAccessRCRScoreTotalMonth implements FieldAccessRCR {
+public class MCRTotalScoreFieldAccessMonth implements MCRTotalScoreFieldAccess {
 
 	private final String monthStrings[];
 
-	public FieldAccessRCRScoreTotalMonth() {
+	public MCRTotalScoreFieldAccessMonth() {
 		monthStrings = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
 	}
 
 	@Override
-	public String getDataString(final RCRScoreTotal data) {
+	public String getDataString(final MCRTotalScore data) {
 		return monthStrings[data.month] + " " + Integer.toString(data.year);
 	}
 

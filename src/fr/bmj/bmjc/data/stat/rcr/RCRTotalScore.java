@@ -14,13 +14,29 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.data.stat.mcr;
+package fr.bmj.bmjc.data.stat.rcr;
 
-public class FieldAccessMCRScoreTotalFinalScore implements FieldAccessMCR {
+public class RCRTotalScore {
 
-	@Override
-	public String getDataString(final MCRScoreTotal data) {
-		return Integer.toString(data.totalScore) + " (" + Integer.toString(data.totalScore2) + ")";
+	public final String playerName;
+	public final String displayName;
+	public int totalScore;
+	public int umaScore;
+	public int numberOfGame;
+	public final int year;
+	public final int month;
+	public final int day;
+
+	public RCRTotalScore(final String playerName, final String displayName, final int year, final int month, final int day) {
+		super();
+		this.playerName = playerName;
+		this.displayName = displayName;
+		this.year = year;
+		this.month = month;
+		this.day = day;
+		totalScore = 0;
+		umaScore = 0;
+		numberOfGame = 0;
 	}
 
 }

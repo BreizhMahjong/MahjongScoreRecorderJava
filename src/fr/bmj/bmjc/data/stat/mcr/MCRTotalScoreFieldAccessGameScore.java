@@ -16,8 +16,22 @@
  */
 package fr.bmj.bmjc.data.stat.mcr;
 
-public interface FieldAccessMCR {
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
-	public String getDataString(MCRScoreTotal data);
+public class MCRTotalScoreFieldAccessGameScore implements MCRTotalScoreFieldAccess {
+	private final DecimalFormat format;
+
+	public MCRTotalScoreFieldAccessGameScore() {
+		format = new DecimalFormat("+#,###;-#,###");
+		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+		symbols.setGroupingSeparator(' ');
+		format.setDecimalFormatSymbols(symbols);
+	}
+
+	@Override
+	public String getDataString(final MCRTotalScore data) {
+		return format.format(data.totalScore);
+	}
 
 }

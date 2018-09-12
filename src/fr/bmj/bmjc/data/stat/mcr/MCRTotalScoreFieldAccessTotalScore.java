@@ -16,27 +16,22 @@
  */
 package fr.bmj.bmjc.data.stat.mcr;
 
-public class MCRScoreTotal {
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
-	public final String playerName;
-	public final String displayName;
-	public int totalScore;
-	public int totalScore2;
-	public int numberOfGame;
-	public final int year;
-	public final int month;
-	public final int day;
+public class MCRTotalScoreFieldAccessTotalScore implements MCRTotalScoreFieldAccess {
+	private final DecimalFormat format;
 
-	public MCRScoreTotal(final String playerName, final String displayName, final int year, final int month, final int day) {
-		super();
-		this.playerName = playerName;
-		this.displayName = displayName;
-		this.year = year;
-		this.month = month;
-		this.day = day;
-		totalScore = 0;
-		totalScore2 = 0;
-		numberOfGame = 0;
+	public MCRTotalScoreFieldAccessTotalScore() {
+		format = new DecimalFormat("#,###");
+		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+		symbols.setGroupingSeparator(' ');
+		format.setDecimalFormatSymbols(symbols);
+	}
+
+	@Override
+	public String getDataString(final MCRTotalScore data) {
+		return format.format(data.totalScore);
 	}
 
 }
