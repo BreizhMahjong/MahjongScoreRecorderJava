@@ -37,6 +37,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -46,13 +48,11 @@ import fr.bmj.bmjc.gui.mcr.UITabPanelMCRGameHistory;
 import fr.bmj.bmjc.gui.mcr.UITabPanelMCRManage;
 import fr.bmj.bmjc.gui.mcr.UITabPanelMCRNewGame;
 import fr.bmj.bmjc.gui.mcr.UITabPanelMCRPersonalAnalyse;
-import fr.bmj.bmjc.gui.mcr.UITabPanelMCRTrend;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRClubRanking;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRGameHistory;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRManage;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRNewGame;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRPersonalAnalyse;
-import fr.bmj.bmjc.gui.rcr.UITabPanelRCRTrend;
 import fr.bmj.bmjc.swing.JDialogWithProgress;
 
 public class UIMainWindow extends JFrame implements WindowListener {
@@ -71,6 +71,11 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private final JRadioButtonMenuItem menuSettingsFullName;
 	private final JRadioButtonMenuItem menuSettingsDisplayName;
 	private final JCheckBoxMenuItem menuSettingsUseMinGame;
+
+	private static final int NB_RCR_TABS = 5;
+	private static final int NB_MCR_TABS = 5;
+	private static final int TAB_RCR_INDEX = 2;
+	private static final int TAB_MCR_INDEX = 3;
 
 	private final JTabbedPane tabbedPane;
 	private final UITabPanel tabsMainManagePlayer;
@@ -104,7 +109,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 
 		final Container mainPane = getContentPane();
 		mainPane.setLayout(new BorderLayout());
-		tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		mainPane.add(tabbedPane, BorderLayout.CENTER);
 
 		tabsMainManagePlayer = new UITabPanelManagePlayer(dataAccess, waitingDialog);
@@ -113,24 +118,24 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		tabRCR = new JPanel();
 		tabbedPane.addTab("RCR", tabRCR);
 
-		tabsRCR = new UITabPanel[6];
+		tabsRCR = new UITabPanel[NB_RCR_TABS];
 		tabsRCR[0] = new UITabPanelRCRManage(dataAccess, waitingDialog);
 		tabsRCR[1] = new UITabPanelRCRNewGame(dataAccess, waitingDialog);
 		tabsRCR[2] = new UITabPanelRCRClubRanking(dataAccess, waitingDialog);
-		tabsRCR[3] = new UITabPanelRCRTrend(dataAccess, waitingDialog);
-		tabsRCR[4] = new UITabPanelRCRPersonalAnalyse(dataAccess, waitingDialog);
-		tabsRCR[5] = new UITabPanelRCRGameHistory(dataAccess, waitingDialog);
+		// tabsRCR[3] = new UITabPanelRCRTrend(dataAccess, waitingDialog);
+		tabsRCR[3] = new UITabPanelRCRPersonalAnalyse(dataAccess, waitingDialog);
+		tabsRCR[4] = new UITabPanelRCRGameHistory(dataAccess, waitingDialog);
 
 		tabMCR = new JPanel();
 		tabbedPane.addTab("MCR", tabMCR);
 
-		tabsMCR = new UITabPanel[6];
+		tabsMCR = new UITabPanel[NB_MCR_TABS];
 		tabsMCR[0] = new UITabPanelMCRManage(dataAccess, waitingDialog);
 		tabsMCR[1] = new UITabPanelMCRNewGame(dataAccess, waitingDialog);
 		tabsMCR[2] = new UITabPanelMCRClubRanking(dataAccess, waitingDialog);
-		tabsMCR[3] = new UITabPanelMCRTrend(dataAccess, waitingDialog);
-		tabsMCR[4] = new UITabPanelMCRPersonalAnalyse(dataAccess, waitingDialog);
-		tabsMCR[5] = new UITabPanelMCRGameHistory(dataAccess, waitingDialog);
+		// tabsMCR[3] = new UITabPanelMCRTrend(dataAccess, waitingDialog);
+		tabsMCR[3] = new UITabPanelMCRPersonalAnalyse(dataAccess, waitingDialog);
+		tabsMCR[4] = new UITabPanelMCRGameHistory(dataAccess, waitingDialog);
 
 		tabPaneChangeListener = (final ChangeEvent e) -> changeTab();
 		tabbedPane.addChangeListener(tabPaneChangeListener);
@@ -184,7 +189,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		addWindowListener(this);
 		setMinimumSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 		setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		pack();
 		setVisible(true);
 
@@ -198,29 +203,29 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		final Component selectedComponent = tabbedPane.getSelectedComponent();
 		if (selectedComponent == tabsMainManagePlayer) {
 			if (currentSubTab == tabMCR) {
-				removeTabs(3, 8);
+				removeTabs(TAB_MCR_INDEX, TAB_MCR_INDEX + NB_MCR_TABS - 1);
 			} else if (currentSubTab == tabRCR) {
-				removeTabs(2, 7);
+				removeTabs(TAB_RCR_INDEX, TAB_RCR_INDEX + NB_RCR_TABS - 1);
 			}
 			currentSubTab = tabsMainManagePlayer;
 		} else if (selectedComponent == tabRCR) {
 			if (currentSubTab == tabMCR) {
-				removeTabs(3, 8);
+				removeTabs(TAB_MCR_INDEX, TAB_MCR_INDEX + NB_MCR_TABS - 1);
 			}
 			if (currentSubTab != tabRCR) {
-				addTabs(2, tabsRCR);
+				addTabs(TAB_RCR_INDEX, tabsRCR);
 			}
 			currentSubTab = tabRCR;
-			tabbedPane.setSelectedIndex(2);
+			tabbedPane.setSelectedIndex(TAB_RCR_INDEX);
 		} else if (selectedComponent == tabMCR) {
 			if (currentSubTab == tabRCR) {
-				removeTabs(2, 7);
+				removeTabs(TAB_RCR_INDEX, TAB_RCR_INDEX + NB_RCR_TABS - 1);
 			}
 			if (currentSubTab != tabMCR) {
-				addTabs(3, tabsMCR);
+				addTabs(TAB_MCR_INDEX, tabsMCR);
 			}
 			currentSubTab = tabMCR;
-			tabbedPane.setSelectedIndex(3);
+			tabbedPane.setSelectedIndex(TAB_MCR_INDEX);
 		}
 
 		final UITabPanel tab = getCurrentTab();

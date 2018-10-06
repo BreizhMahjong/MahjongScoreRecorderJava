@@ -32,6 +32,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.text.DateFormatSymbols;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -178,7 +180,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				}
 				comboPeriodMode = new JComboBox<String>(periodModeStrings);
 				comboPeriodMode.setEditable(false);
-				comboPeriodMode.setSelectedIndex(0);
+				comboPeriodMode.setSelectedIndex(2);
 				c.x = 1;
 				panelNorth.add(comboPeriodMode, c);
 
@@ -196,7 +198,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
-				comboTrimester.setSelectedIndex(0);
+				comboTrimester.setSelectedIndex(LocalDate.now().get(ChronoField.MONTH_OF_YEAR) / 3);
 				c.x = 5;
 				panelNorth.add(comboTrimester, c);
 
