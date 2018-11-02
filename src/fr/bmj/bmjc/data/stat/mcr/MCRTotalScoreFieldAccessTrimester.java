@@ -20,7 +20,9 @@ import fr.bmj.bmjc.enums.EnumTrimester;
 
 public class MCRTotalScoreFieldAccessTrimester implements MCRTotalScoreFieldAccess {
 
-	private static final String TRIMESTER_STRINGS[] = { EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString() };
+	private static final String TRIMESTER_STRINGS[] = {
+		EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
+	};
 
 	@Override
 	public String getDataString(final MCRTotalScore data) {

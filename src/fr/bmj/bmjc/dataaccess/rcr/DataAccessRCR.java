@@ -58,10 +58,10 @@ public interface DataAccessRCR extends DataAccessCommon {
 	public void setRCRUseMinimumGame(boolean useMinimumGame);
 
 	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-			final int trimester, final int month);
+		final int trimester, final int month);
 
 	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-			final int year, final int trimester, final int month);
+		final int year, final int trimester, final int month);
 
 	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month);
 

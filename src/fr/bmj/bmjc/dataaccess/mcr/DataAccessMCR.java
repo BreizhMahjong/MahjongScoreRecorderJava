@@ -58,10 +58,10 @@ public interface DataAccessMCR extends DataAccessCommon {
 	public void setMCRUseMinimumGame(boolean useMinimumGame);
 
 	public MCRDataPackageAnalyze getMCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-			final int trimester, final int month);
+		final int trimester, final int month);
 
 	public List<MCRTotalScore> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-			final int year, final int trimester, final int month);
+		final int year, final int trimester, final int month);
 
 	public MCRDataPackageTrend getMCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month);
 
