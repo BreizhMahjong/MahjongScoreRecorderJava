@@ -254,7 +254,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			e.printStackTrace();
 			return new UpdateResult(false, "Erreur de connexion de base de données");
 		}
-		return new UpdateResult(true, "OK");
+		return new UpdateResult(true, "Scores enregistrés. ID " + Integer.toString(newId) + ".");
 	}
 
 	@Override

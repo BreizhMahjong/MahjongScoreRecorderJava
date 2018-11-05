@@ -50,6 +50,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -158,7 +159,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 
 			c.y = 0;
 			c.x = 0;
-			northPanel.add(new JLabel("Date: ", JLabel.RIGHT), c);
+			northPanel.add(new JLabel("Date: ", SwingConstants.RIGHT), c);
 			labelDate = new JLabel(STRING_EMPTY);
 			labelDate.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			labelDate.addMouseListener(new LabelDateMouseListener());
@@ -166,7 +167,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			northPanel.add(labelDate, c);
 
 			c.x = 2;
-			northPanel.add(new JLabel("Tournoi: ", JLabel.RIGHT), c);
+			northPanel.add(new JLabel("Tournoi: ", SwingConstants.RIGHT), c);
 			listTournament = new ArrayList<Tournament>();
 			comboBoxTournament = new JComboBox<String>();
 			c.x = 3;
@@ -176,7 +177,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			c.y = 1;
 			c.x = 0;
 			c.gridWidth = 1;
-			northPanel.add(new JLabel("Joueur: ", JLabel.RIGHT), c);
+			northPanel.add(new JLabel("Joueur: ", SwingConstants.RIGHT), c);
 			comboBoxNumberPlayers = new JComboBox<String>(NUMBER_OF_PLAYERS_STRINGS);
 			comboBoxNumberPlayers.setSelectedIndex(DEFAULT_NUMBER_OF_PLAYERS_INDEX);
 			comboBoxNumberPlayers.addActionListener((final ActionEvent e) -> toggleFifthPlayer());
@@ -184,7 +185,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			northPanel.add(comboBoxNumberPlayers, c);
 
 			c.x = 2;
-			northPanel.add(new JLabel("Manche: ", JLabel.RIGHT), c);
+			northPanel.add(new JLabel("Manche: ", SwingConstants.RIGHT), c);
 			comboBoxNumberRounds = new JComboBox<String>(NUMBER_OF_ROUNDS_STRINGS);
 			comboBoxNumberRounds.setSelectedIndex(DEFAULT_NUMBER_OF_ROUNDS_INDEX);
 			comboBoxNumberRounds.addActionListener((final ActionEvent e) -> disableSaveButton());
@@ -192,14 +193,14 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			northPanel.add(comboBoxNumberRounds, c);
 
 			c.x = 4;
-			northPanel.add(new JLabel("Stack init.: ", JLabel.RIGHT), c);
+			northPanel.add(new JLabel("Stack init.: ", SwingConstants.RIGHT), c);
 			spinnerInitialScore = new JSpinner(new SpinnerNumberModel(30000, 0, 30000, 1000));
 			spinnerInitialScore.setEditor(new JSpinner.NumberEditor(spinnerInitialScore, "#"));
 			c.x = 5;
 			northPanel.add(spinnerInitialScore, c);
 
 			c.x = 6;
-			northPanel.add(new JLabel("Uma: ", JLabel.RIGHT), c);
+			northPanel.add(new JLabel("Uma: ", SwingConstants.RIGHT), c);
 			comboBoxUma = new JComboBox<>(UMA_SET_NAMES);
 			comboBoxUma.setSelectedIndex(DEFAULT_UMA_SET_INDEX);
 			comboBoxUma.addActionListener((final ActionEvent e) -> disableSaveButton());
@@ -217,22 +218,22 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			centerC.y = 0;
 			centerC.x = 0;
 			centerC.gridWidth = 1;
-			centerPanel.add(new JLabel("#", JLabel.CENTER), centerC);
+			centerPanel.add(new JLabel("#", SwingConstants.CENTER), centerC);
 
 			centerC.x = 1;
 			centerC.gridWidth = 3;
-			centerPanel.add(new JLabel("Joueur", JLabel.CENTER), centerC);
+			centerPanel.add(new JLabel("Joueur", SwingConstants.CENTER), centerC);
 
 			centerC.x = 4;
 			centerC.gridWidth = 2;
-			centerPanel.add(new JLabel("Stack", JLabel.CENTER), centerC);
+			centerPanel.add(new JLabel("Stack", SwingConstants.CENTER), centerC);
 
 			centerC.x = 6;
 			centerC.gridWidth = 1;
-			centerPanel.add(new JLabel("UMA", JLabel.CENTER), centerC);
+			centerPanel.add(new JLabel("UMA", SwingConstants.CENTER), centerC);
 
 			centerC.x = 7;
-			centerPanel.add(new JLabel("Score", JLabel.CENTER), centerC);
+			centerPanel.add(new JLabel("Score", SwingConstants.CENTER), centerC);
 
 			labelPlayerRankings = new ArrayList<JLabel>(MAX_NUMBER_OF_PLAYERS);
 			comboBoxPlayers = new ArrayList<JComboBox<String>>(MAX_NUMBER_OF_PLAYERS);
@@ -245,7 +246,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			for (int playerIndex = 0; playerIndex < MAX_NUMBER_OF_PLAYERS; playerIndex++) {
 				centerC.y = 1 + playerIndex;
 
-				final JLabel labelPlayerRanking = new JLabel(STRING_EMPTY, JLabel.CENTER);
+				final JLabel labelPlayerRanking = new JLabel(STRING_EMPTY, SwingConstants.CENTER);
 				labelPlayerRanking.setBorder(BorderFactory.createLoweredSoftBevelBorder());
 				labelPlayerRanking.setPreferredSize(labelSize);
 				labelPlayerRankings.add(playerIndex, labelPlayerRanking);
@@ -285,7 +286,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 				centerPanel.add(labelPlayerFinalScore, centerC);
 			}
 
-			labelScoreError = new JLabel(STRING_SPACE, JLabel.RIGHT);
+			labelScoreError = new JLabel(STRING_SPACE, SwingConstants.RIGHT);
 			labelScoreError.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			labelScoreError.setForeground(Color.RED);
 			centerC.y = 6;
@@ -631,7 +632,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 				final RCRGame newGame = new RCRGame(0, tournament.getId(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), nbRounds, nbPlayers, scores);
 				final UpdateResult result = dataAccess.addRCRGame(newGame);
 				if (result.getResult()) {
-					JOptionPane.showMessageDialog(this, "Scores enregistrés", "Succès", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(this, result.getMessage(), "Succès", JOptionPane.INFORMATION_MESSAGE);
 					reset();
 				} else {
 					JOptionPane.showMessageDialog(this, result.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
