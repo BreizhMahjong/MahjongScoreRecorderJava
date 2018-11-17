@@ -129,13 +129,13 @@ public class ProportionalGridLayout implements LayoutManager2 {
 				for (int x = 0; x < c.gridWidth; x++) {
 					xParts += weightX[c.x + x];
 				}
-				final double gridWidth = (int) ((minSize.width - hgap * (c.gridWidth - 1)) / (xParts * c.gridWidth / totalWeightX));
+				final double gridWidth = (int) ((minSize.width - hgap * (c.gridWidth - 1)) / (xParts / totalWeightX));
 
 				double yParts = 0.0;
 				for (int y = 0; y < c.gridHeight; y++) {
 					yParts += weightY[c.y + y];
 				}
-				final double gridHeight = (int) ((minSize.height - vgap * (c.gridHeight - 1)) / (yParts * c.gridHeight / totalWeightY));
+				final double gridHeight = (int) ((minSize.height - vgap * (c.gridHeight - 1)) / (yParts / totalWeightY));
 
 				if (gridWidth > minWidth) {
 					minWidth = gridWidth;
@@ -144,7 +144,7 @@ public class ProportionalGridLayout implements LayoutManager2 {
 					minHeight = gridHeight;
 				}
 			}
-			return new Dimension(insets.left + insets.right + (int) (minWidth * colCount) + hgap * (colCount - 1), insets.top + insets.bottom + (int) (minHeight * rowCount) + vgap * (rowCount - 1));
+			return new Dimension(insets.left + insets.right + (int) minWidth + hgap * (colCount - 1), insets.top + insets.bottom + (int) minHeight + vgap * (rowCount - 1));
 		}
 	}
 
@@ -167,13 +167,13 @@ public class ProportionalGridLayout implements LayoutManager2 {
 				for (int x = 0; x < c.gridWidth; x++) {
 					xParts += weightX[c.x + x];
 				}
-				final double gridWidth = (minSize.width - hgap * (c.gridWidth - 1)) / (xParts * colCount / totalWeightX);
+				final double gridWidth = (minSize.width - hgap * (c.gridWidth - 1)) / (xParts / totalWeightX);
 
 				double yParts = 0.0;
 				for (int y = 0; y < c.gridHeight; y++) {
 					yParts += weightY[c.y + y];
 				}
-				final double gridHeight = (minSize.height - vgap * (c.gridHeight - 1)) / (yParts * rowCount / totalWeightY);
+				final double gridHeight = (minSize.height - vgap * (c.gridHeight - 1)) / (yParts / totalWeightY);
 
 				if (gridWidth > minWidth) {
 					minWidth = gridWidth;
@@ -182,7 +182,7 @@ public class ProportionalGridLayout implements LayoutManager2 {
 					minHeight = gridHeight;
 				}
 			}
-			return new Dimension(insets.left + insets.right + (int) (minWidth * colCount) + hgap * (colCount - 1), insets.top + insets.bottom + (int) (minHeight * rowCount) + vgap * (rowCount - 1));
+			return new Dimension(insets.left + insets.right + (int) minWidth + hgap * (colCount - 1), insets.top + insets.bottom + (int) minHeight + vgap * (rowCount - 1));
 		}
 	}
 
