@@ -16,15 +16,13 @@
  */
 package fr.bmj.bmjc.exe;
 
-import java.io.File;
-
 import fr.bmj.bmjc.dataaccess.impl.db.DataAccessDataBase;
 import fr.bmj.bmjc.gui.UIMainWindow;
 
 public class Main {
 
 	public static void main(final String[] args) throws Exception {
-		new UIMainWindow(System.getProperty("database.name"), new DataAccessDataBase(new File(System.getProperty("database.path"))));
+		new UIMainWindow(new DataAccessDataBase());
 	}
 
 }

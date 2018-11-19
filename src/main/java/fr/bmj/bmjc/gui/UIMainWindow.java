@@ -90,8 +90,8 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private static final int WAITING_DIALOG_HEIGHT = 60;
 	private final JDialogWithProgress waitingDialog;
 
-	public UIMainWindow(final String databaseName, final DataAccess dataAccess) {
-		super("Breizh Mahjong Score: " + databaseName);
+	public UIMainWindow(final DataAccess dataAccess) {
+		super("Breizh Mahjong Recorder");
 
 		this.dataAccess = dataAccess;
 		dataAccess.initialize();

@@ -43,20 +43,20 @@ import fr.bmj.bmjc.enums.EnumSortingMode;
 
 public class DataAccessDataBase implements DataAccess {
 
-	private final File dataBaseFile;
+	private static final String DATABASE_NAME = "DataBase";
 	private Connection dataBaseConnection;
 
 	private DataAccessManagePlayer dataAccessManagePlayer;
 	private DataAccessRCR dataAccessRCR;
 	private DataAccessMCR dataAccessMCR;
 
-	public DataAccessDataBase(final File dataBaseFile) {
-		this.dataBaseFile = dataBaseFile;
+	public DataAccessDataBase() {
 	}
 
 	@Override
 	public void initialize() {
 		try {
+			final File dataBaseFile = new File(DATABASE_NAME);
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 			if (dataBaseFile.exists() && dataBaseFile.isDirectory()) {
 				dataBaseConnection = DriverManager.getConnection("jdbc:derby:" + dataBaseFile.getAbsolutePath());
