@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 import fr.bmj.bmjc.data.game.Tournament;
@@ -91,7 +92,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 
 				addTournamentC.x = 0;
 				addTournamentC.gridWidth = 1;
-				addTournamentPanel.add(new JLabel("Nom: ", JLabel.RIGHT), addTournamentC);
+				addTournamentPanel.add(new JLabel("Nom: ", SwingConstants.RIGHT), addTournamentC);
 				textNewTournamentName = new JTextField();
 				addTournamentC.x = 1;
 				addTournamentC.gridWidth = 3;
@@ -115,7 +116,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 
 				modifyTournamentC.y = 0;
 				modifyTournamentC.x = 0;
-				modifyTournamentPanel.add(new JLabel("Tournoi: ", JLabel.RIGHT), modifyTournamentC);
+				modifyTournamentPanel.add(new JLabel("Tournoi: ", SwingConstants.RIGHT), modifyTournamentC);
 				comboBoxTournament = new JComboBox<String>();
 				modifyTournamentC.x = 1;
 				modifyTournamentC.gridWidth = 3;
@@ -130,7 +131,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 				modifyTournamentC.y = 1;
 				modifyTournamentC.x = 0;
 				modifyTournamentC.gridWidth = 1;
-				modifyTournamentPanel.add(new JLabel("Nom: ", JLabel.RIGHT), modifyTournamentC);
+				modifyTournamentPanel.add(new JLabel("Nom: ", SwingConstants.RIGHT), modifyTournamentC);
 				textModifyTournamentName = new JTextField();
 				modifyTournamentC.x = 1;
 				modifyTournamentC.gridWidth = 3;
@@ -158,7 +159,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 
 			deleteGameC.y = 0;
 			deleteGameC.x = 0;
-			gamePanel.add(new JLabel("Tournoi: ", JLabel.RIGHT), deleteGameC);
+			gamePanel.add(new JLabel("Tournoi: ", SwingConstants.RIGHT), deleteGameC);
 			comboBoxGameTournament = new JComboBox<String>();
 			deleteGameC.x = 1;
 			deleteGameC.gridWidth = 5;
@@ -167,26 +168,26 @@ public class UITabPanelRCRManage extends UITabPanel {
 			deleteGameC.y = 1;
 			deleteGameC.x = 0;
 			deleteGameC.gridWidth = 1;
-			gamePanel.add(new JLabel("Année: ", JLabel.RIGHT), deleteGameC);
+			gamePanel.add(new JLabel("Année: ", SwingConstants.RIGHT), deleteGameC);
 			comboBoxYear = new JComboBox<Integer>();
 			deleteGameC.x = 1;
 			gamePanel.add(comboBoxYear, deleteGameC);
 
 			deleteGameC.x = 2;
-			gamePanel.add(new JLabel("Mois: ", JLabel.RIGHT), deleteGameC);
+			gamePanel.add(new JLabel("Mois: ", SwingConstants.RIGHT), deleteGameC);
 			comboBoxMonth = new JComboBox<String>();
 			deleteGameC.x = 3;
 			gamePanel.add(comboBoxMonth, deleteGameC);
 
 			deleteGameC.x = 4;
-			gamePanel.add(new JLabel("Jour: ", JLabel.RIGHT), deleteGameC);
+			gamePanel.add(new JLabel("Jour: ", SwingConstants.RIGHT), deleteGameC);
 			comboBoxDay = new JComboBox<Integer>();
 			deleteGameC.x = 5;
 			gamePanel.add(comboBoxDay, deleteGameC);
 
 			deleteGameC.y = 2;
 			deleteGameC.x = 0;
-			gamePanel.add(new JLabel("ID: ", JLabel.RIGHT), deleteGameC);
+			gamePanel.add(new JLabel("ID: ", SwingConstants.RIGHT), deleteGameC);
 			comboBoxId = new JComboBox<Integer>();
 			deleteGameC.x = 1;
 			deleteGameC.gridWidth = 3;

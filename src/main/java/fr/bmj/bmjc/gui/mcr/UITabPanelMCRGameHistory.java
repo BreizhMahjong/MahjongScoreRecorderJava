@@ -49,6 +49,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -138,7 +140,7 @@ public class UITabPanelMCRGameHistory extends UITabPanel {
 			treeIds.setRootVisible(true);
 			treeIds.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			treeIds.getSelectionModel().addTreeSelectionListener((final TreeSelectionEvent e) -> selectGame());
-			final JScrollPane scrollList = new JScrollPane(treeIds, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			final JScrollPane scrollList = new JScrollPane(treeIds, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			c.gridy = 1;
 			c.gridx = 0;
 			c.gridwidth = 2;
@@ -161,13 +163,13 @@ public class UITabPanelMCRGameHistory extends UITabPanel {
 			{
 				constraints.gridy = 0;
 				constraints.gridx = 0;
-				final JLabel labelTitleDate = new JLabel("Date : ", JLabel.RIGHT);
+				final JLabel labelTitleDate = new JLabel("Date : ", SwingConstants.RIGHT);
 				labelTitleDate.setPreferredSize(labelSizes[0]);
 				centerPanel.add(labelTitleDate, constraints);
 
 				constraints.gridx = 1;
 				constraints.gridwidth = 2;
-				labelDate = new JLabel("", JLabel.LEFT);
+				labelDate = new JLabel("", SwingConstants.LEFT);
 				labelDate.setPreferredSize(new Dimension(COLUMN_WIDTH[1] + COLUMN_WIDTH[2], LABEL_HEIGHT));
 				centerPanel.add(labelDate, constraints);
 			}
@@ -176,25 +178,25 @@ public class UITabPanelMCRGameHistory extends UITabPanel {
 				constraints.gridy = 1;
 				constraints.gridx = 0;
 				constraints.gridwidth = 1;
-				final JLabel labelTitleRanking = new JLabel("#", JLabel.CENTER);
+				final JLabel labelTitleRanking = new JLabel("#", SwingConstants.CENTER);
 				labelTitleRanking.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 				labelTitleRanking.setPreferredSize(labelSizes[0]);
 				centerPanel.add(labelTitleRanking, constraints);
 
 				constraints.gridx = 1;
-				final JLabel labelTitleName = new JLabel("Nom du joueur", JLabel.CENTER);
+				final JLabel labelTitleName = new JLabel("Nom du joueur", SwingConstants.CENTER);
 				labelTitleName.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 				labelTitleName.setPreferredSize(labelSizes[1]);
 				centerPanel.add(labelTitleName, constraints);
 
 				constraints.gridx = 2;
-				final JLabel labelTitleGameScore = new JLabel("Score", JLabel.CENTER);
+				final JLabel labelTitleGameScore = new JLabel("Score", SwingConstants.CENTER);
 				labelTitleGameScore.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 				labelTitleGameScore.setPreferredSize(labelSizes[2]);
 				centerPanel.add(labelTitleGameScore, constraints);
 
 				constraints.gridx = 3;
-				final JLabel labelTitleScore = new JLabel("Score final", JLabel.CENTER);
+				final JLabel labelTitleScore = new JLabel("Score final", SwingConstants.CENTER);
 				labelTitleScore.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 				labelTitleScore.setPreferredSize(labelSizes[3]);
 				centerPanel.add(labelTitleScore, constraints);
@@ -206,7 +208,7 @@ public class UITabPanelMCRGameHistory extends UITabPanel {
 					constraints.gridy = playerIndex + 2;
 					for (int columnIndex = 0; columnIndex < NUMBER_OF_COLUMNS; columnIndex++) {
 						constraints.gridx = columnIndex;
-						labelGameInfos[playerIndex][columnIndex] = new JLabel("", JLabel.CENTER);
+						labelGameInfos[playerIndex][columnIndex] = new JLabel("", SwingConstants.CENTER);
 						labelGameInfos[playerIndex][columnIndex].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 						labelGameInfos[playerIndex][columnIndex].setPreferredSize(labelSizes[columnIndex]);
 						centerPanel.add(labelGameInfos[playerIndex][columnIndex], constraints);

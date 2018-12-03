@@ -217,7 +217,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
-				comboTrimester.setSelectedIndex(LocalDate.now().get(ChronoField.MONTH_OF_YEAR) / 3);
+				comboTrimester.setSelectedIndex((LocalDate.now().get(ChronoField.MONTH_OF_YEAR) - 1) / 3);
 				c.x = 5;
 				panelNorth.add(comboTrimester, c);
 

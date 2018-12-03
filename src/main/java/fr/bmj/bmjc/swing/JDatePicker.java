@@ -47,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -148,7 +149,7 @@ public class JDatePicker extends JDialog {
 		final String weekStrings[] = Arrays.copyOfRange(dfs.getShortWeekdays(), 1, 8);
 		for (int w = 0; w < 7; w++) {
 			final int weekDay = (this.firstDayOfWeek + w - 1) % 7;
-			final JLabel weekLabel = new JLabel(weekStrings[weekDay], JLabel.CENTER);
+			final JLabel weekLabel = new JLabel(weekStrings[weekDay], SwingConstants.CENTER);
 			weekLabel.setPreferredSize(DATE_CASE_SIZE);
 			weekLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			centerPanel.add(weekLabel);
@@ -210,7 +211,7 @@ public class JDatePicker extends JDialog {
 		private int date;
 
 		public DateLabel() {
-			super("", JLabel.CENTER);
+			super("", SwingConstants.CENTER);
 			setOpaque(true);
 			setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		}

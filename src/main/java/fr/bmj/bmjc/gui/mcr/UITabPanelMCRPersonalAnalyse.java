@@ -28,6 +28,8 @@ import java.awt.event.ComponentEvent;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +39,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -145,14 +148,14 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 			{
 				c.y = 0;
 				c.x = 0;
-				panelNorth.add(new JLabel("Nom du joueur :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Nom du joueur :", SwingConstants.RIGHT), c);
 				comboPlayerNames = new JComboBox<String>();
 				comboPlayerNames.setEditable(false);
 				c.x = 1;
 				panelNorth.add(comboPlayerNames, c);
 
 				c.x = 2;
-				panelNorth.add(new JLabel("Tournoi :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Tournoi :", SwingConstants.RIGHT), c);
 				comboTournament = new JComboBox<String>();
 				comboTournament.setEditable(false);
 				c.x = 3;
@@ -161,7 +164,7 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 
 				c.x = 6;
 				c.gridWidth = 1;
-				panelNorth.add(new JLabel("Score :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Score :", SwingConstants.RIGHT), c);
 				scoreModes = new EnumScoreMode[] {
 					EnumScoreMode.FINAL_SCORE, EnumScoreMode.GAME_SCORE
 				};
@@ -179,7 +182,7 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 			{
 				c.y = 1;
 				c.x = 0;
-				panelNorth.add(new JLabel("Période :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = EnumPeriodMode.values();
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -192,25 +195,25 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 				panelNorth.add(comboPeriodMode, c);
 
 				c.x = 2;
-				panelNorth.add(new JLabel("Année :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Année :", SwingConstants.RIGHT), c);
 				comboYear = new JComboBox<Integer>();
 				comboYear.setEditable(false);
 				c.x = 3;
 				panelNorth.add(comboYear, c);
 
 				c.x = 4;
-				panelNorth.add(new JLabel("Trimestre :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Trimestre :", SwingConstants.RIGHT), c);
 				final String trimesters[] = {
 					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
-				comboTrimester.setSelectedIndex(0);
+				comboTrimester.setSelectedIndex((LocalDate.now().get(ChronoField.MONTH_OF_YEAR) - 1) / 3);
 				c.x = 5;
 				panelNorth.add(comboTrimester, c);
 
 				c.x = 6;
-				panelNorth.add(new JLabel("Mois :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Mois :", SwingConstants.RIGHT), c);
 				final String months[] = new String[12];
 				System.arraycopy(DateFormatSymbols.getInstance(Locale.FRANCE).getMonths(), 0, months, 0, 12);
 				comboMonth = new JComboBox<>(months);
@@ -248,31 +251,31 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 				panelBasicAnalyze.setBorder(BorderFactory.createLoweredBevelBorder());
 				panelSouth.add(panelBasicAnalyze);
 
-				panelBasicAnalyze.add(new JLabel("Nombre de parties", JLabel.CENTER));
-				panelBasicAnalyze.add(new JLabel("Score max", JLabel.CENTER));
-				panelBasicAnalyze.add(new JLabel("Score total", JLabel.CENTER));
-				panelBasicAnalyze.add(new JLabel("Total max", JLabel.CENTER));
+				panelBasicAnalyze.add(new JLabel("Nombre de parties", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Score max", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Score total", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Total max", SwingConstants.CENTER));
 
-				labelNumberOfGames = new JLabel("", JLabel.CENTER);
+				labelNumberOfGames = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelNumberOfGames);
-				labelMaxScore = new JLabel("", JLabel.CENTER);
+				labelMaxScore = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelMaxScore);
-				labelTotalScore = new JLabel("", JLabel.CENTER);
+				labelTotalScore = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelTotalScore);
-				labelMaxTotal = new JLabel("", JLabel.CENTER);
+				labelMaxTotal = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelMaxTotal);
 
-				panelBasicAnalyze.add(new JLabel("", JLabel.CENTER));
-				panelBasicAnalyze.add(new JLabel("Score min", JLabel.CENTER));
-				panelBasicAnalyze.add(new JLabel("Moyenne", JLabel.CENTER));
-				panelBasicAnalyze.add(new JLabel("Total min", JLabel.CENTER));
+				panelBasicAnalyze.add(new JLabel("", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Score min", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Moyenne", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Total min", SwingConstants.CENTER));
 
-				panelBasicAnalyze.add(new JLabel("", JLabel.CENTER));
-				labelMinScore = new JLabel("", JLabel.CENTER);
+				panelBasicAnalyze.add(new JLabel("", SwingConstants.CENTER));
+				labelMinScore = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelMinScore);
-				labelMeanScore = new JLabel("", JLabel.CENTER);
+				labelMeanScore = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelMeanScore);
-				labelMinTotal = new JLabel("", JLabel.CENTER);
+				labelMinTotal = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelMinTotal);
 			}
 
@@ -282,20 +285,20 @@ public class UITabPanelMCRPersonalAnalyse extends UITabPanel {
 				panelPlaceAnalyze.setLayout(new GridLayout(3, 4));
 				panelSouth.add(panelPlaceAnalyze);
 
-				panelPlaceAnalyze.add(new JLabel("1er", JLabel.CENTER));
-				panelPlaceAnalyze.add(new JLabel("2ème", JLabel.CENTER));
-				panelPlaceAnalyze.add(new JLabel("3ème", JLabel.CENTER));
-				panelPlaceAnalyze.add(new JLabel("4ème", JLabel.CENTER));
+				panelPlaceAnalyze.add(new JLabel("1er", SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("2ème", SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("3ème", SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("4ème", SwingConstants.CENTER));
 
 				labelPlaces = new JLabel[4];
 				for (int labelIndex = 0; labelIndex < 4; labelIndex++) {
-					labelPlaces[labelIndex] = new JLabel("", JLabel.CENTER);
+					labelPlaces[labelIndex] = new JLabel("", SwingConstants.CENTER);
 					panelPlaceAnalyze.add(labelPlaces[labelIndex]);
 				}
 
 				labelPlacesPercent = new JLabel[4];
 				for (int labelIndex = 0; labelIndex < 4; labelIndex++) {
-					labelPlacesPercent[labelIndex] = new JLabel("", JLabel.CENTER);
+					labelPlacesPercent[labelIndex] = new JLabel("", SwingConstants.CENTER);
 					panelPlaceAnalyze.add(labelPlacesPercent[labelIndex]);
 				}
 			}

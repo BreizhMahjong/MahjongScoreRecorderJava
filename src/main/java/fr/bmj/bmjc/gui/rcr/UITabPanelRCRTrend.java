@@ -52,6 +52,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -144,7 +146,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 			{
 				c.y = 0;
 				c.x = 2;
-				panelNorth.add(new JLabel("Tournoi :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Tournoi :", SwingConstants.RIGHT), c);
 				comboTournament = new JComboBox<String>();
 				comboTournament.setEditable(false);
 				c.x = 3;
@@ -154,7 +156,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				c.y = 1;
 				c.x = 0;
 				c.gridWidth = 1;
-				panelNorth.add(new JLabel("Période :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = EnumPeriodMode.values();
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -167,14 +169,14 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				panelNorth.add(comboPeriodMode, c);
 
 				c.x = 2;
-				panelNorth.add(new JLabel("Année :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Année :", SwingConstants.RIGHT), c);
 				comboYear = new JComboBox<Integer>();
 				comboYear.setEditable(false);
 				c.x = 3;
 				panelNorth.add(comboYear, c);
 
 				c.x = 4;
-				panelNorth.add(new JLabel("Trimestre :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Trimestre :", SwingConstants.RIGHT), c);
 				final String trimesters[] = {
 					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
 				};
@@ -185,7 +187,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				panelNorth.add(comboTrimester, c);
 
 				c.x = 6;
-				panelNorth.add(new JLabel("Mois :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Mois :", SwingConstants.RIGHT), c);
 				final String months[] = new String[12];
 				System.arraycopy(DateFormatSymbols.getInstance(Locale.FRANCE).getMonths(), 0, months, 0, 12);
 				comboMonth = new JComboBox<>(months);
@@ -230,7 +232,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 					final JPanel panelPlayerSelectSupport = new JPanel(new GridBagLayout());
 					final GridBagConstraints constraintsSupport = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 					panelPlayerSelectSupport.add(panelPlayerSelect, constraintsSupport);
-					final JScrollPane scrollPlayerSelect = new JScrollPane(panelPlayerSelectSupport, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+					final JScrollPane scrollPlayerSelect = new JScrollPane(panelPlayerSelectSupport, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 					scrollPlayerSelect.getVerticalScrollBar().setUnitIncrement(16);
 					panelCenterWest.add(scrollPlayerSelect, BorderLayout.CENTER);
 				}

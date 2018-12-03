@@ -30,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 
 public class JDialogWithProgress extends JDialog implements ComponentListener {
 
@@ -42,11 +43,11 @@ public class JDialogWithProgress extends JDialog implements ComponentListener {
 	public JDialogWithProgress(final Dialog owner, final String title, final boolean modal, final GraphicsConfiguration gc) {
 		super(owner, title, modal, gc);
 		super.getContentPane().setLayout(new BorderLayout());
-		textLabel = new JLabel("Reading. Please wait...", JLabel.CENTER);
+		textLabel = new JLabel("Reading. Please wait...", SwingConstants.CENTER);
 		textLabel.setOpaque(true);
 		textLabel.setBackground(Color.WHITE);
 		textLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
+		progressBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 		super.getContentPane().add(textLabel, BorderLayout.CENTER);
@@ -76,11 +77,11 @@ public class JDialogWithProgress extends JDialog implements ComponentListener {
 	public JDialogWithProgress(final Frame owner, final String title, final boolean modal, final GraphicsConfiguration gc) {
 		super(owner, title, modal, gc);
 		super.getContentPane().setLayout(new BorderLayout());
-		textLabel = new JLabel("Reading. Please wait...", JLabel.CENTER);
+		textLabel = new JLabel("Reading. Please wait...", SwingConstants.CENTER);
 		textLabel.setOpaque(true);
 		textLabel.setBackground(Color.WHITE);
 		textLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
+		progressBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 		super.getContentPane().add(textLabel, BorderLayout.CENTER);
@@ -110,11 +111,11 @@ public class JDialogWithProgress extends JDialog implements ComponentListener {
 	public JDialogWithProgress(final Window owner, final String title, final ModalityType modal, final GraphicsConfiguration gc) {
 		super(owner, title, modal, gc);
 		super.getContentPane().setLayout(new BorderLayout());
-		textLabel = new JLabel("Reading. Please wait...", JLabel.CENTER);
+		textLabel = new JLabel("Reading. Please wait...", SwingConstants.CENTER);
 		textLabel.setOpaque(true);
 		textLabel.setBackground(Color.WHITE);
 		textLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
+		progressBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 		super.getContentPane().add(textLabel, BorderLayout.CENTER);

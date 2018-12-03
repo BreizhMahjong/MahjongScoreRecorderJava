@@ -32,6 +32,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.text.DateFormatSymbols;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +45,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 
 import fr.bmj.bmjc.data.game.ComparatorDescendingTournamentID;
 import fr.bmj.bmjc.data.game.Tournament;
@@ -133,7 +137,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 			{
 				c.y = 0;
 				c.x = 0;
-				panelNorth.add(new JLabel("Classement :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Classement :", SwingConstants.RIGHT), c);
 				rankingModes = EnumRankingMode.values();
 				final String rankingModeStrings[] = new String[rankingModes.length];
 				for (int index = 0; index < rankingModes.length; index++) {
@@ -146,7 +150,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 				panelNorth.add(comboRankingMode, c);
 
 				c.x = 2;
-				panelNorth.add(new JLabel("Tournoi :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Tournoi :", SwingConstants.RIGHT), c);
 				comboTournament = new JComboBox<String>();
 				comboTournament.setEditable(false);
 				c.x = 3;
@@ -155,7 +159,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 
 				c.x = 6;
 				c.gridWidth = 1;
-				panelNorth.add(new JLabel("Ordre :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Ordre :", SwingConstants.RIGHT), c);
 				sortingModes = EnumSortingMode.values();
 				final String sortingModeStrings[] = new String[sortingModes.length];
 				for (int index = 0; index < sortingModes.length; index++) {
@@ -169,7 +173,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 
 				c.y = 1;
 				c.x = 0;
-				panelNorth.add(new JLabel("Période :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = EnumPeriodMode.values();
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -182,25 +186,25 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 				panelNorth.add(comboPeriodMode, c);
 
 				c.x = 2;
-				panelNorth.add(new JLabel("Année :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Année :", SwingConstants.RIGHT), c);
 				comboYear = new JComboBox<Integer>();
 				comboYear.setEditable(false);
 				c.x = 3;
 				panelNorth.add(comboYear, c);
 
 				c.x = 4;
-				panelNorth.add(new JLabel("Trimestre :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Trimestre :", SwingConstants.RIGHT), c);
 				final String trimesters[] = {
 					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
-				comboTrimester.setSelectedIndex(0);
+				comboTrimester.setSelectedIndex((LocalDate.now().get(ChronoField.MONTH_OF_YEAR) - 1) / 3);
 				c.x = 5;
 				panelNorth.add(comboTrimester, c);
 
 				c.x = 6;
-				panelNorth.add(new JLabel("Mois :", JLabel.RIGHT), c);
+				panelNorth.add(new JLabel("Mois :", SwingConstants.RIGHT), c);
 				final String months[] = new String[12];
 				System.arraycopy(DateFormatSymbols.getInstance(Locale.FRANCE).getMonths(), 0, months, 0, 12);
 				comboMonth = new JComboBox<>(months);
@@ -229,7 +233,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 				for (int columnIndex = 0; columnIndex < NB_COLUMNS; columnIndex++) {
 					titleConstraints.gridx = columnIndex;
 					labelSizes[columnIndex] = new Dimension(COLUMN_WIDTH[columnIndex], LABEL_HEIGHT);
-					labelTitles[columnIndex] = new JLabel("", JLabel.CENTER);
+					labelTitles[columnIndex] = new JLabel("", SwingConstants.CENTER);
 					labelTitles[columnIndex].setPreferredSize(labelSizes[columnIndex]);
 					panelCenterTitle.add(labelTitles[columnIndex], titleConstraints);
 				}
@@ -260,7 +264,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 				panelRanking.setLayout(new GridBagLayout());
 				panelCenterSupport.add(panelRanking, constraints);
 
-				scrollRanking = new JScrollPane(panelCenterSupport, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				scrollRanking = new JScrollPane(panelCenterSupport, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 				scrollRanking.getVerticalScrollBar().setUnitIncrement(LABEL_HEIGHT + 2);
 				panelCenter.add(scrollRanking, BorderLayout.CENTER);
 			}
@@ -526,7 +530,7 @@ public class UITabPanelMCRClubRanking extends UITabPanel {
 
 					constraints.gridy = index;
 					for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
-						labels[labelIndex] = new JLabel(data[index][labelIndex], labelIndex == 1 ? JLabel.LEADING : JLabel.CENTER);
+						labels[labelIndex] = new JLabel(data[index][labelIndex], labelIndex == 1 ? SwingConstants.LEADING : SwingConstants.CENTER);
 						constraints.gridx = labelIndex;
 						labels[labelIndex].setPreferredSize(labelSizes[labelIndex]);
 						panelRanking.add(labels[labelIndex], constraints);
