@@ -444,6 +444,8 @@ public class UITabPanelMCRGameHistory extends UITabPanel {
 							final MCRScore score = game.getScores().get(index);
 							writer.write(Integer.toString(score.getPlace()));
 							writer.write(SEPARATOR);
+							writer.write(Integer.toString(score.getPlayerId()));
+							writer.write(SEPARATOR);
 							writer.write(score.getPlayerName());
 							writer.write(SEPARATOR);
 							writer.write(Integer.toString(score.getGameScore()));
@@ -455,6 +457,8 @@ public class UITabPanelMCRGameHistory extends UITabPanel {
 						for (int index = 0; index < game.getScores().size(); index++) {
 							final MCRScore score = game.getScores().get(index);
 							writer.write(Integer.toString(score.getPlace()));
+							writer.write(SEPARATOR);
+							writer.write(Integer.toString(score.getPlayerId()));
 							writer.write(SEPARATOR);
 							writer.write(score.getDisplayName());
 							writer.write(SEPARATOR);

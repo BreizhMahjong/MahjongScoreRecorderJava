@@ -493,6 +493,8 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 							final RCRScore score = game.getScores().get(index);
 							writer.write(Integer.toString(score.getPlace()));
 							writer.write(SEPARATOR);
+							writer.write(Integer.toString(score.getPlayerId()));
+							writer.write(SEPARATOR);
 							writer.write(score.getPlayerName());
 							writer.write(SEPARATOR);
 							writer.write(Integer.toString(score.getGameScore()));
@@ -506,6 +508,8 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 						for (int index = 0; index < game.getScores().size(); index++) {
 							final RCRScore score = game.getScores().get(index);
 							writer.write(Integer.toString(score.getPlace()));
+							writer.write(SEPARATOR);
+							writer.write(Integer.toString(score.getPlayerId()));
 							writer.write(SEPARATOR);
 							writer.write(score.getDisplayName());
 							writer.write(SEPARATOR);
