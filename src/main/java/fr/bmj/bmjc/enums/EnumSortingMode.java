@@ -17,16 +17,16 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumSortingMode {
-	DESCENDING {
-		@Override
-		public String toString() {
-			return "Descendant";
-		}
-	},
-	ASCENDING {
-		@Override
-		public String toString() {
-			return "Ascendant";
-		}
+	DESCENDING("Descendant"), ASCENDING("Ascendant");
+
+	private final String display;
+
+	private EnumSortingMode(final String display) {
+		this.display = display;
+	}
+
+	@Override
+	public String toString() {
+		return display;
 	}
 }

@@ -17,30 +17,16 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumPeriodMode {
+	ALL("Tout"), YEAR("Année"), TRIMESTER("Trimestre"), MONTH("Mois");
 
-	ALL {
-		@Override
-		public String toString() {
-			return "Tout";
-		}
-	},
-	YEAR {
-		@Override
-		public String toString() {
-			return "Année";
-		}
-	},
-	TRIMESTER {
-		@Override
-		public String toString() {
-			return "Trimestre";
-		}
-	},
-	MONTH {
-		@Override
-		public String toString() {
-			return "Mois";
-		}
+	private final String display;
+
+	private EnumPeriodMode(final String display) {
+		this.display = display;
 	}
 
+	@Override
+	public String toString() {
+		return display;
+	}
 }

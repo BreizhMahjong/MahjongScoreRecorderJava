@@ -14,19 +14,21 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.enums;
+package fr.bmj.bmjc.data.stat.rcr;
 
-public enum EnumScoreMode {
-	FINAL_SCORE("Score"), GAME_SCORE("Stack");
+import java.text.DecimalFormat;
 
-	private final String display;
+public class RCRTotalScoreFieldAccessWinRate implements RCRTotalScoreFieldAccess {
+	private final DecimalFormat format;
 
-	private EnumScoreMode(final String display) {
-		this.display = display;
+	public RCRTotalScoreFieldAccessWinRate() {
+		format = new DecimalFormat("#00");
 	}
 
 	@Override
-	public String toString() {
-		return display;
+	public String getDataString(final RCRTotalScore data) {
+		final String percent = format.format(data.totalScore);
+		return percent.substring(0, percent.length() - 1) + "," + percent.substring(percent.length() - 1) + "%";
 	}
+
 }

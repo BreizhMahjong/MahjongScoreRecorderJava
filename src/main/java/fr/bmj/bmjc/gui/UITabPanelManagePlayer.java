@@ -23,6 +23,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 import fr.bmj.bmjc.data.game.ComparatorAscendingPlayerDisplayName;
@@ -85,7 +91,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 				addPlayerC.x = 0;
 				addPlayerC.gridWidth = 1;
-				addPlayerPanel.add(new JLabel("Nom: ", JLabel.RIGHT), addPlayerC);
+				addPlayerPanel.add(new JLabel("Nom: ", SwingConstants.RIGHT), addPlayerC);
 				textNewPlayerName = new JTextField();
 				addPlayerC.x = 1;
 				addPlayerC.gridWidth = 2;
@@ -93,7 +99,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 				addPlayerC.x = 3;
 				addPlayerC.gridWidth = 1;
-				addPlayerPanel.add(new JLabel("Pseudo: ", JLabel.RIGHT), addPlayerC);
+				addPlayerPanel.add(new JLabel("Pseudo: ", SwingConstants.RIGHT), addPlayerC);
 				textNewPlayerDisplayName = new JTextField();
 				addPlayerC.x = 4;
 				addPlayerC.gridWidth = 2;
@@ -119,7 +125,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				modifyPlayerC.y = 0;
 				modifyPlayerC.x = 0;
 				modifyPlayerC.gridWidth = 1;
-				modifyPlayerPanel.add(new JLabel("Joueur: ", JLabel.RIGHT), modifyPlayerC);
+				modifyPlayerPanel.add(new JLabel("Joueur: ", SwingConstants.RIGHT), modifyPlayerC);
 				comboBoxPlayer = new JComboBox<String>();
 				modifyPlayerC.x = 1;
 				modifyPlayerC.gridWidth = 4;
@@ -139,7 +145,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				modifyPlayerC.y = 1;
 				modifyPlayerC.x = 0;
 				modifyPlayerC.gridWidth = 1;
-				modifyPlayerPanel.add(new JLabel("Nom: ", JLabel.RIGHT), modifyPlayerC);
+				modifyPlayerPanel.add(new JLabel("Nom: ", SwingConstants.RIGHT), modifyPlayerC);
 				textModifyPlayerName = new JTextField();
 				modifyPlayerC.x = 1;
 				modifyPlayerC.gridWidth = 2;
@@ -147,7 +153,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 				modifyPlayerC.x = 3;
 				modifyPlayerC.gridWidth = 1;
-				modifyPlayerPanel.add(new JLabel("Pseudo: ", JLabel.RIGHT), modifyPlayerC);
+				modifyPlayerPanel.add(new JLabel("Pseudo: ", SwingConstants.RIGHT), modifyPlayerC);
 				textModifyPlayerDisplayName = new JTextField();
 				modifyPlayerC.x = 4;
 				modifyPlayerC.gridWidth = 2;
@@ -291,11 +297,48 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 	@Override
 	public boolean canExport() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public void export() {
+		final File fileSaveFile = askSaveFileName("Players.csv");
+		if (fileSaveFile != null) {
+			BufferedWriter writer = null;
+			try {
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
+				writer.write("Id");
+				writer.write(SEPARATOR);
+				writer.write("Display Name");
+				writer.write(SEPARATOR);
+				writer.write("Name");
+				writer.write(SEPARATOR);
+				writer.write("Hidden");
+				writer.newLine();
+
+				for (int index = 0; index < listPlayer.size(); index++) {
+					final Player player = listPlayer.get(index);
+					writer.write(Integer.toString(player.getPlayerID()));
+					writer.write(SEPARATOR);
+					writer.write(player.getDisplayName());
+					writer.write(SEPARATOR);
+					writer.write(player.getPlayerName());
+					writer.write(SEPARATOR);
+					writer.write(Boolean.toString(player.isHidden()));
+					writer.newLine();
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
+			} finally {
+				if (writer != null) {
+					try {
+						writer.close();
+					} catch (final Exception e) {
+					}
+				}
+			}
+		}
+
 	}
 
 }

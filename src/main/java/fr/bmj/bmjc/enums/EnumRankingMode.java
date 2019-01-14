@@ -17,52 +17,25 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumRankingMode {
-	TOTAL_SCORE {
-		@Override
-		public String toString() {
-			return "Total";
-		}
-	},
-	FINAL_SCORE {
-		@Override
-		public String toString() {
-			return "Score";
-		}
-	},
-	MEAN_FINAL_SCORE {
-		@Override
-		public String toString() {
-			return "Score moyen";
-		}
-	},
-	GAME_SCORE {
-		@Override
-		public String toString() {
-			return "Stack";
-		}
-	},
-	MEAN_GAME_SCORE {
-		@Override
-		public String toString() {
-			return "Stack moyen";
-		}
-	},
-	MENSUAL_SCORE {
-		@Override
-		public String toString() {
-			return "Total mensuel";
-		}
-	},
-	TRIMESTRIAL_SCORE {
-		@Override
-		public String toString() {
-			return "Total trimestriel";
-		}
-	},
-	ANNUAL_SCORE {
-		@Override
-		public String toString() {
-			return "Total annuel";
-		}
+	TOTAL_SCORE("Total"),
+	FINAL_SCORE("Score"),
+	MEAN_FINAL_SCORE("Score moyen"),
+	GAME_SCORE("Stack"),
+	MEAN_GAME_SCORE("Stack moyen"),
+	WIN_RATE("Taux de victoire"),
+	// POSITIVE_RATE("Taux de positif"),
+	MENSUAL_SCORE("Total mensuel"),
+	TRIMESTRIAL_SCORE("Total trimestriel"),
+	ANNUAL_SCORE("Total annuel");
+
+	private final String display;
+
+	private EnumRankingMode(final String display) {
+		this.display = display;
+	}
+
+	@Override
+	public String toString() {
+		return display;
 	}
 }

@@ -64,6 +64,7 @@ import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessNumberOfGames;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessPlayName;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTotalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTrimester;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessWinRate;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessYear;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
@@ -493,6 +494,13 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 						labelTitles[3].setText("Nombre de parties");
 						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
 						access.add(2, new RCRTotalScoreFieldAccessMeanGameScore());
+						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
+						break;
+					case WIN_RATE:
+						labelTitles[2].setText(rankingMode.toString());
+						labelTitles[3].setText("Nombre de parties");
+						scoreFieldHighlighted = (final RCRTotalScore data) -> false;
+						access.add(2, new RCRTotalScoreFieldAccessWinRate());
 						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case ANNUAL_SCORE:
