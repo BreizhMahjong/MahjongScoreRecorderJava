@@ -61,10 +61,10 @@ import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanFinalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanGameScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMonth;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessNumberOfGames;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessPercentage;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessPlayName;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTotalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTrimester;
-import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessWinRate;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessYear;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
@@ -355,6 +355,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 			case MEAN_FINAL_SCORE:
 			case GAME_SCORE:
 			case MEAN_GAME_SCORE:
+			case WIN_RATE:
+			case POSITIVE_RATE:
 				comboBoxActivated[COMBOBOX_PERIOD] = true;
 				comboPeriodMode.setEnabled(true);
 				break;
@@ -500,7 +502,14 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 						labelTitles[2].setText(rankingMode.toString());
 						labelTitles[3].setText("Nombre de parties");
 						scoreFieldHighlighted = (final RCRTotalScore data) -> false;
-						access.add(2, new RCRTotalScoreFieldAccessWinRate());
+						access.add(2, new RCRTotalScoreFieldAccessPercentage());
+						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
+						break;
+					case POSITIVE_RATE:
+						labelTitles[2].setText(rankingMode.toString());
+						labelTitles[3].setText("Nombre de parties");
+						scoreFieldHighlighted = (final RCRTotalScore data) -> false;
+						access.add(2, new RCRTotalScoreFieldAccessPercentage());
 						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 						break;
 					case ANNUAL_SCORE:

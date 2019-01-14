@@ -18,10 +18,10 @@ package fr.bmj.bmjc.data.stat.rcr;
 
 import java.text.DecimalFormat;
 
-public class RCRTotalScoreFieldAccessWinRate implements RCRTotalScoreFieldAccess {
+public class RCRTotalScoreFieldAccessPercentage implements RCRTotalScoreFieldAccess {
 	private final DecimalFormat format;
 
-	public RCRTotalScoreFieldAccessWinRate() {
+	public RCRTotalScoreFieldAccessPercentage() {
 		format = new DecimalFormat("#00");
 	}
 

@@ -22,8 +22,8 @@ public enum EnumRankingMode {
 	MEAN_FINAL_SCORE("Score moyen"),
 	GAME_SCORE("Stack"),
 	MEAN_GAME_SCORE("Stack moyen"),
-	WIN_RATE("Taux de victoire"),
-	// POSITIVE_RATE("Taux de positif"),
+	WIN_RATE("Taux victoire"),
+	POSITIVE_RATE("Taux positif"),
 	MENSUAL_SCORE("Total mensuel"),
 	TRIMESTRIAL_SCORE("Total trimestriel"),
 	ANNUAL_SCORE("Total annuel");

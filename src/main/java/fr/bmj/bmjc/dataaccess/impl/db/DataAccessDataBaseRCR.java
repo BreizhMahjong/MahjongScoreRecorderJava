@@ -852,6 +852,68 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					}
 				}
 					break;
+				case POSITIVE_RATE: {
+					final Map<String, RCRTotalScore> mapNameScore = new HashMap<String, RCRTotalScore>();
+					{
+						final String querySelectPart = "SELECT player.name, player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
+						final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
+						final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
+						final String queryGroupPart = "GROUP BY player.name, player.display_name ";
+						final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
+						PreparedStatement statement = null;
+						if (periodMode == EnumPeriodMode.ALL) {
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
+							statement.setInt(1, tournament.getId());
+						} else {
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryPeriodPart + queryGroupPart + queryHavingPart);
+							statement.setInt(1, tournament.getId());
+							statement.setDate(2, new Date(calendarFrom.getTimeInMillis()));
+							statement.setDate(3, new Date(calendarTo.getTimeInMillis()));
+						}
+
+						final ResultSet result = statement.executeQuery();
+						while (result.next()) {
+							final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
+							total.numberOfGame = result.getInt(3);
+							mapNameScore.put(total.displayName, total);
+						}
+						result.close();
+						statement.close();
+					}
+					{
+						final String querySelectPart = "SELECT player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
+						final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? AND rcr_game_score.final_score>0 ";
+						final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
+						final String queryGroupPart = "GROUP BY player.display_name ";
+						final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
+						PreparedStatement statement = null;
+						if (periodMode == EnumPeriodMode.ALL) {
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
+							statement.setInt(1, tournament.getId());
+						} else {
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryPeriodPart + queryGroupPart + queryHavingPart);
+							statement.setInt(1, tournament.getId());
+							statement.setDate(2, new Date(calendarFrom.getTimeInMillis()));
+							statement.setDate(3, new Date(calendarTo.getTimeInMillis()));
+						}
+
+						final ResultSet result = statement.executeQuery();
+						while (result.next()) {
+							final String name = result.getString(1);
+							final RCRTotalScore total = mapNameScore.get(name);
+							total.totalScore = Math.round(result.getInt(2) * 1000.0f / total.numberOfGame);
+						}
+						result.close();
+						statement.close();
+					}
+					rankingScores.addAll(mapNameScore.values());
+					if (sortingMode == EnumSortingMode.DESCENDING) {
+						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> -Integer.compare(o1.totalScore, o2.totalScore));
+					} else {
+						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> Integer.compare(o1.totalScore, o2.totalScore));
+					}
+				}
+					break;
 				case ANNUAL_SCORE: {
 					final String querySelectPart = "SELECT name, display_name, y, SUM(final_score) AS total, COUNT(*) AS nb_games FROM ";
 					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(rcr_game_id.date) as y, rcr_game_score.final_score FROM player, rcr_game_id, rcr_game_score WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?) AS year_score ";
