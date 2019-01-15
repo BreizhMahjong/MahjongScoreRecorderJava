@@ -49,7 +49,6 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 	private static final int MINIMUM_GAME_MONTH = 2;
 	private static final int MINIMUM_GAME_TRIMESTER = 5;
 	private static final int MINIMUM_GAME_YEAR = 20;
-	private static final int MINIMUM_GAME_ALL = 20;
 
 	private boolean useMinimumGame;
 
@@ -244,7 +243,6 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		try {
 			final String idTableQuery = "INSERT INTO rcr_game_id(id, rcr_tournament_id, date, nb_players, nb_rounds) VALUES(?, ?, ?, ?, ?)";
 			final PreparedStatement idTableStatement = dataBaseConnection.prepareStatement(idTableQuery);
-
 			idTableStatement.setInt(1, newId);
 			idTableStatement.setInt(2, game.getTournamentId());
 			idTableStatement.setDate(3, date);
@@ -590,12 +588,38 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		return dataPackage;
 	}
 
+	private static final float MILLISECONDS_PER_YEAR = 31557600000.0f;
+
+	private float getNumberOfYearOfAllGamePeriod(final Tournament tournament) {
+		Date firstDate = null;
+		Date lastDate = null;
+		try {
+			final PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT MIN(date), MAX(date) FROM rcr_game_id WHERE rcr_tournament_id=?");
+			statement.setInt(1, tournament.getId());
+			final ResultSet result = statement.executeQuery();
+			if (result.next()) {
+				firstDate = result.getDate(1);
+				lastDate = result.getDate(2);
+			}
+			result.close();
+			statement.close();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		if (firstDate != null && lastDate != null) {
+			return (lastDate.getTime() - firstDate.getTime()) / MILLISECONDS_PER_YEAR;
+		} else {
+			return 0.0f;
+		}
+	}
+
 	@Override
 	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
 		final int year, final int trimester, final int month) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
-		int minimumGames = MINIMUM_GAME_ALL;
+		int minimumGames = 0;
 		switch (periodMode) {
 			case MONTH:
 				calendarFrom.set(Calendar.YEAR, year);
@@ -637,22 +661,24 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				minimumGames = MINIMUM_GAME_YEAR;
 				break;
 			case ALL:
+				if (useMinimumGame) {
+					minimumGames = Math.round(MINIMUM_GAME_YEAR * getNumberOfYearOfAllGamePeriod(tournament));
+				}
 				break;
 			default:
 				break;
 		}
-		minimumGames = useMinimumGame ? minimumGames : 0;
 
 		final List<RCRTotalScore> rankingScores = new ArrayList<>();
 		try {
 			switch (rankingMode) {
 				case TOTAL_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, SUM(rcr_game_score.final_score) AS total, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
-					final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-					final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-					final String queryGroupPart = "GROUP BY player.name, player.display_name ";
-					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY total DESC" : "ORDER BY total ASC";
+					final String querySelectPart = "SELECT player.name, player.display_name, SUM(rcr_game_score.final_score) AS total, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+					final String queryGroupPart = " GROUP BY player.name, player.display_name";
+					final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY total DESC" : " ORDER BY total ASC";
 					PreparedStatement statement = null;
 					if (periodMode == EnumPeriodMode.ALL) {
 						statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart + queryOrderPart);
@@ -676,11 +702,11 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case FINAL_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.final_score, rcr_game_score.uma_score FROM player, rcr_game_id, rcr_game_score ";
-					final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-					final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY rcr_game_score.final_score DESC" : "ORDER BY rcr_game_score.final_score ASC";
-					final String queryFetchPart = "FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
+					final String querySelectPart = " SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.final_score, rcr_game_score.uma_score FROM player, rcr_game_id, rcr_game_score";
+					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY rcr_game_score.final_score DESC" : " ORDER BY rcr_game_score.final_score ASC";
+					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					PreparedStatement statement = null;
 					if (periodMode == EnumPeriodMode.ALL) {
 						statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryOrderPart + queryFetchPart);
@@ -704,12 +730,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case MEAN_FINAL_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, AVG(rcr_game_score.final_score) AS mean, STDDEV_POP(rcr_game_score.final_score) as stddev, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
-					final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-					final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-					final String queryGroupPart = "GROUP BY player.name, player.display_name ";
-					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY mean DESC" : "ORDER BY mean ASC";
+					final String querySelectPart = "SELECT player.name, player.display_name, AVG(rcr_game_score.final_score) AS mean, STDDEV_POP(rcr_game_score.final_score) as stddev, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+					final String queryGroupPart = " GROUP BY player.name, player.display_name";
+					final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY mean DESC" : " ORDER BY mean ASC";
 					PreparedStatement statement = null;
 					if (periodMode == EnumPeriodMode.ALL) {
 						statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart + queryOrderPart);
@@ -734,11 +760,11 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case GAME_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.game_score FROM player, rcr_game_id, rcr_game_score ";
-					final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-					final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY rcr_game_score.game_score DESC" : "ORDER BY rcr_game_score.game_score ASC";
-					final String queryFetchPart = "FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
+					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.game_score FROM player, rcr_game_id, rcr_game_score";
+					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY rcr_game_score.game_score DESC" : " ORDER BY rcr_game_score.game_score ASC";
+					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					PreparedStatement statement = null;
 					if (periodMode == EnumPeriodMode.ALL) {
 						statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryOrderPart + queryFetchPart);
@@ -761,12 +787,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case MEAN_GAME_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, AVG(rcr_game_score.game_score) AS mean, STDDEV_POP(rcr_game_score.game_score) as stddev, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
-					final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-					final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-					final String queryGroupPart = "GROUP BY player.name, player.display_name ";
-					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY mean DESC" : "ORDER BY mean ASC";
+					final String querySelectPart = " SELECT player.name, player.display_name, AVG(rcr_game_score.game_score) AS mean, STDDEV_POP(rcr_game_score.game_score) as stddev, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+					final String queryGroupPart = " GROUP BY player.name, player.display_name";
+					final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY mean DESC" : " ORDER BY mean ASC";
 					PreparedStatement statement = null;
 					if (periodMode == EnumPeriodMode.ALL) {
 						statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart + queryOrderPart);
@@ -793,11 +819,11 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				case WIN_RATE: {
 					final Map<String, RCRTotalScore> mapNameScore = new HashMap<String, RCRTotalScore>();
 					{
-						final String querySelectPart = "SELECT player.name, player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
-						final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-						final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-						final String queryGroupPart = "GROUP BY player.name, player.display_name ";
-						final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
+						final String querySelectPart = "SELECT player.name, player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+						final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+						final String queryGroupPart = " GROUP BY player.name, player.display_name";
+						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
 							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
@@ -819,11 +845,11 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						statement.close();
 					}
 					{
-						final String querySelectPart = "SELECT player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
-						final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? AND rcr_game_score.ranking=1 ";
-						final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-						final String queryGroupPart = "GROUP BY player.display_name ";
-						final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
+						final String querySelectPart = "SELECT player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+						final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? AND rcr_game_score.ranking=1";
+						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+						final String queryGroupPart = " GROUP BY player.display_name";
+						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
 							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
@@ -855,11 +881,11 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				case POSITIVE_RATE: {
 					final Map<String, RCRTotalScore> mapNameScore = new HashMap<String, RCRTotalScore>();
 					{
-						final String querySelectPart = "SELECT player.name, player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
-						final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-						final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-						final String queryGroupPart = "GROUP BY player.name, player.display_name ";
-						final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
+						final String querySelectPart = "SELECT player.name, player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+						final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+						final String queryGroupPart = " GROUP BY player.name, player.display_name";
+						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
 							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
@@ -881,11 +907,11 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						statement.close();
 					}
 					{
-						final String querySelectPart = "SELECT player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score ";
-						final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? AND rcr_game_score.final_score>0 ";
-						final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-						final String queryGroupPart = "GROUP BY player.display_name ";
-						final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(minimumGames) + " ";
+						final String querySelectPart = "SELECT player.display_name, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+						final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? AND rcr_game_score.final_score>0";
+						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+						final String queryGroupPart = " GROUP BY player.display_name";
+						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
 							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
@@ -915,12 +941,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case ANNUAL_SCORE: {
-					final String querySelectPart = "SELECT name, display_name, y, SUM(final_score) AS total, COUNT(*) AS nb_games FROM ";
-					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(rcr_game_id.date) as y, rcr_game_score.final_score FROM player, rcr_game_id, rcr_game_score WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?) AS year_score ";
-					final String queryGroupPart = "GROUP BY name, display_name, y ";
-					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_YEAR) + " ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY total DESC" : "ORDER BY total ASC";
-					final String queryFetchPart = "FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
+					final String querySelectPart = "SELECT name, display_name, y, SUM(final_score) AS total, COUNT(*) AS nb_games FROM";
+					final String querySubSelectPart = " (SELECT player.name, player.display_name, YEAR(rcr_game_id.date) as y, rcr_game_score.final_score FROM player, rcr_game_id, rcr_game_score WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?) AS year_score";
+					final String queryGroupPart = " GROUP BY name, display_name, y";
+					final String queryHavingPart = " HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_YEAR);
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY total DESC" : " ORDER BY total ASC";
+					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					final PreparedStatement statement = dataBaseConnection.prepareStatement(querySelectPart + querySubSelectPart + queryGroupPart + queryHavingPart + queryOrderPart + queryFetchPart);
 					statement.setInt(1, tournament.getId());
 
@@ -936,12 +962,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case TRIMESTRIAL_SCORE: {
-					final String querySelectPart = "SELECT name, display_name, y, t, SUM(final_score) AS total, COUNT(*) AS nb_games FROM ";
-					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(rcr_game_id.date) as Y, (MONTH(rcr_game_id.date)-1)/3 as t, rcr_game_score.final_score FROM player, rcr_game_id, rcr_game_score WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?) AS trimester_score ";
-					final String queryGroupPart = "GROUP BY name, display_name, y, t ";
-					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_TRIMESTER) + " ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY total DESC" : "ORDER BY total ASC";
-					final String queryFetchPart = "FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
+					final String querySelectPart = "SELECT name, display_name, y, t, SUM(final_score) AS total, COUNT(*) AS nb_games FROM";
+					final String querySubSelectPart = " (SELECT player.name, player.display_name, YEAR(rcr_game_id.date) as Y, (MONTH(rcr_game_id.date)-1)/3 as t, rcr_game_score.final_score FROM player, rcr_game_id, rcr_game_score WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?) AS trimester_score";
+					final String queryGroupPart = " GROUP BY name, display_name, y, t";
+					final String queryHavingPart = " HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_TRIMESTER);
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY total DESC" : " ORDER BY total ASC";
+					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					final PreparedStatement statement = dataBaseConnection.prepareStatement(querySelectPart + querySubSelectPart + queryGroupPart + queryHavingPart + queryOrderPart + queryFetchPart);
 					statement.setInt(1, tournament.getId());
 
@@ -957,12 +983,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				}
 					break;
 				case MENSUAL_SCORE: {
-					final String querySelectPart = "SELECT name, display_name, y, m, SUM(final_score) AS total, COUNT(*) AS nb_games FROM ";
-					final String querySubSelectPart = "(SELECT player.name, player.display_name, YEAR(rcr_game_id.date) as y, MONTH(rcr_game_id.date)-1 as m, rcr_game_score.final_score FROM player, rcr_game_id, rcr_game_score WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?) AS month_score ";
-					final String queryGroupPart = "GROUP BY name, display_name, y, m ";
-					final String queryHavingPart = "HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_MONTH) + " ";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? "ORDER BY total DESC" : "ORDER BY total ASC";
-					final String queryFetchPart = "FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
+					final String querySelectPart = "SELECT name, display_name, y, m, SUM(final_score) AS total, COUNT(*) AS nb_games FROM";
+					final String querySubSelectPart = " (SELECT player.name, player.display_name, YEAR(rcr_game_id.date) as y, MONTH(rcr_game_id.date)-1 as m, rcr_game_score.final_score FROM player, rcr_game_id, rcr_game_score WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?) AS month_score";
+					final String queryGroupPart = " GROUP BY name, display_name, y, m";
+					final String queryHavingPart = " HAVING COUNT(*)>=" + Integer.toString(MINIMUM_GAME_MONTH);
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY total DESC" : " ORDER BY total ASC";
+					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					final PreparedStatement statement = dataBaseConnection.prepareStatement(querySelectPart + querySubSelectPart + queryGroupPart + queryHavingPart + queryOrderPart + queryFetchPart);
 					statement.setInt(1, tournament.getId());
 
@@ -1039,10 +1065,10 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			final List<String> displayNames = new ArrayList<String>();
 			final Map<Integer, Integer> mapId2Index = new HashMap<Integer, Integer>();
 			{
-				final String querySelectPart = "SELECT DISTINCT player.id, player.name, player.display_name FROM player, rcr_game_id, rcr_game_score ";
-				final String queryWherePart = "WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-				final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-				final String queryOrderPart = "ORDER BY player.id";
+				final String querySelectPart = "SELECT DISTINCT player.id, player.name, player.display_name FROM player, rcr_game_id, rcr_game_score";
+				final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+				final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+				final String queryOrderPart = " ORDER BY player.id";
 				PreparedStatement statement = null;
 				if (periodMode == EnumPeriodMode.ALL) {
 					statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryOrderPart);
@@ -1074,11 +1100,11 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				data.add(index, score);
 			}
 			{
-				final String querySelectPart = "SELECT rcr_game_id.date, rcr_game_score.player_id, SUM(rcr_game_score.final_score) FROM rcr_game_id, rcr_game_score ";
-				final String queryWherePart = "WHERE rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? ";
-				final String queryPeriodPart = "AND rcr_game_id.date>=? AND rcr_game_id.date<? ";
-				final String queryGroupPart = "GROUP BY rcr_game_id.date, rcr_game_score.player_id ";
-				final String queryOrderPart = "ORDER BY rcr_game_id.date";
+				final String querySelectPart = "SELECT rcr_game_id.date, rcr_game_score.player_id, SUM(rcr_game_score.final_score) FROM rcr_game_id, rcr_game_score";
+				final String queryWherePart = " WHERE rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+				final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+				final String queryGroupPart = " GROUP BY rcr_game_id.date, rcr_game_score.player_id";
+				final String queryOrderPart = " ORDER BY rcr_game_id.date";
 				PreparedStatement statement = null;
 				if (periodMode == EnumPeriodMode.ALL) {
 					statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryOrderPart);
