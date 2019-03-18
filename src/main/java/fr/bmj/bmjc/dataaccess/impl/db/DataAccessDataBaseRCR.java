@@ -625,9 +625,9 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, month);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				if (month == 11) {
+				if (month == Calendar.DECEMBER) {
 					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, 0);
+					calendarTo.set(Calendar.MONTH, Calendar.JANUARY);
 					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
 				} else {
 					calendarTo.set(Calendar.YEAR, year);
@@ -642,7 +642,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
 				if (trimester == 3) {
 					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, 0);
+					calendarTo.set(Calendar.MONTH, Calendar.JANUARY);
 					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
 				} else {
 					calendarTo.set(Calendar.YEAR, year);
@@ -653,10 +653,10 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				break;
 			case YEAR:
 				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, 0);
+				calendarFrom.set(Calendar.MONTH, Calendar.JANUARY);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
 				calendarTo.set(Calendar.YEAR, year + 1);
-				calendarTo.set(Calendar.MONTH, 0);
+				calendarTo.set(Calendar.MONTH, Calendar.JANUARY);
 				calendarTo.set(Calendar.DAY_OF_MONTH, 1);
 				minimumGames = MINIMUM_GAME_YEAR;
 				break;
@@ -849,13 +849,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? AND rcr_game_score.ranking=1";
 						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
 						final String queryGroupPart = " GROUP BY player.display_name";
-						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
-							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart);
 							statement.setInt(1, tournament.getId());
 						} else {
-							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryPeriodPart + queryGroupPart + queryHavingPart);
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryPeriodPart + queryGroupPart);
 							statement.setInt(1, tournament.getId());
 							statement.setDate(2, new Date(calendarFrom.getTimeInMillis()));
 							statement.setDate(3, new Date(calendarTo.getTimeInMillis()));
@@ -865,7 +864,10 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						while (result.next()) {
 							final String name = result.getString(1);
 							final RCRTotalScore total = mapNameScore.get(name);
-							total.totalScore = Math.round(result.getInt(2) * 1000.0f / total.numberOfGame);
+							if (total != null) {
+								total.umaScore = result.getInt(2);
+								total.totalScore = Math.round(total.umaScore * 1000.0f / total.numberOfGame);
+							}
 						}
 						result.close();
 						statement.close();
@@ -911,13 +913,12 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=? AND rcr_game_score.final_score>0";
 						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
 						final String queryGroupPart = " GROUP BY player.display_name";
-						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
-							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart + queryHavingPart);
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryGroupPart);
 							statement.setInt(1, tournament.getId());
 						} else {
-							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryPeriodPart + queryGroupPart + queryHavingPart);
+							statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryPeriodPart + queryGroupPart);
 							statement.setInt(1, tournament.getId());
 							statement.setDate(2, new Date(calendarFrom.getTimeInMillis()));
 							statement.setDate(3, new Date(calendarTo.getTimeInMillis()));
@@ -927,7 +928,10 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						while (result.next()) {
 							final String name = result.getString(1);
 							final RCRTotalScore total = mapNameScore.get(name);
-							total.totalScore = Math.round(result.getInt(2) * 1000.0f / total.numberOfGame);
+							if (total != null) {
+								total.umaScore = result.getInt(2);
+								total.totalScore = Math.round(total.umaScore * 1000.0f / total.numberOfGame);
+							}
 						}
 						result.close();
 						statement.close();
