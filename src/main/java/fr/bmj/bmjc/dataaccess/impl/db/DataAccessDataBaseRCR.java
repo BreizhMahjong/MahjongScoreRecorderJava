@@ -466,10 +466,19 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		final RCRDataPackageAnalyze dataPackage = new RCRDataPackageAnalyze();
 		try {
 			String fieldString = null;
-			if (scoreMode == EnumScoreMode.FINAL_SCORE) {
-				fieldString = "final_score";
-			} else {
-				fieldString = "game_score";
+			switch (scoreMode) {
+				case FINAL_SCORE:
+					fieldString = "final_score";
+					break;
+				case NET_SCORE:
+					fieldString = "game_score - 30000";
+					break;
+				case GAME_SCORE:
+					fieldString = "game_score";
+					break;
+				default:
+					fieldString = "";
+					break;
 			}
 
 			PreparedStatement statement = null;

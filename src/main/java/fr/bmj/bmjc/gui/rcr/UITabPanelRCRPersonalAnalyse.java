@@ -175,7 +175,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				c.gridWidth = 1;
 				panelNorth.add(new JLabel("Score :", SwingConstants.RIGHT), c);
 				scoreModes = new EnumScoreMode[] {
-					EnumScoreMode.FINAL_SCORE, EnumScoreMode.GAME_SCORE
+					EnumScoreMode.FINAL_SCORE, EnumScoreMode.NET_SCORE, EnumScoreMode.GAME_SCORE
 				};
 				final String scoreModeStrings[] = new String[scoreModes.length];
 				for (int index = 0; index < scoreModes.length; index++) {
@@ -611,7 +611,21 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 						scorePlot.setBackgroundPaint(new Color(255, 255, 255, 0));
 						scorePlot.setDomainGridlinePaint(Color.BLACK);
 						scorePlot.setRangeGridlinePaint(Color.BLACK);
-						final double makerValue = scoreMode == EnumScoreMode.FINAL_SCORE ? 0.0 : 30000.0;
+						double makerValue;
+						switch (scoreMode) {
+							case FINAL_SCORE:
+								makerValue = 0.0;
+								break;
+							case NET_SCORE:
+								makerValue = 0.0;
+								break;
+							case GAME_SCORE:
+								makerValue = 30000.0;
+								break;
+							default:
+								makerValue = 0.0;
+								break;
+						}
 						final ValueMarker marker = new ValueMarker(makerValue, Color.RED, new BasicStroke(1), null, null, 1.0f);
 						scorePlot.addRangeMarker(marker);
 
@@ -621,7 +635,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 						panelBarChart.add(chartPanel, BorderLayout.CENTER);
 					}
 					// Line Chart
-					if (scoreMode == EnumScoreMode.FINAL_SCORE) {
+					if (scoreMode == EnumScoreMode.FINAL_SCORE || scoreMode == EnumScoreMode.NET_SCORE) {
 						final XYSeries sumSeries = new XYSeries("Score total");
 						sumSeries.add(0, 0);
 						final List<Integer> listSum = dataPackage.getListSum();
