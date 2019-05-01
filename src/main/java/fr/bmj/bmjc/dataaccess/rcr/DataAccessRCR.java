@@ -57,6 +57,8 @@ public interface DataAccessRCR extends DataAccessCommon {
 
 	public void setRCRUseMinimumGame(boolean useMinimumGame);
 
+	public void setRCROnlyRegularPlayers(boolean onlyRegularPlayers);
+
 	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
 		final int trimester, final int month);
 

@@ -22,12 +22,14 @@ public class Player {
 	private final String playerName;
 	private final String displayName;
 	private boolean hidden;
+	private final boolean regular;
 
-	public Player(final int playerID, final String playerName, final String displayName, final boolean hidden) {
+	public Player(final int playerID, final String playerName, final String displayName, final boolean hidden, final boolean regular) {
 		this.playerID = playerID;
 		this.playerName = playerName;
 		this.displayName = displayName;
 		this.hidden = hidden;
+		this.regular = regular;
 	}
 
 	public int getPlayerID() {
@@ -48,6 +50,10 @@ public class Player {
 
 	public void setHidden(final boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	public boolean isRegular() {
+		return regular;
 	}
 
 }

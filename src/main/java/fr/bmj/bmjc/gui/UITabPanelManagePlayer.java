@@ -63,6 +63,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 	private final JComboBox<String> comboBoxPlayer;
 	private final ActionListener comboBoxPlayerActionListener;
 	private final JCheckBox checkBoxHide;
+	private final JCheckBox checkBoxRegular;
 	private final JTextField textModifyPlayerName;
 	private final JTextField textModifyPlayerDisplayName;
 	private final JButton buttonModifyPlayer;
@@ -117,7 +118,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 			{
 				final JPanel modifyPlayerPanel = new JPanel();
-				final ProportionalGridLayout layout = new ProportionalGridLayout(2, 7, 2, 2);
+				final ProportionalGridLayout layout = new ProportionalGridLayout(3, 7, 2, 2);
 				modifyPlayerPanel.setLayout(layout);
 				modifyPlayerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Modifier joueur"));
 				final ProportionalGridLayoutConstraint modifyPlayerC = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
@@ -128,13 +129,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				modifyPlayerPanel.add(new JLabel("Joueur: ", SwingConstants.RIGHT), modifyPlayerC);
 				comboBoxPlayer = new JComboBox<String>();
 				modifyPlayerC.x = 1;
-				modifyPlayerC.gridWidth = 4;
+				modifyPlayerC.gridWidth = 5;
 				modifyPlayerPanel.add(comboBoxPlayer, modifyPlayerC);
-
-				modifyPlayerC.x = 5;
-				modifyPlayerC.gridWidth = 1;
-				checkBoxHide = new JCheckBox("Caché");
-				modifyPlayerPanel.add(checkBoxHide, modifyPlayerC);
 
 				modifyPlayerC.x = 6;
 				modifyPlayerC.gridWidth = 1;
@@ -158,6 +154,17 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				modifyPlayerC.x = 4;
 				modifyPlayerC.gridWidth = 2;
 				modifyPlayerPanel.add(textModifyPlayerDisplayName, modifyPlayerC);
+
+				modifyPlayerC.y = 2;
+				modifyPlayerC.x = 1;
+				modifyPlayerC.gridWidth = 2;
+				checkBoxHide = new JCheckBox("Caché");
+				modifyPlayerPanel.add(checkBoxHide, modifyPlayerC);
+
+				modifyPlayerC.x = 4;
+				modifyPlayerC.gridWidth = 2;
+				checkBoxRegular = new JCheckBox("Régulier");
+				modifyPlayerPanel.add(checkBoxRegular, modifyPlayerC);
 
 				modifyPlayerC.x = 6;
 				modifyPlayerC.gridWidth = 1;
@@ -253,10 +260,12 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			textModifyPlayerName.setText(player.getPlayerName());
 			textModifyPlayerDisplayName.setText(player.getDisplayName());
 			checkBoxHide.setSelected(player.isHidden());
+			checkBoxRegular.setSelected(player.isRegular());
 		} else {
 			textModifyPlayerName.setText("");
 			textModifyPlayerDisplayName.setText("");
 			checkBoxHide.setSelected(false);
+			checkBoxRegular.setSelected(false);
 		}
 	}
 
@@ -267,8 +276,9 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final String playerName = textModifyPlayerName.getText();
 			final String playerDisplayName = textModifyPlayerDisplayName.getText();
 			final boolean hidden = checkBoxHide.isSelected();
+			final boolean regular = checkBoxRegular.isSelected();
 			if (playerName != null && playerName.length() > 0 && playerDisplayName != null && playerDisplayName.length() > 0) {
-				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName, hidden);
+				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName, hidden, regular);
 				if (result.getResult()) {
 					JOptionPane.showMessageDialog(this, "Le joueur a été modifié", "Succès", JOptionPane.INFORMATION_MESSAGE);
 					refreshPlayer();
@@ -314,6 +324,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				writer.write("Name");
 				writer.write(SEPARATOR);
 				writer.write("Hidden");
+				writer.write(SEPARATOR);
+				writer.write("Regular");
 				writer.newLine();
 
 				for (int index = 0; index < listPlayer.size(); index++) {
@@ -325,6 +337,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 					writer.write(player.getPlayerName());
 					writer.write(SEPARATOR);
 					writer.write(Boolean.toString(player.isHidden()));
+					writer.write(SEPARATOR);
+					writer.write(Boolean.toString(player.isRegular()));
 					writer.newLine();
 				}
 			} catch (final Exception e) {

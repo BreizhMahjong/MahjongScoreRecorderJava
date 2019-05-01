@@ -41,7 +41,7 @@ public class DataAccessDataBaseCommon implements DataAccessCommon {
 				final Statement statement = dataBaseConnection.createStatement();
 				final ResultSet result = statement.executeQuery("SELECT id, name, display_name FROM player WHERE NOT hidden ORDER BY id");
 				while (result.next()) {
-					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false));
+					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false, true));
 				}
 				result.close();
 				statement.close();

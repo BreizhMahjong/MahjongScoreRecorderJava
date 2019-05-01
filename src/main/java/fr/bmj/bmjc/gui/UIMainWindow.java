@@ -62,8 +62,9 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private static final int WINDOW_WIDTH = 1024;
 	private static final String MAIN_LOGO_URL = "fr/bmj/bmjc/image/logo.png";
 
-	private static final boolean USE_MIN_GAME = false;
 	private static final boolean DISPLAY_REAL_NAME = false;
+	private static final boolean USE_MIN_GAME = false;
+	private static final boolean ONLY_REGULAR_PLAYERS = false;
 
 	private final DataAccess dataAccess;
 
@@ -71,6 +72,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private final JRadioButtonMenuItem menuSettingsFullName;
 	private final JRadioButtonMenuItem menuSettingsDisplayName;
 	private final JCheckBoxMenuItem menuSettingsUseMinGame;
+	private final JCheckBoxMenuItem menuSettingsOnlyRegularPlayers;
 
 	private static final int NB_RCR_TABS = 5;
 	private static final int NB_MCR_TABS = 5;
@@ -186,6 +188,12 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		menuSettingsUseMinGame.addActionListener((final ActionEvent e) -> setUseMinGame());
 		menuSettings.add(menuSettingsUseMinGame);
 
+		menuSettingsOnlyRegularPlayers = new JCheckBoxMenuItem("Joueurs réguliers");
+		menuSettingsOnlyRegularPlayers.setMnemonic(KeyEvent.VK_R);
+		menuSettingsOnlyRegularPlayers.setSelected(ONLY_REGULAR_PLAYERS);
+		menuSettingsOnlyRegularPlayers.addActionListener((final ActionEvent e) -> setOnlyRegularPlayers());
+		menuSettings.add(menuSettingsOnlyRegularPlayers);
+
 		addWindowListener(this);
 		setMinimumSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 		setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
@@ -288,6 +296,13 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private void setUseMinGame() {
 		dataAccess.setRCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
 		dataAccess.setMCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
+		final UITabPanel tab = getCurrentTab();
+		tab.refresh();
+	}
+
+	private void setOnlyRegularPlayers() {
+		dataAccess.setRCROnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
+		dataAccess.setMCROnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		tab.refresh();
 	}

@@ -51,6 +51,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 	private static final int MINIMUM_GAME_ALL = 20;
 
 	private boolean useMinimumGame;
+	// private boolean onlyRegularPlayers;
 
 	public DataAccessDataBaseMCR(final Connection dataBaseConnection) {
 		super(dataBaseConnection);
@@ -73,7 +74,7 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 				final ResultSet result = statement
 					.executeQuery("SELECT DISTINCT player.id, player.name, player.display_name FROM player, mcr_game_score WHERE player.id=mcr_game_score.player_id ORDER BY player.id");
 				while (result.next()) {
-					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false));
+					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false, true));
 				}
 				result.close();
 				statement.close();
@@ -404,6 +405,11 @@ public class DataAccessDataBaseMCR extends DataAccessDataBaseCommon implements D
 	@Override
 	public void setMCRUseMinimumGame(final boolean useMinimumGame) {
 		this.useMinimumGame = useMinimumGame;
+	}
+
+	@Override
+	public void setMCROnlyRegularPlayers(final boolean onlyRegularPlayers) {
+		// this.onlyRegularPlayers = onlyRegularPlayers;
 	}
 
 	@Override

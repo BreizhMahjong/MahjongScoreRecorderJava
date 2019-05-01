@@ -98,8 +98,8 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean hidden) {
-		return dataAccessManagePlayer.modifyPlayer(id, name, displayName, hidden);
+	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean hidden, final boolean regular) {
+		return dataAccessManagePlayer.modifyPlayer(id, name, displayName, hidden, regular);
 	}
 
 	@Override
@@ -170,6 +170,11 @@ public class DataAccessDataBase implements DataAccess {
 	@Override
 	public void setRCRUseMinimumGame(final boolean useMinimumGame) {
 		dataAccessRCR.setRCRUseMinimumGame(useMinimumGame);
+	}
+
+	@Override
+	public void setRCROnlyRegularPlayers(final boolean onlyRegularPlayers) {
+		dataAccessRCR.setRCROnlyRegularPlayers(onlyRegularPlayers);
 	}
 
 	@Override
@@ -247,6 +252,11 @@ public class DataAccessDataBase implements DataAccess {
 	@Override
 	public void setMCRUseMinimumGame(final boolean useMinimumGame) {
 		dataAccessMCR.setMCRUseMinimumGame(useMinimumGame);
+	}
+
+	@Override
+	public void setMCROnlyRegularPlayers(final boolean onlyRegularPlayers) {
+		dataAccessMCR.setMCROnlyRegularPlayers(onlyRegularPlayers);
 	}
 
 	@Override

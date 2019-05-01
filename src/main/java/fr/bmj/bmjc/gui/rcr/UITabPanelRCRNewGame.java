@@ -568,6 +568,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 		Collections.sort(playerScoreList, (final PlayerScore o1, final PlayerScore o2) -> {
 			return -Integer.compare(o1.gameScore, o2.gameScore);
 		});
+
+		// Distribute UMA
 		final int uma[] = UMA[umaSetIndex][nbPlayersIndex];
 		int playerIndex = 0;
 		while (playerIndex < nbPlayers) {
@@ -587,10 +589,21 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			}
 			playerIndex = equalityPlayerIndex;
 		}
-		if (comboBoxNumberRounds.getSelectedIndex() == 0) {
-			for (int index = 0; index < playerScoreList.size(); index++) {
-				playerScoreList.get(index).finalScore /= 2;
-			}
+
+		// Adjust score according to number of rounds
+		switch (comboBoxNumberRounds.getSelectedIndex()) {
+			case 0:
+				for (int index = 0; index < playerScoreList.size(); index++) {
+					playerScoreList.get(index).finalScore /= 2;
+				}
+				break;
+			case 2:
+				for (int index = 0; index < playerScoreList.size(); index++) {
+					playerScoreList.get(index).finalScore *= 2;
+				}
+				break;
+			default:
+				break;
 		}
 
 		// Update display
