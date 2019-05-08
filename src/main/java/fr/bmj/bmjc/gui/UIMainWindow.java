@@ -53,7 +53,7 @@ import fr.bmj.bmjc.gui.rcr.UITabPanelRCRGameHistory;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRManage;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRNewGame;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRPersonalAnalyse;
-import fr.bmj.bmjc.swing.JDialogWithProgress;
+import fr.bri.swing.JDialogWithProgress;
 
 public class UIMainWindow extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 4639754313889847228L;

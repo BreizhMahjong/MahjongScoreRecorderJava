@@ -65,10 +65,10 @@ import fr.bmj.bmjc.data.game.rcr.RCRScore;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
-import fr.bmj.bmjc.swing.JDatePicker;
-import fr.bmj.bmjc.swing.JDialogWithProgress;
-import fr.bmj.bmjc.swing.ProportionalGridLayout;
-import fr.bmj.bmjc.swing.ProportionalGridLayoutConstraint;
+import fr.bri.awt.ProportionalGridLayout;
+import fr.bri.awt.ProportionalGridLayoutConstraint;
+import fr.bri.swing.JDatePicker;
+import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRNewGame extends UITabPanel {
 	private static final long serialVersionUID = -7499477137622830228L;

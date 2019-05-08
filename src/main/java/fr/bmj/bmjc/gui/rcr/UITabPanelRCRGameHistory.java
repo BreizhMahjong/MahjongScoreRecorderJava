@@ -63,8 +63,8 @@ import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.game.rcr.RCRScore;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
-import fr.bmj.bmjc.swing.ComponentShownListener;
-import fr.bmj.bmjc.swing.JDialogWithProgress;
+import fr.bri.swing.ComponentShownListener;
+import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRGameHistory extends UITabPanel {
 	private static final long serialVersionUID = -6883738413777372692L;

@@ -63,8 +63,8 @@ import fr.bmj.bmjc.data.game.mcr.MCRGame;
 import fr.bmj.bmjc.data.game.mcr.MCRScore;
 import fr.bmj.bmjc.dataaccess.mcr.DataAccessMCR;
 import fr.bmj.bmjc.gui.UITabPanel;
-import fr.bmj.bmjc.swing.ComponentShownListener;
-import fr.bmj.bmjc.swing.JDialogWithProgress;
+import fr.bri.swing.ComponentShownListener;
+import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelMCRGameHistory extends UITabPanel {
 	private static final long serialVersionUID = 2864354782911474988L;

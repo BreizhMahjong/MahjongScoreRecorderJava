@@ -47,9 +47,9 @@ import fr.bmj.bmjc.data.game.ComparatorAscendingPlayerDisplayName;
 import fr.bmj.bmjc.data.game.Player;
 import fr.bmj.bmjc.dataaccess.DataAccessManagePlayer;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
-import fr.bmj.bmjc.swing.JDialogWithProgress;
-import fr.bmj.bmjc.swing.ProportionalGridLayout;
-import fr.bmj.bmjc.swing.ProportionalGridLayoutConstraint;
+import fr.bri.awt.ProportionalGridLayout;
+import fr.bri.awt.ProportionalGridLayoutConstraint;
+import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelManagePlayer extends UITabPanel {
 	private static final long serialVersionUID = 7626428108727903118L;

@@ -66,10 +66,10 @@ import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumScoreMode;
 import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;
-import fr.bmj.bmjc.swing.ComponentShownListener;
-import fr.bmj.bmjc.swing.JDialogWithProgress;
-import fr.bmj.bmjc.swing.ProportionalGridLayout;
-import fr.bmj.bmjc.swing.ProportionalGridLayoutConstraint;
+import fr.bri.awt.ProportionalGridLayout;
+import fr.bri.awt.ProportionalGridLayoutConstraint;
+import fr.bri.swing.ComponentShownListener;
+import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private static final long serialVersionUID = -1239855677109744990L;

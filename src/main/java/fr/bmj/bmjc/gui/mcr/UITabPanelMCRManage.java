@@ -42,9 +42,9 @@ import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
 import fr.bmj.bmjc.dataaccess.mcr.DataAccessMCR;
 import fr.bmj.bmjc.gui.UITabPanel;
-import fr.bmj.bmjc.swing.JDialogWithProgress;
-import fr.bmj.bmjc.swing.ProportionalGridLayout;
-import fr.bmj.bmjc.swing.ProportionalGridLayoutConstraint;
+import fr.bri.awt.ProportionalGridLayout;
+import fr.bri.awt.ProportionalGridLayoutConstraint;
+import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelMCRManage extends UITabPanel {
 	private static final long serialVersionUID = -6892215898167581642L;
