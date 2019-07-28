@@ -17,7 +17,6 @@
 package fr.bmj.bmjc.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -34,26 +33,19 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import fr.bmj.bmjc.dataaccess.DataAccess;
-import fr.bmj.bmjc.gui.mcr.UITabPanelMCRClubRanking;
-import fr.bmj.bmjc.gui.mcr.UITabPanelMCRGameHistory;
-import fr.bmj.bmjc.gui.mcr.UITabPanelMCRManage;
-import fr.bmj.bmjc.gui.mcr.UITabPanelMCRNewGame;
-import fr.bmj.bmjc.gui.mcr.UITabPanelMCRPersonalAnalyse;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRClubRanking;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRGameHistory;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRManage;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRNewGame;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRPersonalAnalyse;
-import fr.bri.swing.JDialogWithProgress;
+import fr.bmj.bmjc.gui.rcr.UITabPanelRCRTrend;
 
 public class UIMainWindow extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 4639754313889847228L;
@@ -74,23 +66,8 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private final JCheckBoxMenuItem menuSettingsUseMinGame;
 	private final JCheckBoxMenuItem menuSettingsOnlyRegularPlayers;
 
-	private static final int NB_RCR_TABS = 5;
-	private static final int NB_MCR_TABS = 5;
-	private static final int TAB_RCR_INDEX = 2;
-	private static final int TAB_MCR_INDEX = 3;
-
+	private final UITabPanel tabPanels[];
 	private final JTabbedPane tabbedPane;
-	private final UITabPanel tabsMainManagePlayer;
-	private final JPanel tabRCR;
-	private final JPanel tabMCR;
-	private JPanel currentSubTab;
-	private final UITabPanel[] tabsRCR;
-	private final UITabPanel[] tabsMCR;
-	private final ChangeListener tabPaneChangeListener;
-
-	private static final int WAITING_DIALOG_WIDTH = 240;
-	private static final int WAITING_DIALOG_HEIGHT = 60;
-	private final JDialogWithProgress waitingDialog;
 
 	public UIMainWindow(final DataAccess dataAccess) {
 		super("Breizh Mahjong Recorder");
@@ -104,43 +81,23 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		} catch (final Exception e) {
 		}
 
-		waitingDialog = new JDialogWithProgress(this, true);
-		waitingDialog.setText("Chargement. Veuillez patienter...");
-		waitingDialog.setPreferredSize(new Dimension(WAITING_DIALOG_WIDTH, WAITING_DIALOG_HEIGHT));
-		waitingDialog.pack();
-
 		final Container mainPane = getContentPane();
 		mainPane.setLayout(new BorderLayout());
 		tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		mainPane.add(tabbedPane, BorderLayout.CENTER);
 
-		tabsMainManagePlayer = new UITabPanelManagePlayer(dataAccess, waitingDialog);
-		tabbedPane.addTab(tabsMainManagePlayer.getTabName(), tabsMainManagePlayer);
-
-		tabRCR = new JPanel();
-		tabbedPane.addTab("RCR", tabRCR);
-
-		tabsRCR = new UITabPanel[NB_RCR_TABS];
-		tabsRCR[0] = new UITabPanelRCRManage(dataAccess, waitingDialog);
-		tabsRCR[1] = new UITabPanelRCRNewGame(dataAccess, waitingDialog);
-		tabsRCR[2] = new UITabPanelRCRClubRanking(dataAccess, waitingDialog);
-		// tabsRCR[3] = new UITabPanelRCRTrend(dataAccess, waitingDialog);
-		tabsRCR[3] = new UITabPanelRCRPersonalAnalyse(dataAccess, waitingDialog);
-		tabsRCR[4] = new UITabPanelRCRGameHistory(dataAccess, waitingDialog);
-
-		tabMCR = new JPanel();
-		tabbedPane.addTab("MCR", tabMCR);
-
-		tabsMCR = new UITabPanel[NB_MCR_TABS];
-		tabsMCR[0] = new UITabPanelMCRManage(dataAccess, waitingDialog);
-		tabsMCR[1] = new UITabPanelMCRNewGame(dataAccess, waitingDialog);
-		tabsMCR[2] = new UITabPanelMCRClubRanking(dataAccess, waitingDialog);
-		// tabsMCR[3] = new UITabPanelMCRTrend(dataAccess, waitingDialog);
-		tabsMCR[3] = new UITabPanelMCRPersonalAnalyse(dataAccess, waitingDialog);
-		tabsMCR[4] = new UITabPanelMCRGameHistory(dataAccess, waitingDialog);
-
-		tabPaneChangeListener = (final ChangeEvent e) -> changeTab();
-		tabbedPane.addChangeListener(tabPaneChangeListener);
+		tabPanels = new UITabPanel[7];
+		tabPanels[0] = new UITabPanelManagePlayer(dataAccess);
+		tabPanels[1] = new UITabPanelRCRManage(dataAccess);
+		tabPanels[2] = new UITabPanelRCRNewGame(dataAccess);
+		tabPanels[3] = new UITabPanelRCRClubRanking(dataAccess);
+		tabPanels[4] = new UITabPanelRCRTrend(dataAccess);
+		tabPanels[5] = new UITabPanelRCRPersonalAnalyse(dataAccess);
+		tabPanels[6] = new UITabPanelRCRGameHistory(dataAccess);
+		for (int indexTabPanel = 0; indexTabPanel < tabPanels.length; indexTabPanel++) {
+			tabbedPane.addTab(tabPanels[indexTabPanel].getTabName(), tabPanels[indexTabPanel]);
+		}
+		tabbedPane.addChangeListener((final ChangeEvent e) -> changeTab());
 
 		final JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -206,72 +163,26 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		setDisplayFullName();
 	}
 
-	private void changeTab() {
-		tabbedPane.removeChangeListener(tabPaneChangeListener);
-		final Component selectedComponent = tabbedPane.getSelectedComponent();
-		if (selectedComponent == tabsMainManagePlayer) {
-			if (currentSubTab == tabMCR) {
-				removeTabs(TAB_MCR_INDEX, TAB_MCR_INDEX + NB_MCR_TABS - 1);
-			} else if (currentSubTab == tabRCR) {
-				removeTabs(TAB_RCR_INDEX, TAB_RCR_INDEX + NB_RCR_TABS - 1);
-			}
-			currentSubTab = tabsMainManagePlayer;
-		} else if (selectedComponent == tabRCR) {
-			if (currentSubTab == tabMCR) {
-				removeTabs(TAB_MCR_INDEX, TAB_MCR_INDEX + NB_MCR_TABS - 1);
-			}
-			if (currentSubTab != tabRCR) {
-				addTabs(TAB_RCR_INDEX, tabsRCR);
-			}
-			currentSubTab = tabRCR;
-			tabbedPane.setSelectedIndex(TAB_RCR_INDEX);
-		} else if (selectedComponent == tabMCR) {
-			if (currentSubTab == tabRCR) {
-				removeTabs(TAB_RCR_INDEX, TAB_RCR_INDEX + NB_RCR_TABS - 1);
-			}
-			if (currentSubTab != tabMCR) {
-				addTabs(TAB_MCR_INDEX, tabsMCR);
-			}
-			currentSubTab = tabMCR;
-			tabbedPane.setSelectedIndex(TAB_MCR_INDEX);
-		}
-
-		final UITabPanel tab = getCurrentTab();
-		if (tab != null) {
-			tab.refresh();
-			menuItemExport.setEnabled(tab.canExport());
-		}
-
-		tabbedPane.addChangeListener(tabPaneChangeListener);
-	}
-
-	private void removeTabs(final int startIndex, final int endIndex) {
-		for (int index = endIndex; index >= startIndex; index--) {
-			tabbedPane.removeTabAt(index);
-		}
-	}
-
-	private void addTabs(final int startIndex, final UITabPanel[] tabs) {
-		for (int index = 0; index < tabs.length; index++) {
-			tabbedPane.insertTab(tabs[index].getTabName(), null, tabs[index], null, startIndex + index);
-		}
-	}
-
 	private UITabPanel getCurrentTab() {
-		if (currentSubTab == tabsMainManagePlayer) {
-			return tabsMainManagePlayer;
-		} else if (currentSubTab == tabRCR) {
-			return tabsRCR[tabbedPane.getSelectedIndex() - 2];
-		} else if (currentSubTab == tabMCR) {
-			return tabsMCR[tabbedPane.getSelectedIndex() - 3];
+		final int selectedTabIndex = tabbedPane.getSelectedIndex();
+		if (selectedTabIndex >= 0) {
+			return tabPanels[selectedTabIndex];
 		} else {
 			return null;
 		}
 	}
 
+	private void changeTab() {
+		final UITabPanel tab = getCurrentTab();
+		if (tab != null) {
+			tab.refresh();
+			menuItemExport.setEnabled(tab.canExport());
+		}
+	}
+
 	private void export() {
 		final UITabPanel tab = getCurrentTab();
-		if (tab != null && tab.canExport()) {
+		if (tab.canExport()) {
 			tab.export();
 		}
 	}
@@ -284,25 +195,19 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private void setDisplayFullName() {
 		final boolean displayFullName = menuSettingsFullName.isSelected();
 		final UITabPanel tab = getCurrentTab();
-		tabsMainManagePlayer.setDisplayFullName(displayFullName, tab == tabsMainManagePlayer);
-		for (int index = 0; index < tabsRCR.length; index++) {
-			tabsRCR[index].setDisplayFullName(displayFullName, tabsRCR[index] == tab);
-		}
-		for (int index = 0; index < tabsMCR.length; index++) {
-			tabsMCR[index].setDisplayFullName(displayFullName, tabsMCR[index] == tab);
+		for (int index = 0; index < tabPanels.length; index++) {
+			tabPanels[index].setDisplayFullName(displayFullName, tabPanels[index] == tab);
 		}
 	}
 
 	private void setUseMinGame() {
 		dataAccess.setRCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
-		dataAccess.setMCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		tab.refresh();
 	}
 
 	private void setOnlyRegularPlayers() {
 		dataAccess.setRCROnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
-		dataAccess.setMCROnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		tab.refresh();
 	}

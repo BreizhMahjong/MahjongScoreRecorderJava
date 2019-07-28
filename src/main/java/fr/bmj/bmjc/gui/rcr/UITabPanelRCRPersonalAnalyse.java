@@ -19,12 +19,9 @@ package fr.bmj.bmjc.gui.rcr;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -68,8 +65,6 @@ import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
-import fr.bri.swing.ComponentShownListener;
-import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private static final long serialVersionUID = -1239855677109744990L;
@@ -81,22 +76,19 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private static final String PERCENTAGE_STRING = "%";
 	private static final String PLUS_MINUS = " ± ";
 
-	private static final int COMBOBOX_NUMBER = 3;
+	private static final int COMBOBOX_NUMBER = 4;
 	private static final int COMBOBOX_YEAR_INDEX = 0;
 	private static final int COMBOBOX_TRIMESTER_INDEX = 1;
 	private static final int COMBOBOX_MONTH_INDEX = 2;
+	private static final int COMBOBOX_DAY_INDEX = 3;
 
 	private boolean displayFullName;
 	private final DataAccessRCR dataAccess;
-	private final JDialogWithProgress waitingDialog;
-	private final ComponentShownListener waitingDialogShowListener;
 	private final DecimalFormat format;
 
-	private final ActionListener comboActionListener;
 	private final JComboBox<String> comboPlayerNames;
-
 	private final JComboBox<String> comboTournament;
-	private final ActionListener tournamentComboBoxActionListener;
+
 	private final EnumScoreMode scoreModes[];
 	private final JComboBox<String> comboScoreMode;
 
@@ -105,6 +97,11 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private final JComboBox<Integer> comboYear;
 	private final JComboBox<String> comboTrimester;
 	private final JComboBox<String> comboMonth;
+	private final JComboBox<Integer> comboDay;
+
+	private final ActionListener tournamentComboBoxActionListener;
+	private final ActionListener periodParametersComboBoxHighLevelActionListener;
+	private final ActionListener periodParametersComboBoxLowLevelActionListener;
 
 	private final boolean comboBoxActivated[];
 
@@ -134,10 +131,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private final List<Player> listPlayers;
 	private final List<Tournament> listTournament;
 
-	public UITabPanelRCRPersonalAnalyse(final DataAccessRCR dataAccess, final JDialogWithProgress waitingDialog) {
+	public UITabPanelRCRPersonalAnalyse(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
-		this.waitingDialog = waitingDialog;
-		waitingDialogShowListener = (final ComponentEvent e) -> new Thread(() -> displayRun()).start();
 
 		format = new DecimalFormat("#,###");
 		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
@@ -147,8 +142,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		setLayout(new BorderLayout());
 		{
 			final JPanel panelNorth = new JPanel();
-			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2, 9, 8, 2);
-			northLayout.setWeightX(4, 5, 3, 5, 3, 5, 3, 5, 2);
+			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2, 11, 8, 2);
+			northLayout.setWeightX(4, 5, 3, 5, 3, 5, 3, 5, 3, 5, 2);
 			panelNorth.setLayout(northLayout);
 			panelNorth.setBorder(BorderFactory.createLoweredBevelBorder());
 			add(panelNorth, BorderLayout.NORTH);
@@ -168,10 +163,10 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				comboTournament = new JComboBox<String>();
 				comboTournament.setEditable(false);
 				c.x = 3;
-				c.gridWidth = 3;
+				c.gridWidth = 5;
 				panelNorth.add(comboTournament, c);
 
-				c.x = 6;
+				c.x = 8;
 				c.gridWidth = 1;
 				panelNorth.add(new JLabel("Score :", SwingConstants.RIGHT), c);
 				scoreModes = new EnumScoreMode[] {
@@ -184,7 +179,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				comboScoreMode = new JComboBox<String>(scoreModeStrings);
 				comboScoreMode.setEditable(false);
 				comboScoreMode.setSelectedIndex(0);
-				c.x = 7;
+				c.x = 9;
 				panelNorth.add(comboScoreMode, c);
 			}
 
@@ -192,7 +187,9 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				c.y = 1;
 				c.x = 0;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
-				periodModes = EnumPeriodMode.values();
+				periodModes = new EnumPeriodMode[] {
+					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
+				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
 					periodModeStrings[index] = periodModes[index].toString();
@@ -230,6 +227,14 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				comboMonth.setSelectedIndex(0);
 				c.x = 7;
 				panelNorth.add(comboMonth, c);
+
+				c.x = 8;
+				panelNorth.add(new JLabel("Jour :", SwingConstants.RIGHT), c);
+				comboDay = new JComboBox<Integer>();
+				comboDay.setEditable(false);
+				comboDay.setSelectedIndex(-1);
+				c.x = 9;
+				panelNorth.add(comboDay, c);
 			}
 		}
 
@@ -364,12 +369,15 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		listPlayers = new ArrayList<Player>();
 		listTournament = new ArrayList<Tournament>();
 
+		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
+
 		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
-		comboActionListener = (final ActionEvent e) -> changePeriodParameters(true);
-		comboPeriodMode.addActionListener(comboActionListener);
-		comboScoreMode.addActionListener(comboActionListener);
-		comboTrimester.addActionListener(comboActionListener);
-		comboMonth.addActionListener(comboActionListener);
+		periodParametersComboBoxHighLevelActionListener = (final ActionEvent e) -> refreshDay();
+		periodParametersComboBoxLowLevelActionListener = (final ActionEvent e) -> display();
+
+		comboScoreMode.addActionListener(periodParametersComboBoxLowLevelActionListener);
+		comboTrimester.addActionListener(periodParametersComboBoxLowLevelActionListener);
+		comboMonth.addActionListener(periodParametersComboBoxHighLevelActionListener);
 
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
 		changePeriodParameters(false);
@@ -390,7 +398,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 
 	@Override
 	public void refresh() {
-		comboPlayerNames.removeActionListener(comboActionListener);
+		comboPlayerNames.removeActionListener(periodParametersComboBoxLowLevelActionListener);
 		comboPlayerNames.removeAllItems();
 		listPlayers.clear();
 		listPlayers.addAll(dataAccess.getRCRPlayers());
@@ -408,7 +416,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		if (listPlayers.size() > 0) {
 			comboPlayerNames.setSelectedIndex(0);
 		}
-		comboPlayerNames.addActionListener(comboActionListener);
+		comboPlayerNames.addActionListener(periodParametersComboBoxLowLevelActionListener);
 
 		listTournament.clear();
 		listTournament.addAll(dataAccess.getRCRTournaments());
@@ -431,7 +439,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private void refreshYear() {
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
 		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-			comboYear.removeActionListener(comboActionListener);
+			comboYear.removeActionListener(periodParametersComboBoxHighLevelActionListener);
 			comboYear.removeAllItems();
 
 			final Tournament tournament = listTournament.get(selectedTournamentIndex);
@@ -442,11 +450,36 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				comboYear.addItem(years.get(index));
 			}
 
-			comboYear.addActionListener(comboActionListener);
+			comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
 			if (years.size() > 0) {
 				comboYear.setSelectedIndex(0);
 			} else {
 				comboYear.setSelectedIndex(-1);
+			}
+		}
+	}
+
+	private void refreshDay() {
+		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+		final int selectedYearIndex = comboYear.getSelectedIndex();
+		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+			comboDay.removeActionListener(periodParametersComboBoxLowLevelActionListener);
+			comboDay.removeAllItems();
+
+			final Tournament tournament = listTournament.get(selectedTournamentIndex);
+			final int year = (Integer) comboYear.getSelectedItem();
+			final int month = comboMonth.getSelectedIndex();
+			final List<Integer> days = new ArrayList<Integer>(dataAccess.getRCRGameDays(tournament, year, month));
+			Collections.sort(days);
+			for (int index = 0; index < days.size(); index++) {
+				comboDay.addItem(days.get(index));
+			}
+
+			comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
+			if (days.size() > 0) {
+				comboDay.setSelectedIndex(0);
+			} else {
+				comboDay.setSelectedIndex(-1);
 			}
 		}
 	}
@@ -458,21 +491,31 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = false;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
 			case YEAR:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
 			case TRIMESTER:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = true;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
 			case MONTH:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = true;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
+			case DAY:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = true;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = true;
 				break;
 			default:
 				break;
@@ -501,6 +544,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		comboYear.setEnabled(comboBoxActivated[COMBOBOX_YEAR_INDEX]);
 		comboTrimester.setEnabled(comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
 		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
+		comboDay.setEnabled(comboBoxActivated[COMBOBOX_DAY_INDEX]);
 	}
 
 	private void display() {
@@ -510,27 +554,22 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		validate();
 		repaint();
 
-		final Point location = getLocationOnScreen();
-		final Dimension size = getSize();
-		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.setComponentShownListener(waitingDialogShowListener);
-		waitingDialog.setVisible(true);
-	}
+		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		final EnumScoreMode scoreMode = scoreModes[comboScoreMode.getSelectedIndex()];
 
-	private void displayRun() {
 		final int selectedPlayerIndex = comboPlayerNames.getSelectedIndex();
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
 		final int selectedYearIndex = comboYear.getSelectedIndex();
+		final int selectedDayIndex = comboDay.getSelectedIndex();
 
-		if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+		if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1 && (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
 			final Player player = listPlayers.get(selectedPlayerIndex);
 			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
-			final EnumScoreMode scoreMode = scoreModes[comboScoreMode.getSelectedIndex()];
 			final int year = (Integer) comboYear.getSelectedItem();
 			final int trimester = comboTrimester.getSelectedIndex();
 			final int month = comboMonth.getSelectedIndex();
-			final RCRDataPackageAnalyze dataPackage = dataAccess.getRCRDataPackageAnalyze(tournament, player.getPlayerID(), scoreMode, periodMode, year, trimester, month);
+			final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
+			final RCRDataPackageAnalyze dataPackage = dataAccess.getRCRDataPackageAnalyze(tournament, player.getPlayerID(), scoreMode, periodMode, year, trimester, month, day);
 
 			if (dataPackage != null && dataPackage.getNumberOfGames() > 0) {
 				final int numberOfGames = dataPackage.getNumberOfGames();
@@ -679,9 +718,6 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		validate();
 		enableComboBoxes();
 		repaint();
-
-		waitingDialog.removeComponentShownListener();
-		waitingDialog.setVisible(false);
 	}
 
 	private void clearGameInfo() {

@@ -49,7 +49,6 @@ import fr.bmj.bmjc.dataaccess.DataAccessManagePlayer;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
-import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelManagePlayer extends UITabPanel {
 	private static final long serialVersionUID = 7626428108727903118L;
@@ -71,7 +70,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 	private final List<Player> listPlayer;
 
-	public UITabPanelManagePlayer(final DataAccessManagePlayer dataAccess, final JDialogWithProgress waitingDialog) {
+	public UITabPanelManagePlayer(final DataAccessManagePlayer dataAccess) {
 		this.dataAccess = dataAccess;
 
 		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);

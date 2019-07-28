@@ -23,18 +23,13 @@ import java.util.List;
 
 import fr.bmj.bmjc.data.game.Player;
 import fr.bmj.bmjc.data.game.Tournament;
-import fr.bmj.bmjc.data.game.mcr.MCRGame;
 import fr.bmj.bmjc.data.game.rcr.RCRGame;
-import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageAnalyze;
-import fr.bmj.bmjc.data.stat.mcr.MCRDataPackageTrend;
-import fr.bmj.bmjc.data.stat.mcr.MCRTotalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageAnalyze;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageTrend;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScore;
 import fr.bmj.bmjc.dataaccess.DataAccess;
 import fr.bmj.bmjc.dataaccess.DataAccessManagePlayer;
 import fr.bmj.bmjc.dataaccess.UpdateResult;
-import fr.bmj.bmjc.dataaccess.mcr.DataAccessMCR;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumRankingMode;
@@ -48,7 +43,6 @@ public class DataAccessDataBase implements DataAccess {
 
 	private DataAccessManagePlayer dataAccessManagePlayer;
 	private DataAccessRCR dataAccessRCR;
-	private DataAccessMCR dataAccessMCR;
 
 	public DataAccessDataBase() {
 	}
@@ -62,7 +56,6 @@ public class DataAccessDataBase implements DataAccess {
 				dataBaseConnection = DriverManager.getConnection("jdbc:derby:" + dataBaseFile.getAbsolutePath());
 				dataAccessManagePlayer = new DataAccessDataBaseManagePlayer(dataBaseConnection);
 				dataAccessRCR = new DataAccessDataBaseRCR(dataBaseConnection);
-				dataAccessMCR = new DataAccessDataBaseMCR(dataBaseConnection);
 			} else {
 				dataBaseConnection = null;
 			}
@@ -179,101 +172,19 @@ public class DataAccessDataBase implements DataAccess {
 
 	@Override
 	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-		final int trimester, final int month) {
-		return dataAccessRCR.getRCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month);
+		final int trimester, final int month, final int day) {
+		return dataAccessRCR.getRCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month, day);
 	}
 
 	@Override
 	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-		final int year, final int trimester, final int month) {
-		return dataAccessRCR.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month);
+		final int year, final int trimester, final int month, final int day) {
+		return dataAccessRCR.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month, day);
 	}
 
 	@Override
-	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month) {
-		return dataAccessRCR.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month);
-	}
-
-	@Override
-	public List<Player> getMCRPlayers() {
-		return dataAccessMCR.getMCRPlayers();
-	}
-
-	@Override
-	public UpdateResult addMCRTournament(final String tournamentName) {
-		return dataAccessMCR.addMCRTournament(tournamentName);
-	}
-
-	@Override
-	public UpdateResult modifyMCRTournament(final int tournamentId, final String tournamentName) {
-		return dataAccessMCR.modifyMCRTournament(tournamentId, tournamentName);
-	}
-
-	@Override
-	public List<Tournament> getMCRTournaments() {
-		return dataAccessMCR.getMCRTournaments();
-	}
-
-	@Override
-	public UpdateResult deleteMCRTournament(final int tournamentId) {
-		return dataAccessMCR.deleteMCRTournament(tournamentId);
-	}
-
-	@Override
-	public UpdateResult addMCRGame(final MCRGame game) {
-		return dataAccessMCR.addMCRGame(game);
-	}
-
-	@Override
-	public List<Integer> getMCRGameDays(final Tournament tournament, final int year, final int month) {
-		return dataAccessMCR.getMCRGameDays(tournament, year, month);
-	}
-
-	@Override
-	public List<Integer> getMCRGameIds(final Tournament tournament, final int year, final int month, final int day) {
-		return dataAccessMCR.getMCRGameIds(tournament, year, month, day);
-	}
-
-	@Override
-	public MCRGame getMCRGame(final int id) {
-		return dataAccessMCR.getMCRGame(id);
-	}
-
-	@Override
-	public List<Integer> getMCRYears(final Tournament tournament) {
-		return dataAccessMCR.getMCRYears(tournament);
-	}
-
-	@Override
-	public UpdateResult deleteMCRGame(final int id) {
-		return dataAccessMCR.deleteMCRGame(id);
-	}
-
-	@Override
-	public void setMCRUseMinimumGame(final boolean useMinimumGame) {
-		dataAccessMCR.setMCRUseMinimumGame(useMinimumGame);
-	}
-
-	@Override
-	public void setMCROnlyRegularPlayers(final boolean onlyRegularPlayers) {
-		dataAccessMCR.setMCROnlyRegularPlayers(onlyRegularPlayers);
-	}
-
-	@Override
-	public MCRDataPackageAnalyze getMCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-		final int trimester, final int month) {
-		return dataAccessMCR.getMCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month);
-	}
-
-	@Override
-	public List<MCRTotalScore> getMCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-		final int year, final int trimester, final int month) {
-		return dataAccessMCR.getMCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month);
-	}
-
-	@Override
-	public MCRDataPackageTrend getMCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month) {
-		return dataAccessMCR.getMCRDataPackageTrend(tournament, periodMode, year, trimester, month);
+	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
+		return dataAccessRCR.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, day);
 	}
 
 }

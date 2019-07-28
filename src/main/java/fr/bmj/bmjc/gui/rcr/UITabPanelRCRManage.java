@@ -44,7 +44,6 @@ import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
-import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRManage extends UITabPanel {
 	private static final long serialVersionUID = -8908338011775965764L;
@@ -72,7 +71,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 
 	private final List<Tournament> listTournament;
 
-	public UITabPanelRCRManage(final DataAccessRCR dataAccess, final JDialogWithProgress waitingDialog) {
+	public UITabPanelRCRManage(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
 
 		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);

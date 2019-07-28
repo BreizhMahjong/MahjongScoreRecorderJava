@@ -423,7 +423,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 
 	@Override
 	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-		final int trimester, final int month) {
+		final int trimester, final int month, final int day) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		switch (periodMode) {
@@ -433,37 +433,29 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, 0);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				calendarTo.set(Calendar.YEAR, year + 1);
-				calendarTo.set(Calendar.MONTH, 0);
-				calendarTo.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.YEAR, 1);
 				break;
 			case TRIMESTER:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, trimester * 3);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				if (trimester == 3) {
-					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, 0);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				} else {
-					calendarTo.set(Calendar.YEAR, year);
-					calendarTo.set(Calendar.MONTH, (trimester + 1) * 3);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				}
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 3);
 				break;
 			case MONTH:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, month);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				if (month == 11) {
-					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, 0);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				} else {
-					calendarTo.set(Calendar.YEAR, year);
-					calendarTo.set(Calendar.MONTH, month + 1);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				}
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 1);
+				break;
+			case DAY:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, day);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.DAY_OF_MONTH, 1);
 				break;
 			default:
 				break;
@@ -631,48 +623,41 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 
 	@Override
 	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-		final int year, final int trimester, final int month) {
+		final int year, final int trimester, final int month, final int day) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		int minimumGames = 0;
 		switch (periodMode) {
+			case DAY:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, day);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.DAY_OF_MONTH, 1);
+				minimumGames = 0;
+				break;
 			case MONTH:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, month);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				if (month == Calendar.DECEMBER) {
-					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, Calendar.JANUARY);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				} else {
-					calendarTo.set(Calendar.YEAR, year);
-					calendarTo.set(Calendar.MONTH, month + 1);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				}
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 1);
 				minimumGames = MINIMUM_GAME_MONTH;
 				break;
 			case TRIMESTER:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, trimester * 3);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				if (trimester == 3) {
-					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, Calendar.JANUARY);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				} else {
-					calendarTo.set(Calendar.YEAR, year);
-					calendarTo.set(Calendar.MONTH, (trimester + 1) * 3);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				}
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 3);
 				minimumGames = MINIMUM_GAME_TRIMESTER;
 				break;
 			case YEAR:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, Calendar.JANUARY);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				calendarTo.set(Calendar.YEAR, year + 1);
-				calendarTo.set(Calendar.MONTH, Calendar.JANUARY);
-				calendarTo.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.YEAR, 1);
 				minimumGames = MINIMUM_GAME_YEAR;
 				break;
 			case ALL:
@@ -1053,45 +1038,37 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 	}
 
 	@Override
-	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month) {
+	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		switch (periodMode) {
+			case DAY:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.DAY_OF_MONTH, 1);
+				break;
 			case MONTH:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, month);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				if (month == 11) {
-					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, 0);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				} else {
-					calendarTo.set(Calendar.YEAR, year);
-					calendarTo.set(Calendar.MONTH, month + 1);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				}
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 1);
 				break;
 			case TRIMESTER:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, trimester * 3);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				if (trimester == 3) {
-					calendarTo.set(Calendar.YEAR, year + 1);
-					calendarTo.set(Calendar.MONTH, 0);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				} else {
-					calendarTo.set(Calendar.YEAR, year);
-					calendarTo.set(Calendar.MONTH, (trimester + 1) * 3);
-					calendarTo.set(Calendar.DAY_OF_MONTH, 1);
-				}
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 3);
 				break;
 			case YEAR:
 				calendarFrom.set(Calendar.YEAR, year);
 				calendarFrom.set(Calendar.MONTH, 0);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				calendarTo.set(Calendar.YEAR, year + 1);
-				calendarTo.set(Calendar.MONTH, 0);
-				calendarTo.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.YEAR, 1);
 				break;
 			case ALL:
 				break;

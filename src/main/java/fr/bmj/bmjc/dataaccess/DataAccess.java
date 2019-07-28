@@ -1,9 +1,8 @@
 package fr.bmj.bmjc.dataaccess;
 
-import fr.bmj.bmjc.dataaccess.mcr.DataAccessMCR;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 
-public interface DataAccess extends DataAccessManagePlayer, DataAccessRCR, DataAccessMCR {
+public interface DataAccess extends DataAccessManagePlayer, DataAccessRCR {
 
 	public void initialize();
 

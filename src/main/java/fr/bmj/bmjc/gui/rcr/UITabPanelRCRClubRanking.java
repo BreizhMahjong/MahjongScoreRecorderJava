@@ -22,10 +22,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -75,8 +73,6 @@ import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
-import fr.bri.swing.ComponentShownListener;
-import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRClubRanking extends UITabPanel {
 	private static final long serialVersionUID = -2831122708393360423L;
@@ -87,16 +83,15 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 	};
 	private final int LABEL_HEIGHT = 18;
 
-	private static final int COMBOBOX_NUMBER = 4;
+	private static final int COMBOBOX_NUMBER = 5;
 	private static final int COMBOBOX_PERIOD = 0;
 	private static final int COMBOBOX_YEAR_INDEX = 1;
 	private static final int COMBOBOX_TRIMESTER_INDEX = 2;
 	private static final int COMBOBOX_MONTH_INDEX = 3;
+	private static final int COMBOBOX_DAY_INDEX = 4;
 
 	private boolean displayFullName;
 	private final DataAccessRCR dataAccess;
-	private final JDialogWithProgress waitingDialog;
-	private final ComponentShownListener waitingDialogShowListener;
 
 	private final EnumRankingMode rankingModes[];
 	private final JComboBox<String> comboRankingMode;
@@ -109,11 +104,13 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 	private final JComboBox<Integer> comboYear;
 	private final JComboBox<String> comboTrimester;
 	private final JComboBox<String> comboMonth;
-
-	private final boolean comboBoxActivated[];
+	private final JComboBox<Integer> comboDay;
 
 	private final ActionListener tournamentComboBoxActionListener;
-	private final ActionListener periodParametersComboBoxActionListener;
+	private final ActionListener periodParametersComboBoxHighLevelActionListener;
+	private final ActionListener periodParametersComboBoxLowLevelActionListener;
+
+	private final boolean comboBoxActivated[];
 
 	private final JPanel panelRanking;
 	private final JScrollPane scrollRanking;
@@ -122,21 +119,18 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 
 	private final List<Tournament> listTournament;
 
-	public UITabPanelRCRClubRanking(final DataAccessRCR dataAccess, final JDialogWithProgress waitingDialog) {
+	public UITabPanelRCRClubRanking(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
-		this.waitingDialog = waitingDialog;
-		waitingDialogShowListener = (final ComponentEvent e) -> new Thread(() -> displayRun()).start();
 
 		setLayout(new BorderLayout());
 		{
 			final JPanel panelNorth = new JPanel();
-			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2, 9, 8, 2);
-			northLayout.setWeightX(4, 5, 3, 5, 3, 5, 3, 5, 2);
+			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2, 11, 8, 2);
+			northLayout.setWeightX(4, 5, 3, 5, 3, 5, 3, 5, 3, 5, 2);
 			panelNorth.setLayout(northLayout);
 			panelNorth.setBorder(BorderFactory.createLoweredBevelBorder());
 			add(panelNorth, BorderLayout.NORTH);
 			final ProportionalGridLayoutConstraint c = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
-
 			{
 				c.y = 0;
 				c.x = 0;
@@ -157,10 +151,10 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				comboTournament = new JComboBox<String>();
 				comboTournament.setEditable(false);
 				c.x = 3;
-				c.gridWidth = 3;
+				c.gridWidth = 5;
 				panelNorth.add(comboTournament, c);
 
-				c.x = 6;
+				c.x = 8;
 				c.gridWidth = 1;
 				panelNorth.add(new JLabel("Ordre :", SwingConstants.RIGHT), c);
 				sortingModes = EnumSortingMode.values();
@@ -171,13 +165,15 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				comboSortingMode = new JComboBox<>(sortingModeStrings);
 				comboSortingMode.setEditable(false);
 				comboSortingMode.setSelectedIndex(0);
-				c.x = 7;
+				c.x = 9;
 				panelNorth.add(comboSortingMode, c);
 
 				c.y = 1;
 				c.x = 0;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
-				periodModes = EnumPeriodMode.values();
+				periodModes = new EnumPeriodMode[] {
+					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
+				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
 					periodModeStrings[index] = periodModes[index].toString();
@@ -210,12 +206,19 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				panelNorth.add(new JLabel("Mois :", SwingConstants.RIGHT), c);
 				final String months[] = new String[12];
 				System.arraycopy(DateFormatSymbols.getInstance(Locale.FRANCE).getMonths(), 0, months, 0, 12);
-				comboMonth = new JComboBox<>(months);
+				comboMonth = new JComboBox<String>(months);
 				comboMonth.setEditable(false);
 				comboMonth.setSelectedIndex(0);
 				c.x = 7;
 				panelNorth.add(comboMonth, c);
 
+				c.x = 8;
+				panelNorth.add(new JLabel("Jour :", SwingConstants.RIGHT), c);
+				comboDay = new JComboBox<Integer>();
+				comboDay.setEditable(false);
+				comboDay.setSelectedIndex(-1);
+				c.x = 9;
+				panelNorth.add(comboDay, c);
 			}
 		}
 
@@ -278,15 +281,20 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		displayFullName = false;
 		listTournament = new ArrayList<Tournament>();
 
-		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
-		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
-		periodParametersComboBoxActionListener = (final ActionEvent e) -> display();
-		comboTrimester.addActionListener(periodParametersComboBoxActionListener);
-		comboMonth.addActionListener(periodParametersComboBoxActionListener);
-
 		final ActionListener rankingModeActionListener = (final ActionEvent e) -> togglePeriodMode(true);
 		comboSortingMode.addActionListener(rankingModeActionListener);
 		comboRankingMode.addActionListener(rankingModeActionListener);
+
+		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
+		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
+
+		periodParametersComboBoxHighLevelActionListener = (final ActionEvent e) -> refreshDay();
+		periodParametersComboBoxLowLevelActionListener = (final ActionEvent e) -> display();
+		// comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
+		comboTrimester.addActionListener(periodParametersComboBoxLowLevelActionListener);
+		comboMonth.addActionListener(periodParametersComboBoxHighLevelActionListener);
+		// comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
+
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
 		togglePeriodMode(false);
 	}
@@ -328,7 +336,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 	private void refreshYear() {
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
 		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-			comboYear.removeActionListener(periodParametersComboBoxActionListener);
+			comboYear.removeActionListener(periodParametersComboBoxHighLevelActionListener);
 			comboYear.removeAllItems();
 
 			final Tournament tournament = listTournament.get(selectedTournamentIndex);
@@ -339,11 +347,36 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				comboYear.addItem(years.get(index));
 			}
 
-			comboYear.addActionListener(periodParametersComboBoxActionListener);
+			comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
 			if (years.size() > 0) {
 				comboYear.setSelectedIndex(0);
 			} else {
 				comboYear.setSelectedIndex(-1);
+			}
+		}
+	}
+
+	private void refreshDay() {
+		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+		final int selectedYearIndex = comboYear.getSelectedIndex();
+		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+			comboDay.removeActionListener(periodParametersComboBoxLowLevelActionListener);
+			comboDay.removeAllItems();
+
+			final Tournament tournament = listTournament.get(selectedTournamentIndex);
+			final int year = (Integer) comboYear.getSelectedItem();
+			final int month = comboMonth.getSelectedIndex();
+			final List<Integer> days = new ArrayList<Integer>(dataAccess.getRCRGameDays(tournament, year, month));
+			Collections.sort(days);
+			for (int index = 0; index < days.size(); index++) {
+				comboDay.addItem(days.get(index));
+			}
+
+			comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
+			if (days.size() > 0) {
+				comboDay.setSelectedIndex(0);
+			} else {
+				comboDay.setSelectedIndex(-1);
 			}
 		}
 	}
@@ -380,21 +413,31 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = false;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
 			case YEAR:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
 			case TRIMESTER:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = true;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
 			case MONTH:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = true;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
+			case DAY:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = true;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = true;
 				break;
 			default:
 				break;
@@ -413,6 +456,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		comboYear.setEnabled(false);
 		comboTrimester.setEnabled(false);
 		comboMonth.setEnabled(false);
+		comboDay.setEnabled(false);
 	}
 
 	private void enableComboBoxes() {
@@ -423,6 +467,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		comboYear.setEnabled(comboBoxActivated[COMBOBOX_YEAR_INDEX]);
 		comboTrimester.setEnabled(comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
 		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
+		comboDay.setEnabled(comboBoxActivated[COMBOBOX_DAY_INDEX]);
 	}
 
 	private void display() {
@@ -431,26 +476,20 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		validate();
 		repaint();
 
-		final Point location = getLocationOnScreen();
-		final Dimension size = getSize();
-		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.setComponentShownListener(waitingDialogShowListener);
-		waitingDialog.setVisible(true);
-	}
-
-	private void displayRun() {
 		final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
 		final EnumSortingMode sortingMode = sortingModes[comboSortingMode.getSelectedIndex()];
 		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
 		final int selectedYearIndex = comboYear.getSelectedIndex();
-		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+		final int selectedDayIndex = comboDay.getSelectedIndex();
+		if (selectedTournamentIndex != -1 && selectedYearIndex != -1 && (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
 			final Tournament tournament = listTournament.get(selectedTournamentIndex);
 			final int year = (Integer) comboYear.getSelectedItem();
 			final int trimestral = comboTrimester.getSelectedIndex();
 			final int month = comboMonth.getSelectedIndex();
-			final List<RCRTotalScore> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month);
+			final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
+			final List<RCRTotalScore> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month, day);
 
 			if (scoreList != null && scoreList.size() > 0) {
 				labelTitles[0].setText("Classement");
@@ -583,9 +622,6 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		scrollRanking.getVerticalScrollBar().setValue(0);
 		enableComboBoxes();
 		repaint();
-
-		waitingDialog.removeComponentShownListener();
-		waitingDialog.setVisible(false);
 	}
 
 	@Override

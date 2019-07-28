@@ -22,19 +22,17 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -63,8 +61,6 @@ import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.game.rcr.RCRScore;
 import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
-import fr.bri.swing.ComponentShownListener;
-import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRGameHistory extends UITabPanel {
 	private static final long serialVersionUID = -6883738413777372692L;
@@ -78,8 +74,6 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 	private boolean displayFullName;
 	private final DataAccessRCR dataAccess;
-	private final JDialogWithProgress waitingDialog;
-	private final ComponentShownListener waitingDialogShowListener;
 
 	private final JLabel labelDate;
 	private final JLabel labelRounds;
@@ -92,20 +86,18 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 	private TreePath selectedPath;
 	private Integer selectedId;
 
-	private final DateFormat dateFormat;
+	private final SimpleDateFormat dateFormat;
 	private final Calendar calendar;
 	private final DecimalFormat normalDecimalFormat;
 	private final DecimalFormat finalScoreDecimalFormat;
 
 	private final List<Tournament> listTournament;
 
-	public UITabPanelRCRGameHistory(final DataAccessRCR dataAccess, final JDialogWithProgress waitingDialog) {
+	public UITabPanelRCRGameHistory(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
-		this.waitingDialog = waitingDialog;
-		waitingDialogShowListener = (final ComponentEvent e) -> new Thread(() -> refreshTreeRun()).start();
 		displayFullName = false;
 
-		dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.FRANCE);
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		calendar = Calendar.getInstance();
 		normalDecimalFormat = new DecimalFormat("#,###");
 		final DecimalFormatSymbols normalFormatSymbols = normalDecimalFormat.getDecimalFormatSymbols();
@@ -293,14 +285,6 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 	}
 
 	private void refreshTree() {
-		final Point location = getLocationOnScreen();
-		final Dimension size = getSize();
-		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.setComponentShownListener(waitingDialogShowListener);
-		waitingDialog.setVisible(true);
-	}
-
-	private void refreshTreeRun() {
 		invalidate();
 		final String monthStrings[] = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
@@ -309,7 +293,6 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 			final List<Integer> yearList = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
 			Collections.sort(yearList);
 
-			final int totalSize = yearList.size() * 12;
 			final DefaultMutableTreeNode root = new DefaultMutableTreeNode(tournament.getName());
 			for (int index = 0; index < yearList.size(); index++) {
 				final int year = yearList.get(index);
@@ -336,7 +319,6 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 							}
 						}
 					}
-					waitingDialog.setProgress((index * 12 + month) * 100 / totalSize);
 				}
 			}
 			treeModel.setRoot(root);
@@ -346,9 +328,6 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 		selectedPath = null;
 		validate();
 		repaint();
-
-		waitingDialog.removeComponentShownListener();
-		waitingDialog.setVisible(false);
 	}
 
 	private void selectGame() {
@@ -479,49 +458,34 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 				final RCRGame game = dataAccess.getRCRGame(id);
 				if (game != null) {
 					calendar.set(game.getYear(), game.getMonth(), game.getDay());
-					writer.write("Date");
+					writer.write("0");
+					writer.write(SEPARATOR);
+					writer.write(Integer.toString(game.getId()));
+					writer.write(SEPARATOR);
+					writer.write(Integer.toString(game.getTournamentId()));
 					writer.write(SEPARATOR);
 					writer.write(dateFormat.format(calendar.getTime()));
 					writer.write(SEPARATOR);
-					writer.write("Manches");
+					writer.write(Integer.toString(game.getNbPlayers()));
 					writer.write(SEPARATOR);
-					writer.write(normalDecimalFormat.format(game.getNbRounds()));
+					writer.write(Integer.toString(game.getNbRounds()));
 					writer.newLine();
 
-					if (displayFullName) {
-						for (int index = 0; index < game.getScores().size(); index++) {
-							final RCRScore score = game.getScores().get(index);
-							writer.write(Integer.toString(score.getPlace()));
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getPlayerId()));
-							writer.write(SEPARATOR);
-							writer.write(score.getPlayerName());
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getGameScore()));
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getUmaScore()));
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getFinalScore()));
-							writer.newLine();
-						}
-					} else {
-						for (int index = 0; index < game.getScores().size(); index++) {
-							final RCRScore score = game.getScores().get(index);
-							writer.write(Integer.toString(score.getPlace()));
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getPlayerId()));
-							writer.write(SEPARATOR);
-							writer.write(score.getDisplayName());
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getGameScore()));
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getUmaScore()));
-							writer.write(SEPARATOR);
-							writer.write(Integer.toString(score.getFinalScore()));
-							writer.newLine();
-						}
+					for (int index = 0; index < game.getScores().size(); index++) {
+						final RCRScore score = game.getScores().get(index);
+						writer.write(Integer.toString(game.getId()));
+						writer.write(SEPARATOR);
+						writer.write(Integer.toString(score.getPlayerId()));
+						writer.write(SEPARATOR);
+						writer.write(Integer.toString(score.getPlace()));
+						writer.write(SEPARATOR);
+						writer.write(Integer.toString(score.getGameScore()));
+						writer.write(SEPARATOR);
+						writer.write(Integer.toString(score.getUmaScore()));
+						writer.write(SEPARATOR);
+						writer.write(Integer.toString(score.getFinalScore()));
+						writer.newLine();
 					}
-					writer.newLine();
 				}
 			}
 		}

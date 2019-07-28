@@ -23,10 +23,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -81,8 +79,6 @@ import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
-import fr.bri.swing.ComponentShownListener;
-import fr.bri.swing.JDialogWithProgress;
 
 public class UITabPanelRCRTrend extends UITabPanel {
 	private static final long serialVersionUID = 6352466319081554030L;
@@ -99,9 +95,6 @@ public class UITabPanelRCRTrend extends UITabPanel {
 
 	private boolean displayFullName;
 	private final DataAccessRCR dataAccess;
-	private final JDialogWithProgress waitingDialog;
-	private final ComponentShownListener waitingDialogRefreshData;
-	private final ComponentShownListener waitingDialogDisplayData;
 
 	private final JComboBox<String> comboTournament;
 
@@ -127,11 +120,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	private final List<Tournament> listTournament;
 	private final List<Player> listPlayers;
 
-	public UITabPanelRCRTrend(final DataAccessRCR dataAccess, final JDialogWithProgress waitingDialog) {
+	public UITabPanelRCRTrend(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
-		this.waitingDialog = waitingDialog;
-		waitingDialogRefreshData = (final ComponentEvent e) -> new Thread(() -> refreshDataRun()).start();
-		waitingDialogDisplayData = (final ComponentEvent e) -> new Thread(() -> displayDataRun()).start();
 
 		setLayout(new BorderLayout());
 		{
@@ -157,7 +147,9 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				c.x = 0;
 				c.gridWidth = 1;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
-				periodModes = EnumPeriodMode.values();
+				periodModes = new EnumPeriodMode[] {
+					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH
+				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
 					periodModeStrings[index] = periodModes[index].toString();
@@ -400,14 +392,6 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	}
 
 	private void refreshData() {
-		final Point location = getLocationOnScreen();
-		final Dimension size = getSize();
-		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.setComponentShownListener(waitingDialogRefreshData);
-		waitingDialog.setVisible(true);
-	}
-
-	private void refreshDataRun() {
 		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
 		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
@@ -418,10 +402,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 			final int trimester = comboTrimester.getSelectedIndex();
 			final int month = comboMonth.getSelectedIndex();
 
-			trend = dataAccess.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month);
+			trend = dataAccess.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, 0);
 		}
-		waitingDialog.removeComponentShownListener();
-		waitingDialog.setVisible(false);
 
 		displayData();
 	}
@@ -439,14 +421,6 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		validate();
 		repaint();
 
-		final Point location = getLocationOnScreen();
-		final Dimension size = getSize();
-		waitingDialog.setLocation(location.x + (size.width - waitingDialog.getWidth()) / 2, location.y + (size.height - waitingDialog.getHeight()) / 2);
-		waitingDialog.setComponentShownListener(waitingDialogDisplayData);
-		waitingDialog.setVisible(true);
-	}
-
-	private void displayDataRun() {
 		if (trend.data.size() > 0) {
 			final Set<String> selectedNames = new HashSet<String>();
 			if (displayFullName) {
@@ -511,9 +485,6 @@ public class UITabPanelRCRTrend extends UITabPanel {
 
 		validate();
 		repaint();
-
-		waitingDialog.removeComponentShownListener();
-		waitingDialog.setVisible(false);
 	}
 
 	@Override
