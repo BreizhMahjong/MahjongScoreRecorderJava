@@ -17,8 +17,8 @@
 package fr.bmj.bmjc.dataaccess.impl.db;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,17 +29,25 @@ public class DataAccessDataBaseCommon implements DataAccessCommon {
 
 	protected final Connection dataBaseConnection;
 
+	private boolean onlyFrequentPlayers;
+
 	public DataAccessDataBaseCommon(final Connection dataBaseConnection) {
 		this.dataBaseConnection = dataBaseConnection;
 	}
 
 	@Override
-	public List<Player> getRegisteredPlayers() {
+	public void setOnlyFrequentPlayers(final boolean onlyFrequentPlayers) {
+		this.onlyFrequentPlayers = onlyFrequentPlayers;
+	}
+
+	@Override
+	public List<Player> getPlayers() {
 		final List<Player> playerList = new ArrayList<Player>();
 		if (dataBaseConnection != null) {
 			try {
-				final Statement statement = dataBaseConnection.createStatement();
-				final ResultSet result = statement.executeQuery("SELECT id, name, display_name FROM player WHERE NOT hidden ORDER BY id");
+				final PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT id, name, display_name FROM player WHERE frequent=? ORDER BY id");
+				statement.setBoolean(1, onlyFrequentPlayers);
+				final ResultSet result = statement.executeQuery();
 				while (result.next()) {
 					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false, true));
 				}

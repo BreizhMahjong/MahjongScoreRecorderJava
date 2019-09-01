@@ -86,6 +86,11 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
+	public void setOnlyFrequentPlayers(final boolean onlyFrequentPlayers) {
+		dataAccessManagePlayer.setOnlyFrequentPlayers(onlyFrequentPlayers);
+	}
+
+	@Override
 	public List<Player> getAllPlayers() {
 		return dataAccessManagePlayer.getAllPlayers();
 	}
@@ -96,8 +101,8 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public List<Player> getRegisteredPlayers() {
-		return dataAccessManagePlayer.getRegisteredPlayers();
+	public List<Player> getPlayers() {
+		return dataAccessManagePlayer.getPlayers();
 	}
 
 	@Override

@@ -390,7 +390,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			for (int comboBoxIndex = 0; comboBoxIndex < comboBoxPlayers.size(); comboBoxIndex++) {
 				comboBoxPlayers.get(comboBoxIndex).removeAllItems();
 			}
-			players.addAll(dataAccess.getRegisteredPlayers());
+			players.addAll(dataAccess.getPlayers());
 			if (displayFullName) {
 				Collections.sort(players, new ComparatorAscendingPlayerName());
 			} else {

@@ -61,7 +61,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 	private final JComboBox<String> comboBoxPlayer;
 	private final ActionListener comboBoxPlayerActionListener;
-	private final JCheckBox checkBoxHide;
+	private final JCheckBox checkBoxFrequent;
 	private final JCheckBox checkBoxRegular;
 	private final JTextField textModifyPlayerName;
 	private final JTextField textModifyPlayerDisplayName;
@@ -157,8 +157,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				modifyPlayerC.y = 2;
 				modifyPlayerC.x = 1;
 				modifyPlayerC.gridWidth = 2;
-				checkBoxHide = new JCheckBox("Caché");
-				modifyPlayerPanel.add(checkBoxHide, modifyPlayerC);
+				checkBoxFrequent = new JCheckBox("Fréquent");
+				modifyPlayerPanel.add(checkBoxFrequent, modifyPlayerC);
 
 				modifyPlayerC.x = 4;
 				modifyPlayerC.gridWidth = 2;
@@ -258,12 +258,12 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final Player player = listPlayer.get(selectedPlayerIndex);
 			textModifyPlayerName.setText(player.getPlayerName());
 			textModifyPlayerDisplayName.setText(player.getDisplayName());
-			checkBoxHide.setSelected(player.isHidden());
+			checkBoxFrequent.setSelected(player.isFrequent());
 			checkBoxRegular.setSelected(player.isRegular());
 		} else {
 			textModifyPlayerName.setText("");
 			textModifyPlayerDisplayName.setText("");
-			checkBoxHide.setSelected(false);
+			checkBoxFrequent.setSelected(false);
 			checkBoxRegular.setSelected(false);
 		}
 	}
@@ -274,10 +274,10 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final Player player = listPlayer.get(selectedPlayerIndex);
 			final String playerName = textModifyPlayerName.getText();
 			final String playerDisplayName = textModifyPlayerDisplayName.getText();
-			final boolean hidden = checkBoxHide.isSelected();
+			final boolean frequent = checkBoxFrequent.isSelected();
 			final boolean regular = checkBoxRegular.isSelected();
 			if (playerName != null && playerName.length() > 0 && playerDisplayName != null && playerDisplayName.length() > 0) {
-				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName, hidden, regular);
+				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName, frequent, regular);
 				if (result.getResult()) {
 					JOptionPane.showMessageDialog(this, "Le joueur a été modifié", "Succès", JOptionPane.INFORMATION_MESSAGE);
 					refreshPlayer();
@@ -322,7 +322,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				writer.write(SEPARATOR);
 				writer.write("Name");
 				writer.write(SEPARATOR);
-				writer.write("Hidden");
+				writer.write("Frequent");
 				writer.write(SEPARATOR);
 				writer.write("Regular");
 				writer.newLine();
@@ -335,7 +335,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 					writer.write(SEPARATOR);
 					writer.write(player.getPlayerName());
 					writer.write(SEPARATOR);
-					writer.write(Boolean.toString(player.isHidden()));
+					writer.write(Boolean.toString(player.isFrequent()));
 					writer.write(SEPARATOR);
 					writer.write(Boolean.toString(player.isRegular()));
 					writer.newLine();

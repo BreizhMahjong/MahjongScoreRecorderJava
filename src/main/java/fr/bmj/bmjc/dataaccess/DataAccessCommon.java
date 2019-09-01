@@ -6,6 +6,8 @@ import fr.bmj.bmjc.data.game.Player;
 
 public interface DataAccessCommon {
 
-	public List<Player> getRegisteredPlayers();
+	public void setOnlyFrequentPlayers(boolean onlyFrequentPlayers);
+
+	public List<Player> getPlayers();
 
 }

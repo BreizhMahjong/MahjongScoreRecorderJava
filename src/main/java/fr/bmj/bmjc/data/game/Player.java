@@ -21,14 +21,14 @@ public class Player {
 	private final int playerID;
 	private final String playerName;
 	private final String displayName;
-	private boolean hidden;
+	private boolean frequent;
 	private final boolean regular;
 
-	public Player(final int playerID, final String playerName, final String displayName, final boolean hidden, final boolean regular) {
+	public Player(final int playerID, final String playerName, final String displayName, final boolean frequent, final boolean regular) {
 		this.playerID = playerID;
 		this.playerName = playerName;
 		this.displayName = displayName;
-		this.hidden = hidden;
+		this.frequent = frequent;
 		this.regular = regular;
 	}
 
@@ -44,12 +44,12 @@ public class Player {
 		return displayName;
 	}
 
-	public boolean isHidden() {
-		return hidden;
+	public boolean isFrequent() {
+		return frequent;
 	}
 
-	public void setHidden(final boolean hidden) {
-		this.hidden = hidden;
+	public void setFrequent(final boolean frequent) {
+		this.frequent = frequent;
 	}
 
 	public boolean isRegular() {

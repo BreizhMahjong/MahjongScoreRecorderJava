@@ -50,6 +50,15 @@ import fr.bmj.bmjc.gui.rcr.UITabPanelRCRTrend;
 public class UIMainWindow extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 4639754313889847228L;
 
+	private static final int NB_PANELS = 7;
+	private static final int INDEX_PANEL_MANAGE_PLAYER = 0;
+	private static final int INDEX_PANEL_RCR_MANAGE_GAME = 1;
+	private static final int INDEX_PANEL_RCR_NEW_GAME = 2;
+	private static final int INDEX_PANEL_RCR_RANKING = 3;
+	private static final int INDEX_PANEL_RCR_TREND = 4;
+	private static final int INDEX_PANEL_RCR_ANALYZE = 5;
+	private static final int INDEX_PANEL_RCR_GAME_HISTORY = 6;
+
 	private static final int WINDOW_HEIGHT = 768;
 	private static final int WINDOW_WIDTH = 1024;
 	private static final String MAIN_LOGO_URL = "fr/bmj/bmjc/image/logo.png";
@@ -57,6 +66,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private static final boolean DISPLAY_REAL_NAME = false;
 	private static final boolean USE_MIN_GAME = false;
 	private static final boolean ONLY_REGULAR_PLAYERS = false;
+	private static final boolean ONLY_FREQUENT_PLAYERS = true;
 
 	private final DataAccess dataAccess;
 
@@ -65,6 +75,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private final JRadioButtonMenuItem menuSettingsDisplayName;
 	private final JCheckBoxMenuItem menuSettingsUseMinGame;
 	private final JCheckBoxMenuItem menuSettingsOnlyRegularPlayers;
+	private final JCheckBoxMenuItem menuSettingsOnlyFrequentPlayers;
 
 	private final UITabPanel tabPanels[];
 	private final JTabbedPane tabbedPane;
@@ -74,6 +85,9 @@ public class UIMainWindow extends JFrame implements WindowListener {
 
 		this.dataAccess = dataAccess;
 		dataAccess.initialize();
+		dataAccess.setRCRUseMinimumGame(USE_MIN_GAME);
+		dataAccess.setRCROnlyRegularPlayers(ONLY_REGULAR_PLAYERS);
+		dataAccess.setOnlyFrequentPlayers(ONLY_FREQUENT_PLAYERS);
 
 		try {
 			final URL icon = ClassLoader.getSystemResource(MAIN_LOGO_URL);
@@ -86,14 +100,14 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		mainPane.add(tabbedPane, BorderLayout.CENTER);
 
-		tabPanels = new UITabPanel[7];
-		tabPanels[0] = new UITabPanelManagePlayer(dataAccess);
-		tabPanels[1] = new UITabPanelRCRManage(dataAccess);
-		tabPanels[2] = new UITabPanelRCRNewGame(dataAccess);
-		tabPanels[3] = new UITabPanelRCRClubRanking(dataAccess);
-		tabPanels[4] = new UITabPanelRCRTrend(dataAccess);
-		tabPanels[5] = new UITabPanelRCRPersonalAnalyse(dataAccess);
-		tabPanels[6] = new UITabPanelRCRGameHistory(dataAccess);
+		tabPanels = new UITabPanel[NB_PANELS];
+		tabPanels[INDEX_PANEL_MANAGE_PLAYER] = new UITabPanelManagePlayer(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_MANAGE_GAME] = new UITabPanelRCRManage(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_NEW_GAME] = new UITabPanelRCRNewGame(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_RANKING] = new UITabPanelRCRClubRanking(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_TREND] = new UITabPanelRCRTrend(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_ANALYZE] = new UITabPanelRCRPersonalAnalyse(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_GAME_HISTORY] = new UITabPanelRCRGameHistory(dataAccess);
 		for (int indexTabPanel = 0; indexTabPanel < tabPanels.length; indexTabPanel++) {
 			tabbedPane.addTab(tabPanels[indexTabPanel].getTabName(), tabPanels[indexTabPanel]);
 		}
@@ -151,6 +165,12 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		menuSettingsOnlyRegularPlayers.addActionListener((final ActionEvent e) -> setOnlyRegularPlayers());
 		menuSettings.add(menuSettingsOnlyRegularPlayers);
 
+		menuSettingsOnlyFrequentPlayers = new JCheckBoxMenuItem("Joueurs fréquents");
+		menuSettingsOnlyFrequentPlayers.setMnemonic(KeyEvent.VK_F);
+		menuSettingsOnlyFrequentPlayers.setSelected(ONLY_FREQUENT_PLAYERS);
+		menuSettingsOnlyFrequentPlayers.addActionListener((final ActionEvent e) -> setOnlyFrequentPlayers());
+		menuSettings.add(menuSettingsOnlyFrequentPlayers);
+
 		addWindowListener(this);
 		setMinimumSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 		setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
@@ -203,13 +223,25 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private void setUseMinGame() {
 		dataAccess.setRCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
 		final UITabPanel tab = getCurrentTab();
-		tab.refresh();
+		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING]) {
+			tab.refresh();
+		}
 	}
 
 	private void setOnlyRegularPlayers() {
 		dataAccess.setRCROnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
-		tab.refresh();
+		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING]) {
+			tab.refresh();
+		}
+	}
+
+	private void setOnlyFrequentPlayers() {
+		dataAccess.setOnlyFrequentPlayers(menuSettingsOnlyFrequentPlayers.isSelected());
+		final UITabPanel tab = getCurrentTab();
+		if (tab == tabPanels[INDEX_PANEL_RCR_NEW_GAME]) {
+			tab.refresh();
+		}
 	}
 
 	@Override

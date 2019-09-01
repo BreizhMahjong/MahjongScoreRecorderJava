@@ -69,12 +69,12 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 		}
 
 		try {
-			final String query = "INSERT INTO player(id, name, display_name, hidden, regular) VALUES(?, ?, ?, ?, ?)";
+			final String query = "INSERT INTO player(id, name, display_name, frequent, regular) VALUES(?, ?, ?, ?, ?)";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setInt(1, newId);
 			statement.setString(2, name);
 			statement.setString(3, displayName);
-			statement.setBoolean(4, false);
+			statement.setBoolean(4, true);
 			statement.setBoolean(5, true);
 			added = statement.executeUpdate() == 1;
 			statement.close();
@@ -96,7 +96,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 		if (dataBaseConnection != null) {
 			try {
 				final Statement statement = dataBaseConnection.createStatement();
-				final ResultSet result = statement.executeQuery("SELECT id, name, display_name, hidden, regular FROM player ORDER BY id");
+				final ResultSet result = statement.executeQuery("SELECT id, name, display_name, frequent, regular FROM player ORDER BY id");
 				while (result.next()) {
 					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), result.getBoolean(4), result.getBoolean(5)));
 				}
@@ -110,7 +110,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean hidden, final boolean regular) {
+	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean frequent, final boolean regular) {
 		if (!isConnected()) {
 			return new UpdateResult(false, "Pas de connxion à la base de données");
 		}
@@ -120,11 +120,11 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 
 		boolean modified;
 		try {
-			final String query = "UPDATE player SET name=?, display_name=?, hidden=?, regular=? WHERE id=?";
+			final String query = "UPDATE player SET name=?, display_name=?, frequent=?, regular=? WHERE id=?";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setString(1, name);
 			statement.setString(2, displayName);
-			statement.setBoolean(3, hidden);
+			statement.setBoolean(3, frequent);
 			statement.setBoolean(4, regular);
 			statement.setInt(5, id);
 			modified = statement.executeUpdate() == 1;
