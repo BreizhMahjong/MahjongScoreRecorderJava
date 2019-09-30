@@ -17,8 +17,8 @@
 package fr.bmj.bmjc.dataaccess.impl.db;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,9 +45,13 @@ public class DataAccessDataBaseCommon implements DataAccessCommon {
 		final List<Player> playerList = new ArrayList<Player>();
 		if (dataBaseConnection != null) {
 			try {
-				final PreparedStatement statement = dataBaseConnection.prepareStatement("SELECT id, name, display_name FROM player WHERE frequent=? ORDER BY id");
-				statement.setBoolean(1, onlyFrequentPlayers);
-				final ResultSet result = statement.executeQuery();
+				String query = "SELECT id, name, display_name FROM player ";
+				if (onlyFrequentPlayers) {
+					query = query + "WHERE frequent=true ";
+				}
+				query = query + "ORDER BY id";
+				final Statement statement = dataBaseConnection.createStatement();
+				final ResultSet result = statement.executeQuery(query);
 				while (result.next()) {
 					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false, true));
 				}
