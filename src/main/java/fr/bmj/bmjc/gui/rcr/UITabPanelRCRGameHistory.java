@@ -139,7 +139,8 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 			treeIds.setRootVisible(true);
 			treeIds.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			treeIds.getSelectionModel().addTreeSelectionListener((final TreeSelectionEvent e) -> selectGame());
-			final JScrollPane scrollList = new JScrollPane(treeIds, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			final JScrollPane scrollList = new JScrollPane(treeIds, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			c.gridy = 1;
 			c.gridx = 0;
 			c.gridwidth = 2;
@@ -153,7 +154,8 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 			final Dimension labelSizes[] = new Dimension[NUMBER_OF_COLUMNS];
 
 			final JPanel centerPanel = new JPanel(new GridBagLayout());
-			final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 8, 8);
+			final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(0, 0, 0, 0), 8, 8);
 
 			for (int index = 0; index < NUMBER_OF_COLUMNS; index++) {
 				labelSizes[index] = new Dimension(COLUMN_WIDTH[index], LABEL_HEIGHT);
@@ -233,7 +235,8 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 			{
 				rightComponent = new JPanel(new GridBagLayout());
-				final GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+				final GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.NONE,
+					new Insets(0, 0, 0, 0), 0, 0);
 				rightComponent.setMinimumSize(new Dimension(600, 600));
 				rightComponent.add(centerPanel, c);
 			}
@@ -458,7 +461,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 				final RCRGame game = dataAccess.getRCRGame(id);
 				if (game != null) {
 					calendar.set(game.getYear(), game.getMonth(), game.getDay());
-					writer.write("0");
+					writer.write("#");
 					writer.write(SEPARATOR);
 					writer.write(Integer.toString(game.getId()));
 					writer.write(SEPARATOR);
@@ -469,10 +472,13 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 					writer.write(Integer.toString(game.getNbPlayers()));
 					writer.write(SEPARATOR);
 					writer.write(Integer.toString(game.getNbRounds()));
+					writer.write(SEPARATOR);
 					writer.newLine();
 
 					for (int index = 0; index < game.getScores().size(); index++) {
 						final RCRScore score = game.getScores().get(index);
+						writer.write("*");
+						writer.write(SEPARATOR);
 						writer.write(Integer.toString(game.getId()));
 						writer.write(SEPARATOR);
 						writer.write(Integer.toString(score.getPlayerId()));
