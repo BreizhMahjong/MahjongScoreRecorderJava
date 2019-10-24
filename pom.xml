@@ -24,11 +24,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.bri.swing</groupId>
-			<artifactId>JDialogWithProgress</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.bri.swing</groupId>
 			<artifactId>JDatePicker</artifactId>
 			<version>1.0</version>
 		</dependency>

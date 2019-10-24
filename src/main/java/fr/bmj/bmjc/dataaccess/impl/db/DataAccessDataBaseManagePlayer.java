@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,9 +97,10 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 		if (dataBaseConnection != null) {
 			try {
 				final Statement statement = dataBaseConnection.createStatement();
-				final ResultSet result = statement.executeQuery("SELECT id, name, display_name, frequent, regular FROM player ORDER BY id");
+				final ResultSet result = statement.executeQuery("SELECT id, name, display_name, frequent, regular, license FROM player ORDER BY id");
 				while (result.next()) {
-					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), result.getBoolean(4), result.getBoolean(5)));
+					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), result.getBoolean(4), result.getBoolean(5),
+						result.getString(6)));
 				}
 				result.close();
 				statement.close();
@@ -110,7 +112,8 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean frequent, final boolean regular) {
+	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean frequent, final boolean regular,
+		final String license) {
 		if (!isConnected()) {
 			return new UpdateResult(false, "Pas de connxion à la base de données");
 		}
@@ -120,13 +123,18 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 
 		boolean modified;
 		try {
-			final String query = "UPDATE player SET name=?, display_name=?, frequent=?, regular=? WHERE id=?";
+			final String query = "UPDATE player SET name=?, display_name=?, frequent=?, regular=?, license=? WHERE id=?";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setString(1, name);
 			statement.setString(2, displayName);
 			statement.setBoolean(3, frequent);
 			statement.setBoolean(4, regular);
 			statement.setInt(5, id);
+			if (license == null || license.length() == 0) {
+				statement.setNull(6, Types.VARCHAR);
+			} else {
+				statement.setString(6, license);
+			}
 			modified = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {

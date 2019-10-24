@@ -4,6 +4,7 @@ create table Player(
 	display_name varchar(32) not null,
 	frequent boolean not null,
 	regular boolean not null,
+	license varchar(10),
 	constraint player_pk primary key(id),
 	constraint player_dn unique(display_name)
 );

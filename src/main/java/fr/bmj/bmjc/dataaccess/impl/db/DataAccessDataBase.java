@@ -96,8 +96,9 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean hidden, final boolean regular) {
-		return dataAccessManagePlayer.modifyPlayer(id, name, displayName, hidden, regular);
+	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean frequent, final boolean regular,
+		final String license) {
+		return dataAccessManagePlayer.modifyPlayer(id, name, displayName, frequent, regular, license);
 	}
 
 	@Override
@@ -176,19 +177,20 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-		final int trimester, final int month, final int day) {
+	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode,
+		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
 		return dataAccessRCR.getRCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month, day);
 	}
 
 	@Override
-	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-		final int year, final int trimester, final int month, final int day) {
+	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode,
+		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
 		return dataAccessRCR.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month, day);
 	}
 
 	@Override
-	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
+	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
+		final int month, final int day) {
 		return dataAccessRCR.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, day);
 	}
 

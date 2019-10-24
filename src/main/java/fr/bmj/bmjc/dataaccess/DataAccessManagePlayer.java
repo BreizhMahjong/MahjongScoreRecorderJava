@@ -26,7 +26,7 @@ public interface DataAccessManagePlayer extends DataAccessCommon {
 
 	public List<Player> getAllPlayers();
 
-	public UpdateResult modifyPlayer(final int id, String name, final String displayName, boolean hidden, boolean regular);
+	public UpdateResult modifyPlayer(final int id, String name, final String displayName, boolean frequent, boolean regular, String license);
 
 	public UpdateResult deletePlayer(final int id);
 

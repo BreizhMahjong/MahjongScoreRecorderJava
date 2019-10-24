@@ -65,6 +65,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 	private final JCheckBox checkBoxRegular;
 	private final JTextField textModifyPlayerName;
 	private final JTextField textModifyPlayerDisplayName;
+	private final JTextField textModifyLicense;
 	private final JButton buttonModifyPlayer;
 	private final JButton buttonDeletePlayer;
 
@@ -76,12 +77,14 @@ public class UITabPanelManagePlayer extends UITabPanel {
 		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);
 		final JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new GridBagLayout());
-		final GridBagConstraints innerC = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(16, 8, 16, 8), 0, 0);
+		final GridBagConstraints innerC = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+			new Insets(16, 8, 16, 8), 0, 0);
 		{
 			final JPanel playerPanel = new JPanel();
 			playerPanel.setLayout(new GridBagLayout());
 			playerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(0, 0, 127)), "Joueur"));
-			final GridBagConstraints playerC = new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(8, 0, 8, 0), 0, 0);
+			final GridBagConstraints playerC = new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(8, 0, 8, 0), 0, 0);
 			{
 				final JPanel addPlayerPanel = new JPanel();
 				final ProportionalGridLayout layout = new ProportionalGridLayout(1, 7, 2, 2);
@@ -117,7 +120,7 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 			{
 				final JPanel modifyPlayerPanel = new JPanel();
-				final ProportionalGridLayout layout = new ProportionalGridLayout(3, 7, 2, 2);
+				final ProportionalGridLayout layout = new ProportionalGridLayout(4, 7, 2, 2);
 				modifyPlayerPanel.setLayout(layout);
 				modifyPlayerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Modifier joueur"));
 				final ProportionalGridLayoutConstraint modifyPlayerC = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
@@ -155,6 +158,15 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				modifyPlayerPanel.add(textModifyPlayerDisplayName, modifyPlayerC);
 
 				modifyPlayerC.y = 2;
+				modifyPlayerC.x = 0;
+				modifyPlayerC.gridWidth = 1;
+				modifyPlayerPanel.add(new JLabel("Licence: ", SwingConstants.RIGHT), modifyPlayerC);
+				textModifyLicense = new JTextField();
+				modifyPlayerC.x = 1;
+				modifyPlayerC.gridWidth = 2;
+				modifyPlayerPanel.add(textModifyLicense, modifyPlayerC);
+
+				modifyPlayerC.y = 3;
 				modifyPlayerC.x = 1;
 				modifyPlayerC.gridWidth = 2;
 				checkBoxFrequent = new JCheckBox("Fréquent");
@@ -260,11 +272,13 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			textModifyPlayerDisplayName.setText(player.getDisplayName());
 			checkBoxFrequent.setSelected(player.isFrequent());
 			checkBoxRegular.setSelected(player.isRegular());
+			textModifyLicense.setText(player.getLicense());
 		} else {
 			textModifyPlayerName.setText("");
 			textModifyPlayerDisplayName.setText("");
 			checkBoxFrequent.setSelected(false);
 			checkBoxRegular.setSelected(false);
+			textModifyLicense.setText("");
 		}
 	}
 
@@ -276,8 +290,9 @@ public class UITabPanelManagePlayer extends UITabPanel {
 			final String playerDisplayName = textModifyPlayerDisplayName.getText();
 			final boolean frequent = checkBoxFrequent.isSelected();
 			final boolean regular = checkBoxRegular.isSelected();
+			final String license = textModifyLicense.getText();
 			if (playerName != null && playerName.length() > 0 && playerDisplayName != null && playerDisplayName.length() > 0) {
-				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName, frequent, regular);
+				final UpdateResult result = dataAccess.modifyPlayer(player.getPlayerID(), playerName, playerDisplayName, frequent, regular, license);
 				if (result.getResult()) {
 					JOptionPane.showMessageDialog(this, "Le joueur a été modifié", "Succès", JOptionPane.INFORMATION_MESSAGE);
 					refreshPlayer();
@@ -326,6 +341,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				writer.write(SEPARATOR);
 				writer.write("Regular");
 				writer.newLine();
+				writer.write("License");
+				writer.newLine();
 
 				for (int index = 0; index < listPlayer.size(); index++) {
 					final Player player = listPlayer.get(index);
@@ -339,6 +356,8 @@ public class UITabPanelManagePlayer extends UITabPanel {
 					writer.write(SEPARATOR);
 					writer.write(Boolean.toString(player.isRegular()));
 					writer.newLine();
+					writer.write(SEPARATOR);
+					writer.write(player.getLicense() != null ? player.getLicense() : "");
 				}
 			} catch (final Exception e) {
 				JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -351,7 +370,5 @@ public class UITabPanelManagePlayer extends UITabPanel {
 				}
 			}
 		}
-
 	}
-
 }

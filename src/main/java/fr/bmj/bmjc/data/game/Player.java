@@ -21,15 +21,17 @@ public class Player {
 	private final int playerID;
 	private final String playerName;
 	private final String displayName;
-	private boolean frequent;
+	private final boolean frequent;
 	private final boolean regular;
+	private final String license;
 
-	public Player(final int playerID, final String playerName, final String displayName, final boolean frequent, final boolean regular) {
+	public Player(final int playerID, final String playerName, final String displayName, final boolean frequent, final boolean regular, final String license) {
 		this.playerID = playerID;
 		this.playerName = playerName;
 		this.displayName = displayName;
 		this.frequent = frequent;
 		this.regular = regular;
+		this.license = license;
 	}
 
 	public int getPlayerID() {
@@ -48,12 +50,12 @@ public class Player {
 		return frequent;
 	}
 
-	public void setFrequent(final boolean frequent) {
-		this.frequent = frequent;
-	}
-
 	public boolean isRegular() {
 		return regular;
+	}
+
+	public String getLicense() {
+		return license;
 	}
 
 }
