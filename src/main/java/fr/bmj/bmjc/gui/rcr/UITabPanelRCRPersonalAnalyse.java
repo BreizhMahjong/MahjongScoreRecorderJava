@@ -188,7 +188,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				c.x = 0;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = new EnumPeriodMode[] {
-					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
+					EnumPeriodMode.ALL, EnumPeriodMode.SEASON, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
 				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -196,7 +196,7 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				}
 				comboPeriodMode = new JComboBox<String>(periodModeStrings);
 				comboPeriodMode.setEditable(false);
-				comboPeriodMode.setSelectedIndex(2);
+				comboPeriodMode.setSelectedIndex(3);
 				c.x = 1;
 				panelNorth.add(comboPeriodMode, c);
 
@@ -210,7 +210,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				c.x = 4;
 				panelNorth.add(new JLabel("Trimestre :", SwingConstants.RIGHT), c);
 				final String trimesters[] = {
-					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
+					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(),
+					EnumTrimester.TRIMESTER_4.toString()
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
@@ -493,6 +494,12 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
 				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
+			case SEASON:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
 			case YEAR:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
@@ -562,14 +569,16 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		final int selectedYearIndex = comboYear.getSelectedIndex();
 		final int selectedDayIndex = comboDay.getSelectedIndex();
 
-		if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1 && (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
+		if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1
+			&& (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
 			final Player player = listPlayers.get(selectedPlayerIndex);
 			final Tournament tournament = listTournament.get(selectedTournamentIndex);
 			final int year = (Integer) comboYear.getSelectedItem();
 			final int trimester = comboTrimester.getSelectedIndex();
 			final int month = comboMonth.getSelectedIndex();
 			final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
-			final RCRDataPackageAnalyze dataPackage = dataAccess.getRCRDataPackageAnalyze(tournament, player.getPlayerID(), scoreMode, periodMode, year, trimester, month, day);
+			final RCRDataPackageAnalyze dataPackage = dataAccess.getRCRDataPackageAnalyze(tournament, player.getPlayerID(), scoreMode, periodMode, year,
+				trimester, month, day);
 
 			if (dataPackage != null && dataPackage.getNumberOfGames() > 0) {
 				final int numberOfGames = dataPackage.getNumberOfGames();
@@ -592,7 +601,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 					if (dataPackage.getNumberOfFourPlayerGames() > 0) {
 						for (int index = 0; index < 4; index++) {
 							labelFourPlayersGamePlaces[index].setText(format.format(dataPackage.getFourPlayerGamePlaces()[index]));
-							labelFourPlayersGamePlacesPercent[index].setText(format.format(dataPackage.getFourPlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
+							labelFourPlayersGamePlacesPercent[index]
+								.setText(format.format(dataPackage.getFourPlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
 						}
 					} else {
 						for (int index = 0; index < 4; index++) {
@@ -605,7 +615,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 					if (dataPackage.getNumberOfFivePlayerGames() > 0) {
 						for (int index = 0; index < 5; index++) {
 							labelFivePlayersGamePlaces[index].setText(format.format(dataPackage.getFivePlayerGamePlaces()[index]));
-							labelFivePlayersGamePlacesPercent[index].setText(format.format(dataPackage.getFivePlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
+							labelFivePlayersGamePlacesPercent[index]
+								.setText(format.format(dataPackage.getFivePlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
 						}
 					} else {
 						for (int index = 0; index < 5; index++) {
@@ -631,7 +642,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 						final List<String> listToolTipText = new ArrayList<String>();
 						for (int index = 0; index < numberOfGames; index++) {
 							scoreSeries.add(index + 1, listScore.get(index));
-							listToolTipText.add(index, "<html>Score : " + Integer.toString(listScore.get(index)) + "<br>ID : " + Integer.toString(listGameID.get(index)) + "</html>");
+							listToolTipText.add(index,
+								"<html>Score : " + Integer.toString(listScore.get(index)) + "<br>ID : " + Integer.toString(listGameID.get(index)) + "</html>");
 						}
 						final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
 						toolTip.addToolTipSeries(listToolTipText);

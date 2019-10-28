@@ -172,7 +172,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				c.x = 0;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = new EnumPeriodMode[] {
-					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
+					EnumPeriodMode.ALL, EnumPeriodMode.SEASON, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
 				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -180,7 +180,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				}
 				comboPeriodMode = new JComboBox<String>(periodModeStrings);
 				comboPeriodMode.setEditable(false);
-				comboPeriodMode.setSelectedIndex(2);
+				comboPeriodMode.setSelectedIndex(3);
 				c.x = 1;
 				panelNorth.add(comboPeriodMode, c);
 
@@ -194,7 +194,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				c.x = 4;
 				panelNorth.add(new JLabel("Trimestre :", SwingConstants.RIGHT), c);
 				final String trimesters[] = {
-					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
+					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(),
+					EnumTrimester.TRIMESTER_4.toString()
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
@@ -232,7 +233,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 
 				final JPanel panelCenterTitle = new JPanel();
 				panelCenterTitle.setLayout(new GridBagLayout());
-				final GridBagConstraints titleConstraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 64, 2);
+				final GridBagConstraints titleConstraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 0), 64, 2);
 
 				labelTitles = new JLabel[NB_COLUMNS];
 				labelSizes = new Dimension[NB_COLUMNS];
@@ -270,7 +272,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				panelRanking.setLayout(new GridBagLayout());
 				panelCenterSupport.add(panelRanking, constraints);
 
-				scrollRanking = new JScrollPane(panelCenterSupport, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				scrollRanking = new JScrollPane(panelCenterSupport, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 				scrollRanking.getVerticalScrollBar().setUnitIncrement(LABEL_HEIGHT + 2);
 				panelCenter.add(scrollRanking, BorderLayout.CENTER);
 			}
@@ -415,6 +418,12 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
 				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
 				break;
+			case SEASON:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
 			case YEAR:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
@@ -489,7 +498,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 			final int trimestral = comboTrimester.getSelectedIndex();
 			final int month = comboMonth.getSelectedIndex();
 			final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
-			final List<RCRTotalScore> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month, day);
+			final List<RCRTotalScore> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month,
+				day);
 
 			if (scoreList != null && scoreList.size() > 0) {
 				labelTitles[0].setText("Classement");
@@ -579,7 +589,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 
 				data = new String[scoreList.size()][NB_COLUMNS];
 				final JLabel labels[] = new JLabel[NB_COLUMNS];
-				final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 64, 2);
+				final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 0), 64, 2);
 				int lastIndex = 0;
 				RCRTotalScore lastRecord = null;
 				for (int index = 0; index < scoreList.size(); index++) {
@@ -656,6 +667,9 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				switch (periodMode) {
 					case ALL:
 						break;
+					case SEASON:
+						proposedSaveFileName.append(Integer.toString(year));
+						break;
 					case YEAR:
 						proposedSaveFileName.append(Integer.toString(year));
 						break;
@@ -703,6 +717,9 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 						switch (periodMode) {
 							case ALL:
 								writer.write("Tout");
+								break;
+							case SEASON:
+								writer.write(Integer.toString(year));
 								break;
 							case YEAR:
 								writer.write(Integer.toString(year));

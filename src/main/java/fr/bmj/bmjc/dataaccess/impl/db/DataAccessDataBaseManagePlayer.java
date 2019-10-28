@@ -129,12 +129,12 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 			statement.setString(2, displayName);
 			statement.setBoolean(3, frequent);
 			statement.setBoolean(4, regular);
-			statement.setInt(5, id);
 			if (license == null || license.length() == 0) {
-				statement.setNull(6, Types.VARCHAR);
+				statement.setNull(5, Types.VARCHAR);
 			} else {
-				statement.setString(6, license);
+				statement.setString(5, license);
 			}
+			statement.setInt(6, id);
 			modified = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {

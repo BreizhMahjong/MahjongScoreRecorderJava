@@ -148,7 +148,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				c.gridWidth = 1;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = new EnumPeriodMode[] {
-					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH
+					EnumPeriodMode.ALL, EnumPeriodMode.SEASON, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH
 				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -170,7 +170,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				c.x = 4;
 				panelNorth.add(new JLabel("Trimestre :", SwingConstants.RIGHT), c);
 				final String trimesters[] = {
-					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
+					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(),
+					EnumTrimester.TRIMESTER_4.toString()
 				};
 				comboTrimester = new JComboBox<String>(trimesters);
 				comboTrimester.setEditable(false);
@@ -204,8 +205,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 					final JPanel panelCenterWestNorth = new JPanel(new GridBagLayout());
 					panelCenterWestNorth.setMinimumSize(new Dimension(160, 0));
 					panelCenterWest.add(panelCenterWestNorth, BorderLayout.NORTH);
-					final GridBagConstraints constraintsCenterWestNorth = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-						0);
+					final GridBagConstraints constraintsCenterWestNorth = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+						GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
 
 					buttonFilter = new JButton("Filtrer");
 					buttonFilter.setPreferredSize(new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT));
@@ -222,9 +223,11 @@ public class UITabPanelRCRTrend extends UITabPanel {
 					panelPlayerSelect = new JPanel();
 					panelPlayerSelect.setLayout(new BoxLayout(panelPlayerSelect, BoxLayout.Y_AXIS));
 					final JPanel panelPlayerSelectSupport = new JPanel(new GridBagLayout());
-					final GridBagConstraints constraintsSupport = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+					final GridBagConstraints constraintsSupport = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
+						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 					panelPlayerSelectSupport.add(panelPlayerSelect, constraintsSupport);
-					final JScrollPane scrollPlayerSelect = new JScrollPane(panelPlayerSelectSupport, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+					final JScrollPane scrollPlayerSelect = new JScrollPane(panelPlayerSelectSupport, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+						ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 					scrollPlayerSelect.getVerticalScrollBar().setUnitIncrement(16);
 					panelCenterWest.add(scrollPlayerSelect, BorderLayout.CENTER);
 				}
@@ -359,6 +362,11 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		switch (periodMode) {
 			case ALL:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = false;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				break;
+			case SEASON:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
 				break;

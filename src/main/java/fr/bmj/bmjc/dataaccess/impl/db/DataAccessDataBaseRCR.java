@@ -434,9 +434,16 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		switch (periodMode) {
 			case ALL:
 				break;
+			case SEASON:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, Calendar.SEPTEMBER);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.YEAR, 1);
+				break;
 			case YEAR:
 				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, 0);
+				calendarFrom.set(Calendar.MONTH, Calendar.JANUARY);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
 				calendarTo.setTime(calendarFrom.getTime());
 				calendarTo.add(Calendar.YEAR, 1);
@@ -635,29 +642,18 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		final Calendar calendarTo = Calendar.getInstance();
 		int minimumGames = 0;
 		switch (periodMode) {
-			case DAY:
-				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, month);
-				calendarFrom.set(Calendar.DAY_OF_MONTH, day);
-				calendarTo.setTime(calendarFrom.getTime());
-				calendarTo.add(Calendar.DAY_OF_MONTH, 1);
-				minimumGames = 0;
+			case ALL:
+				if (useMinimumGame) {
+					minimumGames = Math.round(MINIMUM_GAME_YEAR * getNumberOfYearOfAllGamePeriod(tournament));
+				}
 				break;
-			case MONTH:
+			case SEASON:
 				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.MONTH, Calendar.SEPTEMBER);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
 				calendarTo.setTime(calendarFrom.getTime());
-				calendarTo.add(Calendar.MONTH, 1);
-				minimumGames = MINIMUM_GAME_MONTH;
-				break;
-			case TRIMESTER:
-				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, trimester * 3);
-				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				calendarTo.setTime(calendarFrom.getTime());
-				calendarTo.add(Calendar.MONTH, 3);
-				minimumGames = MINIMUM_GAME_TRIMESTER;
+				calendarTo.add(Calendar.YEAR, 1);
+				minimumGames = MINIMUM_GAME_YEAR;
 				break;
 			case YEAR:
 				calendarFrom.set(Calendar.YEAR, year);
@@ -667,10 +663,29 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				calendarTo.add(Calendar.YEAR, 1);
 				minimumGames = MINIMUM_GAME_YEAR;
 				break;
-			case ALL:
-				if (useMinimumGame) {
-					minimumGames = Math.round(MINIMUM_GAME_YEAR * getNumberOfYearOfAllGamePeriod(tournament));
-				}
+			case TRIMESTER:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, trimester * 3);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 3);
+				minimumGames = MINIMUM_GAME_TRIMESTER;
+				break;
+			case MONTH:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH, 1);
+				minimumGames = MINIMUM_GAME_MONTH;
+				break;
+			case DAY:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, day);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.DAY_OF_MONTH, 1);
+				minimumGames = 0;
 				break;
 			default:
 				break;
@@ -1068,19 +1083,21 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		switch (periodMode) {
-			case DAY:
-				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, month);
-				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
-				calendarTo.setTime(calendarFrom.getTime());
-				calendarTo.add(Calendar.DAY_OF_MONTH, 1);
+			case ALL:
 				break;
-			case MONTH:
+			case SEASON:
 				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.MONTH, Calendar.SEPTEMBER);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
 				calendarTo.setTime(calendarFrom.getTime());
-				calendarTo.add(Calendar.MONTH, 1);
+				calendarTo.add(Calendar.YEAR, 1);
+				break;
+			case YEAR:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, Calendar.JANUARY);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.YEAR, 1);
 				break;
 			case TRIMESTER:
 				calendarFrom.set(Calendar.YEAR, year);
@@ -1089,14 +1106,19 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				calendarTo.setTime(calendarFrom.getTime());
 				calendarTo.add(Calendar.MONTH, 3);
 				break;
-			case YEAR:
+			case MONTH:
 				calendarFrom.set(Calendar.YEAR, year);
-				calendarFrom.set(Calendar.MONTH, 0);
+				calendarFrom.set(Calendar.MONTH, month);
 				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
 				calendarTo.setTime(calendarFrom.getTime());
-				calendarTo.add(Calendar.YEAR, 1);
+				calendarTo.add(Calendar.MONTH, 1);
 				break;
-			case ALL:
+			case DAY:
+				calendarFrom.set(Calendar.YEAR, year);
+				calendarFrom.set(Calendar.MONTH, month);
+				calendarFrom.set(Calendar.DAY_OF_MONTH, 1);
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.DAY_OF_MONTH, 1);
 				break;
 			default:
 				break;
