@@ -88,10 +88,10 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	private static final long MILLISECONDS_PER_DAY = 1000l * 60l * 60l * 24l;
 
 	private static final int COMBOBOX_NUMBER = 4;
-	private static final int COMBOBOX_PERIOD = 0;
-	private static final int COMBOBOX_YEAR_INDEX = 1;
-	private static final int COMBOBOX_TRIMESTER_INDEX = 2;
-	private static final int COMBOBOX_MONTH_INDEX = 3;
+	private static final int COMBOBOX_YEAR_INDEX = 0;
+	private static final int COMBOBOX_TRIMESTER_INDEX = 1;
+	private static final int COMBOBOX_MONTH_INDEX = 2;
+	private static final int COMBOBOX_DAY_INDEX = 3;
 
 	private boolean displayFullName;
 	private final DataAccessRCR dataAccess;
@@ -103,10 +103,13 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	private final JComboBox<Integer> comboYear;
 	private final JComboBox<String> comboTrimester;
 	private final JComboBox<String> comboMonth;
-	private final boolean comboBoxActivated[];
+	private final JComboBox<Integer> comboDay;
 
 	private final ActionListener tournamentComboBoxActionListener;
-	private final ActionListener periodParametersComboBoxActionListener;
+	private final ActionListener periodParametersComboBoxHighLevelActionListener;
+	private final ActionListener periodParametersComboBoxLowLevelActionListener;
+
+	private final boolean comboBoxActivated[];
 
 	private final JPanel panelPlayerSelect;
 	private final JCheckBox checkBoxSelectAll;
@@ -126,8 +129,8 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		setLayout(new BorderLayout());
 		{
 			final JPanel panelNorth = new JPanel();
-			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2, 9, 8, 2);
-			northLayout.setWeightX(4, 5, 3, 5, 3, 5, 3, 5, 2);
+			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2, 11, 8, 2);
+			northLayout.setWeightX(4, 5, 3, 5, 3, 5, 3, 5, 3, 5, 2);
 			panelNorth.setLayout(northLayout);
 			panelNorth.setBorder(BorderFactory.createLoweredBevelBorder());
 			add(panelNorth, BorderLayout.NORTH);
@@ -140,7 +143,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				comboTournament = new JComboBox<String>();
 				comboTournament.setEditable(false);
 				c.x = 3;
-				c.gridWidth = 3;
+				c.gridWidth = 5;
 				panelNorth.add(comboTournament, c);
 
 				c.y = 1;
@@ -188,6 +191,14 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				comboMonth.setSelectedIndex(0);
 				c.x = 7;
 				panelNorth.add(comboMonth, c);
+
+				c.x = 8;
+				panelNorth.add(new JLabel("Jour :", SwingConstants.RIGHT), c);
+				comboDay = new JComboBox<Integer>();
+				comboDay.setEditable(false);
+				comboDay.setSelectedIndex(-1);
+				c.x = 9;
+				panelNorth.add(comboDay, c);
 			}
 		}
 
@@ -246,15 +257,16 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		selectAllCheckBoxActionListener = (final ActionEvent e) -> selectAll();
 		filterButtonActionListeneer = (final ActionEvent e) -> displayData();
 
+		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
 		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
 
-		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
-		periodParametersComboBoxActionListener = (final ActionEvent e) -> refreshData();
-		comboTrimester.addActionListener(periodParametersComboBoxActionListener);
-		comboMonth.addActionListener(periodParametersComboBoxActionListener);
+		periodParametersComboBoxHighLevelActionListener = (final ActionEvent e) -> refreshDay();
+		periodParametersComboBoxLowLevelActionListener = (final ActionEvent e) -> refreshData();
+
+		comboTrimester.addActionListener(periodParametersComboBoxLowLevelActionListener);
+		comboMonth.addActionListener(periodParametersComboBoxHighLevelActionListener);
 
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
-		comboBoxActivated[COMBOBOX_PERIOD] = true;
 		changePeriodParameters(false);
 	}
 
@@ -272,10 +284,83 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		}
 	}
 
+	private void changePeriodParameters(final boolean toRefresh) {
+		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		switch (periodMode) {
+			case ALL:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = false;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
+			case SEASON:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
+			case YEAR:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
+			case TRIMESTER:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = true;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
+			case MONTH:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = true;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
+				break;
+			case DAY:
+				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
+				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
+				comboBoxActivated[COMBOBOX_MONTH_INDEX] = true;
+				comboBoxActivated[COMBOBOX_DAY_INDEX] = true;
+				break;
+			default:
+				break;
+		}
+
+		enableComboBoxes();
+		if (toRefresh) {
+			refreshData();
+		}
+	}
+
+	private void disableComboBoxes() {
+		comboTournament.setEnabled(false);
+		comboPeriodMode.setEnabled(false);
+		comboYear.setEnabled(false);
+		comboTrimester.setEnabled(false);
+		comboMonth.setEnabled(false);
+		comboDay.setEnabled(false);
+	}
+
+	private void enableComboBoxes() {
+		comboTournament.setEnabled(true);
+		comboPeriodMode.setEnabled(true);
+		comboYear.setEnabled(comboBoxActivated[COMBOBOX_YEAR_INDEX]);
+		comboTrimester.setEnabled(comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
+		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
+		comboDay.setEnabled(comboBoxActivated[COMBOBOX_DAY_INDEX]);
+	}
+
 	@Override
 	public void refresh() {
-		refreshPlayerName();
-		refreshTournament();
+		new Thread(() -> {
+			try {
+				refreshPlayerName();
+				refreshTournament();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void refreshPlayerName() {
@@ -335,85 +420,87 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	}
 
 	private void refreshYear() {
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-			comboYear.removeActionListener(periodParametersComboBoxActionListener);
-			comboYear.removeAllItems();
+		new Thread(() -> {
+			try {
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
+					comboYear.removeActionListener(periodParametersComboBoxHighLevelActionListener);
+					comboYear.removeAllItems();
 
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final List<Integer> years = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
-			Collections.sort(years);
-			Collections.reverse(years);
-			for (int index = 0; index < years.size(); index++) {
-				comboYear.addItem(years.get(index));
-			}
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final List<Integer> years = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
+					Collections.sort(years);
+					Collections.reverse(years);
+					for (int index = 0; index < years.size(); index++) {
+						comboYear.addItem(years.get(index));
+					}
 
-			comboYear.addActionListener(periodParametersComboBoxActionListener);
-			if (years.size() > 0) {
-				comboYear.setSelectedIndex(0);
-			} else {
-				comboYear.setSelectedIndex(-1);
+					comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
+					if (years.size() > 0) {
+						comboYear.setSelectedIndex(0);
+					} else {
+						comboYear.setSelectedIndex(-1);
+					}
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		}).start();
 	}
 
-	private void changePeriodParameters(final boolean refresh) {
-		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
-		switch (periodMode) {
-			case ALL:
-				comboBoxActivated[COMBOBOX_YEAR_INDEX] = false;
-				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
-				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
-				break;
-			case SEASON:
-				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
-				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
-				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
-				break;
-			case YEAR:
-				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
-				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
-				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
-				break;
-			case TRIMESTER:
-				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
-				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = true;
-				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
-				break;
-			case MONTH:
-				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
-				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
-				comboBoxActivated[COMBOBOX_MONTH_INDEX] = true;
-				break;
-			default:
-				break;
-		}
+	private void refreshDay() {
+		new Thread(() -> {
+			try {
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+					comboDay.removeActionListener(periodParametersComboBoxLowLevelActionListener);
+					comboDay.removeAllItems();
 
-		comboPeriodMode.setEnabled(comboBoxActivated[COMBOBOX_PERIOD]);
-		comboYear.setEnabled(comboBoxActivated[COMBOBOX_YEAR_INDEX]);
-		comboTrimester.setEnabled(comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
-		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
+					final int month = comboMonth.getSelectedIndex();
+					final List<Integer> days = new ArrayList<Integer>(dataAccess.getRCRGameDays(tournament, year, month));
+					Collections.sort(days);
+					for (int index = 0; index < days.size(); index++) {
+						comboDay.addItem(days.get(index));
+					}
 
-		if (refresh) {
-			refreshData();
-		}
+					comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
+					if (days.size() > 0) {
+						comboDay.setSelectedIndex(0);
+					} else {
+						comboDay.setSelectedIndex(-1);
+					}
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void refreshData() {
-		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		new Thread(() -> {
+			try {
+				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		final int selectedYearIndex = comboYear.getSelectedIndex();
-		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final int year = (Integer) comboYear.getSelectedItem();
-			final int trimester = comboTrimester.getSelectedIndex();
-			final int month = comboMonth.getSelectedIndex();
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				final int selectedDayIndex = comboDay.getSelectedIndex();
+				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
+					final int trimester = comboTrimester.getSelectedIndex();
+					final int month = comboMonth.getSelectedIndex();
+					final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
+					trend = dataAccess.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, day);
+				}
 
-			trend = dataAccess.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, 0);
-		}
-
-		displayData();
+				displayData();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void selectAll() {
@@ -425,74 +512,82 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	}
 
 	private void displayData() {
-		panelChart.removeAll();
-		validate();
-		repaint();
+		new Thread(() -> {
+			try {
+				disableComboBoxes();
+				panelChart.removeAll();
+				validate();
+				repaint();
 
-		if (trend.data.size() > 0) {
-			final Set<String> selectedNames = new HashSet<String>();
-			if (displayFullName) {
-				for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-					if (listCheckBoxPlayerSelect.get(index).isSelected()) {
-						selectedNames.add(listPlayers.get(index).getPlayerName());
+				if (trend.data.size() > 0) {
+					final Set<String> selectedNames = new HashSet<String>();
+					if (displayFullName) {
+						for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
+							if (listCheckBoxPlayerSelect.get(index).isSelected()) {
+								selectedNames.add(listPlayers.get(index).getPlayerName());
+							}
+						}
+					} else {
+						for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
+							if (listCheckBoxPlayerSelect.get(index).isSelected()) {
+								selectedNames.add(listPlayers.get(index).getDisplayName());
+							}
+						}
 					}
-				}
-			} else {
-				for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-					if (listCheckBoxPlayerSelect.get(index).isSelected()) {
-						selectedNames.add(listPlayers.get(index).getDisplayName());
+
+					final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
+					final List<List<Integer>> scores = trend.data;
+					final List<Long> dates = trend.dates;
+
+					final TimeSeriesCollection series = new TimeSeriesCollection();
+					final XYItemRenderer sumRender = new XYLineAndShapeRenderer();
+					for (int playerIndex = 0; playerIndex < listName.size(); playerIndex++) {
+						final String playerName = listName.get(playerIndex);
+						if (selectedNames.contains(playerName)) {
+							final List<Integer> score = scores.get(playerIndex);
+							final TimeSeries sumSeries = new TimeSeries(playerName);
+							for (int index = 1; index < score.size(); index++) {
+								sumSeries.add(new Day(new Date(dates.get(index))), score.get(index));
+							}
+							series.addSeries(sumSeries);
+						}
 					}
-				}
-			}
 
-			final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
-			final List<List<Integer>> scores = trend.data;
-			final List<Long> dates = trend.dates;
-
-			final TimeSeriesCollection series = new TimeSeriesCollection();
-			final XYItemRenderer sumRender = new XYLineAndShapeRenderer();
-			for (int playerIndex = 0; playerIndex < listName.size(); playerIndex++) {
-				final String playerName = listName.get(playerIndex);
-				if (selectedNames.contains(playerName)) {
-					final List<Integer> score = scores.get(playerIndex);
-					final TimeSeries sumSeries = new TimeSeries(playerName);
-					for (int index = 1; index < score.size(); index++) {
-						sumSeries.add(new Day(new Date(dates.get(index))), score.get(index));
+					int tickUnit;
+					final int numberOfDays = (int) ((dates.get(dates.size() - 1) - dates.get(1)) / MILLISECONDS_PER_DAY);
+					if (numberOfDays < MAX_NUMBER_OF_TICKS) {
+						tickUnit = 1;
+					} else {
+						tickUnit = (numberOfDays / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
 					}
-					series.addSeries(sumSeries);
+
+					final DateAxis sumDomainAxis = new DateAxis("Date");
+					sumDomainAxis.setRange(new Date(dates.get(1) - MILLISECONDS_PER_DAY), new Date(dates.get(dates.size() - 1) + MILLISECONDS_PER_DAY));
+					sumDomainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, tickUnit));
+					sumDomainAxis.setLowerMargin(0.0);
+					sumDomainAxis.setUpperMargin(0.0);
+
+					final NumberAxis sumRangeAxis = new NumberAxis("Score total");
+					final XYPlot sumPlot = new XYPlot(series, sumDomainAxis, sumRangeAxis, sumRender);
+					sumPlot.setBackgroundPaint(new Color(255, 255, 255, 0));
+					sumPlot.setDomainGridlinePaint(Color.BLACK);
+					sumPlot.setRangeGridlinePaint(Color.BLACK);
+					final ValueMarker marker = new ValueMarker(0.0, Color.RED, new BasicStroke(1), null, null, 1.0f);
+					sumPlot.addRangeMarker(marker);
+
+					final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
+					chartPanel.setPopupMenu(null);
+					chartPanel.setMouseZoomable(false);
+					panelChart.add(chartPanel, BorderLayout.CENTER);
 				}
+
+				validate();
+				enableComboBoxes();
+				repaint();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-
-			int tickUnit;
-			final int numberOfDays = (int) ((dates.get(dates.size() - 1) - dates.get(1)) / MILLISECONDS_PER_DAY);
-			if (numberOfDays < MAX_NUMBER_OF_TICKS) {
-				tickUnit = 1;
-			} else {
-				tickUnit = (numberOfDays / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
-			}
-
-			final DateAxis sumDomainAxis = new DateAxis("Date");
-			sumDomainAxis.setRange(new Date(dates.get(1) - MILLISECONDS_PER_DAY), new Date(dates.get(dates.size() - 1) + MILLISECONDS_PER_DAY));
-			sumDomainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, tickUnit));
-			sumDomainAxis.setLowerMargin(0.0);
-			sumDomainAxis.setUpperMargin(0.0);
-
-			final NumberAxis sumRangeAxis = new NumberAxis("Score total");
-			final XYPlot sumPlot = new XYPlot(series, sumDomainAxis, sumRangeAxis, sumRender);
-			sumPlot.setBackgroundPaint(new Color(255, 255, 255, 0));
-			sumPlot.setDomainGridlinePaint(Color.BLACK);
-			sumPlot.setRangeGridlinePaint(Color.BLACK);
-			final ValueMarker marker = new ValueMarker(0.0, Color.RED, new BasicStroke(1), null, null, 1.0f);
-			sumPlot.addRangeMarker(marker);
-
-			final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
-			chartPanel.setPopupMenu(null);
-			chartPanel.setMouseZoomable(false);
-			panelChart.add(chartPanel, BorderLayout.CENTER);
-		}
-
-		validate();
-		repaint();
+		}).start();
 	}
 
 	@Override
@@ -504,82 +599,88 @@ public class UITabPanelRCRTrend extends UITabPanel {
 
 	@Override
 	public void export() {
-		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		new Thread(() -> {
+			try {
+				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		final int selectedYearIndex = comboYear.getSelectedIndex();
-		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final int year = (Integer) comboYear.getSelectedItem();
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
 
-			if (trend != null && trend.data.size() > 0) {
-				final StringBuffer proposedSaveFileName = new StringBuffer();
-				proposedSaveFileName.append(tournament.getName());
-				proposedSaveFileName.append("_tendance_");
-				proposedSaveFileName.append(periodMode.toString());
-				proposedSaveFileName.append("_");
-				switch (periodMode) {
-					case ALL:
-						break;
-					case YEAR:
-						proposedSaveFileName.append(Integer.toString(year));
-						break;
-					case TRIMESTER:
-						proposedSaveFileName.append(Integer.toString(year));
+					if (trend != null && trend.data.size() > 0) {
+						final StringBuffer proposedSaveFileName = new StringBuffer();
+						proposedSaveFileName.append(tournament.getName());
+						proposedSaveFileName.append("_tendance_");
+						proposedSaveFileName.append(periodMode.toString());
 						proposedSaveFileName.append("_");
-						proposedSaveFileName.append(comboTrimester.getSelectedItem().toString());
-						break;
-					case MONTH:
-						proposedSaveFileName.append(Integer.toString(year));
-						proposedSaveFileName.append("_");
-						proposedSaveFileName.append(comboMonth.getSelectedItem().toString());
-						break;
-					default:
-						break;
-				}
-				proposedSaveFileName.append(".csv");
-				final File fileSaveFile = askSaveFileName(proposedSaveFileName.toString());
-				if (fileSaveFile != null) {
-					BufferedWriter writer = null;
-					try {
-						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
-
-						final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
-						final List<List<Integer>> scores = trend.data;
-						final List<Long> dates = trend.dates;
-
-						final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
-						final Calendar calendar = Calendar.getInstance();
-
-						for (int index = 0; index < listName.size(); index++) {
-							writer.write(SEPARATOR);
-							writer.write(listName.get(index));
+						switch (periodMode) {
+							case ALL:
+								break;
+							case YEAR:
+								proposedSaveFileName.append(Integer.toString(year));
+								break;
+							case TRIMESTER:
+								proposedSaveFileName.append(Integer.toString(year));
+								proposedSaveFileName.append("_");
+								proposedSaveFileName.append(comboTrimester.getSelectedItem().toString());
+								break;
+							case MONTH:
+								proposedSaveFileName.append(Integer.toString(year));
+								proposedSaveFileName.append("_");
+								proposedSaveFileName.append(comboMonth.getSelectedItem().toString());
+								break;
+							default:
+								break;
 						}
-						writer.newLine();
-
-						for (int dateIndex = 1; dateIndex < dates.size(); dateIndex++) {
-							calendar.setTimeInMillis(dates.get(dateIndex));
-							writer.write(dateFormat.format(calendar.getTime()));
-
-							for (int playerIndex = 0; playerIndex < scores.size(); playerIndex++) {
-								writer.write(SEPARATOR);
-								writer.write(Integer.toString(scores.get(playerIndex).get(dateIndex)));
-							}
-							writer.newLine();
-						}
-					} catch (final Exception e) {
-						JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
-					} finally {
-						if (writer != null) {
+						proposedSaveFileName.append(".csv");
+						final File fileSaveFile = askSaveFileName(proposedSaveFileName.toString());
+						if (fileSaveFile != null) {
+							BufferedWriter writer = null;
 							try {
-								writer.close();
+								writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
+
+								final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
+								final List<List<Integer>> scores = trend.data;
+								final List<Long> dates = trend.dates;
+
+								final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
+								final Calendar calendar = Calendar.getInstance();
+
+								for (int index = 0; index < listName.size(); index++) {
+									writer.write(SEPARATOR);
+									writer.write(listName.get(index));
+								}
+								writer.newLine();
+
+								for (int dateIndex = 1; dateIndex < dates.size(); dateIndex++) {
+									calendar.setTimeInMillis(dates.get(dateIndex));
+									writer.write(dateFormat.format(calendar.getTime()));
+
+									for (int playerIndex = 0; playerIndex < scores.size(); playerIndex++) {
+										writer.write(SEPARATOR);
+										writer.write(Integer.toString(scores.get(playerIndex).get(dateIndex)));
+									}
+									writer.newLine();
+								}
 							} catch (final Exception e) {
+								JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
+							} finally {
+								if (writer != null) {
+									try {
+										writer.close();
+									} catch (final Exception e) {
+									}
+								}
 							}
 						}
 					}
 				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		}).start();
 	}
 
 }

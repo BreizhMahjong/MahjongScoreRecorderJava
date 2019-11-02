@@ -22,6 +22,7 @@ import fr.bmj.bmjc.data.game.Player;
 import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageAnalyze;
+import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageScoreAnalyze;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageTrend;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScore;
 import fr.bmj.bmjc.dataaccess.DataAccessCommon;
@@ -59,12 +60,16 @@ public interface DataAccessRCR extends DataAccessCommon {
 
 	public void setRCROnlyRegularPlayers(boolean onlyRegularPlayers);
 
-	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode, final EnumPeriodMode periodMode, final int year,
-		final int trimester, final int month, final int day);
+	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode,
+		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day);
 
-	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode, final EnumPeriodMode periodMode,
-		final int year, final int trimester, final int month, final int day);
+	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode,
+		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day);
 
-	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day);
+	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
+		final int month, final int day);
+
+	public RCRDataPackageScoreAnalyze getRCRDataPackageScoreAnalyze(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
+		final int month, final int day);
 
 }

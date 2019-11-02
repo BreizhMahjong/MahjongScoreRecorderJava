@@ -315,75 +315,6 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		}
 	}
 
-	@Override
-	public void refresh() {
-		listTournament.clear();
-		final List<Tournament> newTournaments = dataAccess.getRCRTournaments();
-		if (newTournaments.size() > 0) {
-			listTournament.addAll(newTournaments);
-			Collections.sort(listTournament, new ComparatorDescendingTournamentID());
-
-			comboTournament.removeActionListener(tournamentComboBoxActionListener);
-			comboTournament.removeAllItems();
-			for (int index = 0; index < listTournament.size(); index++) {
-				final Tournament tournament = listTournament.get(index);
-				comboTournament.addItem(tournament.getName());
-			}
-			comboTournament.addActionListener(tournamentComboBoxActionListener);
-			if (listTournament.size() > 0) {
-				comboTournament.setSelectedIndex(0);
-			}
-		}
-	}
-
-	private void refreshYear() {
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-			comboYear.removeActionListener(periodParametersComboBoxHighLevelActionListener);
-			comboYear.removeAllItems();
-
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final List<Integer> years = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
-			Collections.sort(years);
-			Collections.reverse(years);
-			for (int index = 0; index < years.size(); index++) {
-				comboYear.addItem(years.get(index));
-			}
-
-			comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
-			if (years.size() > 0) {
-				comboYear.setSelectedIndex(0);
-			} else {
-				comboYear.setSelectedIndex(-1);
-			}
-		}
-	}
-
-	private void refreshDay() {
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		final int selectedYearIndex = comboYear.getSelectedIndex();
-		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-			comboDay.removeActionListener(periodParametersComboBoxLowLevelActionListener);
-			comboDay.removeAllItems();
-
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final int year = (Integer) comboYear.getSelectedItem();
-			final int month = comboMonth.getSelectedIndex();
-			final List<Integer> days = new ArrayList<Integer>(dataAccess.getRCRGameDays(tournament, year, month));
-			Collections.sort(days);
-			for (int index = 0; index < days.size(); index++) {
-				comboDay.addItem(days.get(index));
-			}
-
-			comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
-			if (days.size() > 0) {
-				comboDay.setSelectedIndex(0);
-			} else {
-				comboDay.setSelectedIndex(-1);
-			}
-		}
-	}
-
 	private void togglePeriodMode(final boolean toRefresh) {
 		final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
 		switch (rankingMode) {
@@ -479,160 +410,257 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		comboDay.setEnabled(comboBoxActivated[COMBOBOX_DAY_INDEX]);
 	}
 
-	private void display() {
-		disableComboBoxes();
-		panelRanking.removeAll();
-		validate();
-		repaint();
+	@Override
+	public void refresh() {
+		refreshTournament();
+	}
 
-		final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
-		final EnumSortingMode sortingMode = sortingModes[comboSortingMode.getSelectedIndex()];
-		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+	private void refreshTournament() {
+		new Thread(() -> {
+			try {
+				listTournament.clear();
+				final List<Tournament> newTournaments = dataAccess.getRCRTournaments();
+				if (newTournaments.size() > 0) {
+					listTournament.addAll(newTournaments);
+					Collections.sort(listTournament, new ComparatorDescendingTournamentID());
 
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		final int selectedYearIndex = comboYear.getSelectedIndex();
-		final int selectedDayIndex = comboDay.getSelectedIndex();
-		if (selectedTournamentIndex != -1 && selectedYearIndex != -1 && (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final int year = (Integer) comboYear.getSelectedItem();
-			final int trimestral = comboTrimester.getSelectedIndex();
-			final int month = comboMonth.getSelectedIndex();
-			final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
-			final List<RCRTotalScore> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimestral, month,
-				day);
-
-			if (scoreList != null && scoreList.size() > 0) {
-				labelTitles[0].setText("Classement");
-				labelTitles[1].setText("Nom du joueur");
-				FieldHighlighted scoreFieldHighlighted = null;
-				final List<RCRTotalScoreFieldAccess> access = new ArrayList<>(3);
-				access.add(0, null);
-				if (displayFullName) {
-					access.add(1, new RCRTotalScoreFieldAccessPlayName());
-				} else {
-					access.add(1, new RCRTotalScoreFieldAccessDisplayName());
-				}
-				switch (rankingMode) {
-					case TOTAL_SCORE:
-						labelTitles[2].setText(rankingMode.toString());
-						labelTitles[3].setText("Nombre de parties");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
-						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
-						break;
-					case FINAL_SCORE:
-						labelTitles[2].setText(rankingMode.toString() + " (Uma)");
-						labelTitles[3].setText("Date");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-						access.add(2, new RCRTotalScoreFieldAccessFinalScore());
-						access.add(3, new RCRTotalScoreFieldAccessDay());
-						break;
-					case MEAN_FINAL_SCORE:
-						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
-						labelTitles[3].setText("Nombre de parties");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-						access.add(2, new RCRTotalScoreFieldAccessMeanFinalScore());
-						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
-						break;
-					case GAME_SCORE:
-						labelTitles[2].setText(rankingMode.toString());
-						labelTitles[3].setText("Date");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
-						access.add(2, new RCRTotalScoreFieldAccessGameScore());
-						access.add(3, new RCRTotalScoreFieldAccessDay());
-						break;
-					case MEAN_GAME_SCORE:
-						labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
-						labelTitles[3].setText("Nombre de parties");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
-						access.add(2, new RCRTotalScoreFieldAccessMeanGameScore());
-						access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
-						break;
-					case WIN_RATE:
-						labelTitles[2].setText(rankingMode.toString());
-						labelTitles[3].setText("Nombre de parties");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 250;
-						access.add(2, new RCRTotalScoreFieldAccessPercentage());
-						access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
-						break;
-					case POSITIVE_RATE:
-						labelTitles[2].setText(rankingMode.toString());
-						labelTitles[3].setText("Nombre de parties");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 500;
-						access.add(2, new RCRTotalScoreFieldAccessPercentage());
-						access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
-						break;
-					case ANNUAL_SCORE:
-						labelTitles[2].setText(rankingMode.toString());
-						labelTitles[3].setText("Date");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
-						access.add(3, new RCRTotalScoreFieldAccessYear());
-						break;
-					case TRIMESTRIAL_SCORE:
-						labelTitles[2].setText(rankingMode.toString());
-						labelTitles[3].setText("Date");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
-						access.add(3, new RCRTotalScoreFieldAccessTrimester());
-						break;
-					case MENSUAL_SCORE:
-						labelTitles[2].setText(rankingMode.toString());
-						labelTitles[3].setText("Date");
-						scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-						access.add(2, new RCRTotalScoreFieldAccessTotalScore());
-						access.add(3, new RCRTotalScoreFieldAccessMonth());
-						break;
-					default:
-						break;
-				}
-
-				data = new String[scoreList.size()][NB_COLUMNS];
-				final JLabel labels[] = new JLabel[NB_COLUMNS];
-				final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 0), 64, 2);
-				int lastIndex = 0;
-				RCRTotalScore lastRecord = null;
-				for (int index = 0; index < scoreList.size(); index++) {
-					final RCRTotalScore record = scoreList.get(index);
-
-					if (lastRecord == null || lastRecord.totalScore != record.totalScore) {
-						lastIndex = index;
+					comboTournament.removeActionListener(tournamentComboBoxActionListener);
+					comboTournament.removeAllItems();
+					for (int index = 0; index < listTournament.size(); index++) {
+						final Tournament tournament = listTournament.get(index);
+						comboTournament.addItem(tournament.getName());
 					}
-					lastRecord = record;
-
-					data[index][0] = Integer.toString(lastIndex + 1);
-					for (int labelIndex = 1; labelIndex < labels.length; labelIndex++) {
-						data[index][labelIndex] = access.get(labelIndex).getDataString(record);
-					}
-					final boolean highlighted = scoreFieldHighlighted.highlighted(record);
-
-					constraints.gridy = index;
-					for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
-						labels[labelIndex] = new JLabel(data[index][labelIndex], labelIndex == 1 ? SwingConstants.LEADING : SwingConstants.CENTER);
-						constraints.gridx = labelIndex;
-						labels[labelIndex].setPreferredSize(labelSizes[labelIndex]);
-						if (labelIndex == 2 && highlighted) {
-							labels[labelIndex].setForeground(Color.RED);
-						}
-						panelRanking.add(labels[labelIndex], constraints);
-					}
-
-					if (index % 2 == 0) {
-						for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
-							labels[labelIndex].setOpaque(true);
-							labels[labelIndex].setBackground(Color.LIGHT_GRAY);
-						}
+					comboTournament.addActionListener(tournamentComboBoxActionListener);
+					if (listTournament.size() > 0) {
+						comboTournament.setSelectedIndex(0);
 					}
 				}
-			} else {
-				data = null;
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
-		validate();
-		scrollRanking.getVerticalScrollBar().setValue(0);
-		enableComboBoxes();
-		repaint();
+		}).start();
+	}
+
+	private void refreshYear() {
+		new Thread(() -> {
+			try {
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
+					comboYear.removeActionListener(periodParametersComboBoxHighLevelActionListener);
+					comboYear.removeAllItems();
+
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final List<Integer> years = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
+					Collections.sort(years);
+					Collections.reverse(years);
+					for (int index = 0; index < years.size(); index++) {
+						comboYear.addItem(years.get(index));
+					}
+
+					comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
+					if (years.size() > 0) {
+						comboYear.setSelectedIndex(0);
+					} else {
+						comboYear.setSelectedIndex(-1);
+					}
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
+	}
+
+	private void refreshDay() {
+		new Thread(() -> {
+			try {
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+					comboDay.removeActionListener(periodParametersComboBoxLowLevelActionListener);
+					comboDay.removeAllItems();
+
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
+					final int month = comboMonth.getSelectedIndex();
+					final List<Integer> days = new ArrayList<Integer>(dataAccess.getRCRGameDays(tournament, year, month));
+					Collections.sort(days);
+					for (int index = 0; index < days.size(); index++) {
+						comboDay.addItem(days.get(index));
+					}
+
+					comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
+					if (days.size() > 0) {
+						comboDay.setSelectedIndex(0);
+					} else {
+						comboDay.setSelectedIndex(-1);
+					}
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
+	}
+
+	private void display() {
+		new Thread(() -> {
+			try {
+				disableComboBoxes();
+				panelRanking.removeAll();
+				validate();
+				repaint();
+
+				final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
+				final EnumSortingMode sortingMode = sortingModes[comboSortingMode.getSelectedIndex()];
+				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				final int selectedDayIndex = comboDay.getSelectedIndex();
+				if (selectedTournamentIndex != -1 && selectedYearIndex != -1 && (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
+					final int trimestral = comboTrimester.getSelectedIndex();
+					final int month = comboMonth.getSelectedIndex();
+					final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
+					final List<RCRTotalScore> scoreList = dataAccess.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year,
+						trimestral, month, day);
+
+					if (scoreList != null && scoreList.size() > 0) {
+						labelTitles[0].setText("Classement");
+						labelTitles[1].setText("Nom du joueur");
+						FieldHighlighted scoreFieldHighlighted = null;
+						final List<RCRTotalScoreFieldAccess> access = new ArrayList<>(3);
+						access.add(0, null);
+						if (displayFullName) {
+							access.add(1, new RCRTotalScoreFieldAccessPlayName());
+						} else {
+							access.add(1, new RCRTotalScoreFieldAccessDisplayName());
+						}
+						switch (rankingMode) {
+							case TOTAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
+								break;
+							case FINAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString() + " (Uma)");
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessFinalScore());
+								access.add(3, new RCRTotalScoreFieldAccessDay());
+								break;
+							case MEAN_FINAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessMeanFinalScore());
+								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
+								break;
+							case GAME_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
+								access.add(2, new RCRTotalScoreFieldAccessGameScore());
+								access.add(3, new RCRTotalScoreFieldAccessDay());
+								break;
+							case MEAN_GAME_SCORE:
+								labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
+								access.add(2, new RCRTotalScoreFieldAccessMeanGameScore());
+								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
+								break;
+							case WIN_RATE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 250;
+								access.add(2, new RCRTotalScoreFieldAccessPercentage());
+								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
+								break;
+							case POSITIVE_RATE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 500;
+								access.add(2, new RCRTotalScoreFieldAccessPercentage());
+								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
+								break;
+							case ANNUAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+								access.add(3, new RCRTotalScoreFieldAccessYear());
+								break;
+							case TRIMESTRIAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+								access.add(3, new RCRTotalScoreFieldAccessTrimester());
+								break;
+							case MENSUAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+								access.add(3, new RCRTotalScoreFieldAccessMonth());
+								break;
+							default:
+								break;
+						}
+
+						data = new String[scoreList.size()][NB_COLUMNS];
+						final JLabel labels[] = new JLabel[NB_COLUMNS];
+						final GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+							new Insets(0, 0, 0, 0), 64, 2);
+						int lastIndex = 0;
+						RCRTotalScore lastRecord = null;
+						for (int index = 0; index < scoreList.size(); index++) {
+							final RCRTotalScore record = scoreList.get(index);
+
+							if (lastRecord == null || lastRecord.totalScore != record.totalScore) {
+								lastIndex = index;
+							}
+							lastRecord = record;
+
+							data[index][0] = Integer.toString(lastIndex + 1);
+							for (int labelIndex = 1; labelIndex < labels.length; labelIndex++) {
+								data[index][labelIndex] = access.get(labelIndex).getDataString(record);
+							}
+							final boolean highlighted = scoreFieldHighlighted.highlighted(record);
+
+							constraints.gridy = index;
+							for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
+								labels[labelIndex] = new JLabel(data[index][labelIndex], labelIndex == 1 ? SwingConstants.LEADING : SwingConstants.CENTER);
+								constraints.gridx = labelIndex;
+								labels[labelIndex].setPreferredSize(labelSizes[labelIndex]);
+								if (labelIndex == 2 && highlighted) {
+									labels[labelIndex].setForeground(Color.RED);
+								}
+								panelRanking.add(labels[labelIndex], constraints);
+							}
+
+							if (index % 2 == 0) {
+								for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
+									labels[labelIndex].setOpaque(true);
+									labels[labelIndex].setBackground(Color.LIGHT_GRAY);
+								}
+							}
+						}
+					} else {
+						data = null;
+					}
+				}
+				validate();
+				scrollRanking.getVerticalScrollBar().setValue(0);
+				enableComboBoxes();
+				repaint();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	@Override
@@ -644,128 +672,134 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 
 	@Override
 	public void export() {
-		final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
-		final EnumSortingMode sortingMode = sortingModes[comboSortingMode.getSelectedIndex()];
-		final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		new Thread(() -> {
+			try {
+				final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
+				final EnumSortingMode sortingMode = sortingModes[comboSortingMode.getSelectedIndex()];
+				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		final int selectedYearIndex = comboYear.getSelectedIndex();
-		if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final int year = (Integer) comboYear.getSelectedItem();
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
 
-			if (data != null && data.length > 0) {
-				final StringBuffer proposedSaveFileName = new StringBuffer();
-				proposedSaveFileName.append(tournament.getName());
-				proposedSaveFileName.append("_");
-				proposedSaveFileName.append(rankingMode.toString());
-				proposedSaveFileName.append("_");
-				proposedSaveFileName.append(sortingMode.toString());
-				proposedSaveFileName.append("_");
-				proposedSaveFileName.append(periodMode.toString());
-				proposedSaveFileName.append("_");
-				switch (periodMode) {
-					case ALL:
-						break;
-					case SEASON:
-						proposedSaveFileName.append(Integer.toString(year));
-						break;
-					case YEAR:
-						proposedSaveFileName.append(Integer.toString(year));
-						break;
-					case TRIMESTER:
-						proposedSaveFileName.append(Integer.toString(year));
+					if (data != null && data.length > 0) {
+						final StringBuffer proposedSaveFileName = new StringBuffer();
+						proposedSaveFileName.append(tournament.getName());
 						proposedSaveFileName.append("_");
-						proposedSaveFileName.append(comboTrimester.getSelectedItem().toString());
-						break;
-					case MONTH:
-						proposedSaveFileName.append(Integer.toString(year));
+						proposedSaveFileName.append(rankingMode.toString());
 						proposedSaveFileName.append("_");
-						proposedSaveFileName.append(comboMonth.getSelectedItem().toString());
-						break;
-					default:
-						break;
-				}
-				proposedSaveFileName.append(".csv");
-				final File fileSaveFile = askSaveFileName(proposedSaveFileName.toString());
-				if (fileSaveFile != null) {
-					BufferedWriter writer = null;
-					try {
-						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
-						writer.write("Classement");
-						writer.write(SEPARATOR);
-						writer.write(rankingMode.toString());
-						writer.newLine();
-
-						writer.write("Tournois");
-						writer.write(SEPARATOR);
-						writer.write(tournament.getName());
-						writer.newLine();
-
-						writer.write("Ordre");
-						writer.write(SEPARATOR);
-						writer.write(sortingMode.toString());
-						writer.newLine();
-
-						writer.write("Période mode");
-						writer.write(SEPARATOR);
-						writer.write(periodMode.toString());
-						writer.newLine();
-
-						writer.write("Période");
-						writer.write(SEPARATOR);
+						proposedSaveFileName.append(sortingMode.toString());
+						proposedSaveFileName.append("_");
+						proposedSaveFileName.append(periodMode.toString());
+						proposedSaveFileName.append("_");
 						switch (periodMode) {
 							case ALL:
-								writer.write("Tout");
 								break;
 							case SEASON:
-								writer.write(Integer.toString(year));
+								proposedSaveFileName.append(Integer.toString(year));
 								break;
 							case YEAR:
-								writer.write(Integer.toString(year));
+								proposedSaveFileName.append(Integer.toString(year));
 								break;
 							case TRIMESTER:
-								writer.write(comboTrimester.getSelectedItem().toString());
-								writer.write(" ");
-								writer.write(Integer.toString(year));
+								proposedSaveFileName.append(Integer.toString(year));
+								proposedSaveFileName.append("_");
+								proposedSaveFileName.append(comboTrimester.getSelectedItem().toString());
 								break;
 							case MONTH:
-								writer.write(comboMonth.getSelectedItem().toString());
-								writer.write(" ");
-								writer.write(Integer.toString(year));
+								proposedSaveFileName.append(Integer.toString(year));
+								proposedSaveFileName.append("_");
+								proposedSaveFileName.append(comboMonth.getSelectedItem().toString());
 								break;
 							default:
 								break;
 						}
-						writer.newLine();
-
-						writer.write(labelTitles[0].getText());
-						for (int fieldIndex = 1; fieldIndex < labelTitles.length; fieldIndex++) {
-							writer.write(SEPARATOR);
-							writer.write(labelTitles[fieldIndex].getText());
-						}
-						writer.newLine();
-
-						for (int index = 0; index < data.length; index++) {
-							writer.write(data[index][0]);
-							for (int fieldIndex = 1; fieldIndex < data[index].length; fieldIndex++) {
-								writer.write(SEPARATOR);
-								writer.write(data[index][fieldIndex]);
-							}
-							writer.newLine();
-						}
-					} catch (final Exception e) {
-						JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
-					} finally {
-						if (writer != null) {
+						proposedSaveFileName.append(".csv");
+						final File fileSaveFile = askSaveFileName(proposedSaveFileName.toString());
+						if (fileSaveFile != null) {
+							BufferedWriter writer = null;
 							try {
-								writer.close();
+								writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
+								writer.write("Classement");
+								writer.write(SEPARATOR);
+								writer.write(rankingMode.toString());
+								writer.newLine();
+
+								writer.write("Tournois");
+								writer.write(SEPARATOR);
+								writer.write(tournament.getName());
+								writer.newLine();
+
+								writer.write("Ordre");
+								writer.write(SEPARATOR);
+								writer.write(sortingMode.toString());
+								writer.newLine();
+
+								writer.write("Période mode");
+								writer.write(SEPARATOR);
+								writer.write(periodMode.toString());
+								writer.newLine();
+
+								writer.write("Période");
+								writer.write(SEPARATOR);
+								switch (periodMode) {
+									case ALL:
+										writer.write("Tout");
+										break;
+									case SEASON:
+										writer.write(Integer.toString(year));
+										break;
+									case YEAR:
+										writer.write(Integer.toString(year));
+										break;
+									case TRIMESTER:
+										writer.write(comboTrimester.getSelectedItem().toString());
+										writer.write(" ");
+										writer.write(Integer.toString(year));
+										break;
+									case MONTH:
+										writer.write(comboMonth.getSelectedItem().toString());
+										writer.write(" ");
+										writer.write(Integer.toString(year));
+										break;
+									default:
+										break;
+								}
+								writer.newLine();
+
+								writer.write(labelTitles[0].getText());
+								for (int fieldIndex = 1; fieldIndex < labelTitles.length; fieldIndex++) {
+									writer.write(SEPARATOR);
+									writer.write(labelTitles[fieldIndex].getText());
+								}
+								writer.newLine();
+
+								for (int index = 0; index < data.length; index++) {
+									writer.write(data[index][0]);
+									for (int fieldIndex = 1; fieldIndex < data[index].length; fieldIndex++) {
+										writer.write(SEPARATOR);
+										writer.write(data[index][fieldIndex]);
+									}
+									writer.newLine();
+								}
 							} catch (final Exception e) {
+								JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
+							} finally {
+								if (writer != null) {
+									try {
+										writer.close();
+									} catch (final Exception e) {
+									}
+								}
 							}
 						}
 					}
 				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		}).start();
 	}
 }

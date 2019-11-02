@@ -45,19 +45,21 @@ import fr.bmj.bmjc.gui.rcr.UITabPanelRCRGameHistory;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRManage;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRNewGame;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRPersonalAnalyse;
+import fr.bmj.bmjc.gui.rcr.UITabPanelRCRScoreAnalyze;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRTrend;
 
 public class UIMainWindow extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 4639754313889847228L;
 
-	private static final int NB_PANELS = 7;
+	private static final int NB_PANELS = 8;
 	private static final int INDEX_PANEL_MANAGE_PLAYER = 0;
 	private static final int INDEX_PANEL_RCR_MANAGE_GAME = 1;
 	private static final int INDEX_PANEL_RCR_NEW_GAME = 2;
 	private static final int INDEX_PANEL_RCR_RANKING = 3;
 	private static final int INDEX_PANEL_RCR_TREND = 4;
-	private static final int INDEX_PANEL_RCR_ANALYZE = 5;
-	private static final int INDEX_PANEL_RCR_GAME_HISTORY = 6;
+	private static final int INDEX_PANEL_RCR_PERSONAL_ANALYZE = 5;
+	private static final int INDEX_PANEL_RCR_SCORE_ANALYZE = 6;
+	private static final int INDEX_PANEL_RCR_GAME_HISTORY = 7;
 
 	private static final int WINDOW_HEIGHT = 768;
 	private static final int WINDOW_WIDTH = 1024;
@@ -106,7 +108,8 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		tabPanels[INDEX_PANEL_RCR_NEW_GAME] = new UITabPanelRCRNewGame(dataAccess);
 		tabPanels[INDEX_PANEL_RCR_RANKING] = new UITabPanelRCRClubRanking(dataAccess);
 		tabPanels[INDEX_PANEL_RCR_TREND] = new UITabPanelRCRTrend(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_ANALYZE] = new UITabPanelRCRPersonalAnalyse(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] = new UITabPanelRCRPersonalAnalyse(dataAccess);
+		tabPanels[INDEX_PANEL_RCR_SCORE_ANALYZE] = new UITabPanelRCRScoreAnalyze(dataAccess);
 		tabPanels[INDEX_PANEL_RCR_GAME_HISTORY] = new UITabPanelRCRGameHistory(dataAccess);
 		for (int indexTabPanel = 0; indexTabPanel < tabPanels.length; indexTabPanel++) {
 			tabbedPane.addTab(tabPanels[indexTabPanel].getTabName(), tabPanels[indexTabPanel]);
@@ -195,8 +198,8 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private void changeTab() {
 		final UITabPanel tab = getCurrentTab();
 		if (tab != null) {
-			tab.refresh();
 			menuItemExport.setEnabled(tab.canExport());
+			tab.refresh();
 		}
 	}
 

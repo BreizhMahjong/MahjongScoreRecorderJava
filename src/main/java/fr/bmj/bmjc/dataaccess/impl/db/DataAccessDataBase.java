@@ -25,6 +25,7 @@ import fr.bmj.bmjc.data.game.Player;
 import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageAnalyze;
+import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageScoreAnalyze;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageTrend;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScore;
 import fr.bmj.bmjc.dataaccess.DataAccess;
@@ -192,6 +193,12 @@ public class DataAccessDataBase implements DataAccess {
 	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
 		final int month, final int day) {
 		return dataAccessRCR.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, day);
+	}
+
+	@Override
+	public RCRDataPackageScoreAnalyze getRCRDataPackageScoreAnalyze(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
+		final int month, final int day) {
+		return dataAccessRCR.getRCRDataPackageScoreAnalyze(tournament, periodMode, year, trimester, month, day);
 	}
 
 }

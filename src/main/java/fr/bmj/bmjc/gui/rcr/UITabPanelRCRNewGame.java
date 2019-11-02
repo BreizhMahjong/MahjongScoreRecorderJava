@@ -376,46 +376,48 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 
 	@Override
 	public void refresh() {
-		try {
-			comboBoxTournament.removeAllItems();
-			listTournament.clear();
-			listTournament.addAll(dataAccess.getRCRTournaments());
-			Collections.sort(listTournament, new ComparatorDescendingTournamentID());
-			for (int index = 0; index < listTournament.size(); index++) {
-				comboBoxTournament.addItem(listTournament.get(index).getName());
-			}
-
-			players.clear();
-			normalizedPlayerNames.clear();
-			for (int comboBoxIndex = 0; comboBoxIndex < comboBoxPlayers.size(); comboBoxIndex++) {
-				comboBoxPlayers.get(comboBoxIndex).removeAllItems();
-			}
-			players.addAll(dataAccess.getPlayers());
-			if (displayFullName) {
-				Collections.sort(players, new ComparatorAscendingPlayerName());
-			} else {
-				Collections.sort(players, new ComparatorAscendingPlayerDisplayName());
-			}
-			for (int playerIndex = 0; playerIndex < players.size(); playerIndex++) {
-				final Player player = players.get(playerIndex);
-				String displayString = null;
-				if (displayFullName) {
-					displayString = player.getPlayerName() + " - " + Integer.toString(player.getPlayerID());
-				} else {
-					displayString = player.getDisplayName() + " - " + Integer.toString(player.getPlayerID());
+		new Thread(() -> {
+			try {
+				comboBoxTournament.removeAllItems();
+				listTournament.clear();
+				listTournament.addAll(dataAccess.getRCRTournaments());
+				Collections.sort(listTournament, new ComparatorDescendingTournamentID());
+				for (int index = 0; index < listTournament.size(); index++) {
+					comboBoxTournament.addItem(listTournament.get(index).getName());
 				}
-				final String normalizedDisplayString = Normalizer.normalize(displayString, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase();
-				normalizedPlayerNames.add(playerIndex, normalizedDisplayString);
 
+				players.clear();
+				normalizedPlayerNames.clear();
 				for (int comboBoxIndex = 0; comboBoxIndex < comboBoxPlayers.size(); comboBoxIndex++) {
-					comboBoxPlayers.get(comboBoxIndex).addItem(displayString);
+					comboBoxPlayers.get(comboBoxIndex).removeAllItems();
 				}
+				players.addAll(dataAccess.getPlayers());
+				if (displayFullName) {
+					Collections.sort(players, new ComparatorAscendingPlayerName());
+				} else {
+					Collections.sort(players, new ComparatorAscendingPlayerDisplayName());
+				}
+				for (int playerIndex = 0; playerIndex < players.size(); playerIndex++) {
+					final Player player = players.get(playerIndex);
+					String displayString = null;
+					if (displayFullName) {
+						displayString = player.getPlayerName() + " - " + Integer.toString(player.getPlayerID());
+					} else {
+						displayString = player.getDisplayName() + " - " + Integer.toString(player.getPlayerID());
+					}
+					final String normalizedDisplayString = Normalizer.normalize(displayString, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")
+						.toLowerCase();
+					normalizedPlayerNames.add(playerIndex, normalizedDisplayString);
+
+					for (int comboBoxIndex = 0; comboBoxIndex < comboBoxPlayers.size(); comboBoxIndex++) {
+						comboBoxPlayers.get(comboBoxIndex).addItem(displayString);
+					}
+				}
+				reset();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-			reset();
-		} catch (final Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Erreur de base de donnée", "Erreur", JOptionPane.ERROR_MESSAGE);
-		}
+		}).start();
 	}
 
 	private class LabelDateMouseListener extends MouseAdapter {
@@ -641,7 +643,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 					scores.add(score);
 				}
 
-				final RCRGame newGame = new RCRGame(0, tournament.getId(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), nbRounds, nbPlayers, scores);
+				final RCRGame newGame = new RCRGame(0, tournament.getId(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+					calendar.get(Calendar.DAY_OF_MONTH), nbRounds, nbPlayers, scores);
 				final UpdateResult result = dataAccess.addRCRGame(newGame);
 				if (result.getResult()) {
 					JOptionPane.showMessageDialog(this, result.getMessage(), "Succès", JOptionPane.INFORMATION_MESSAGE);

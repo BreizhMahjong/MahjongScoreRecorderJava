@@ -77,12 +77,14 @@ public class UITabPanelRCRManage extends UITabPanel {
 		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);
 		final JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new GridBagLayout());
-		final GridBagConstraints innerC = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(16, 8, 16, 8), 0, 0);
+		final GridBagConstraints innerC = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+			new Insets(16, 8, 16, 8), 0, 0);
 		{
 			final JPanel tournamentPanel = new JPanel();
 			tournamentPanel.setLayout(new GridBagLayout());
 			tournamentPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(0, 0, 127)), "Tournoi"));
-			final GridBagConstraints tournamentC = new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(8, 0, 8, 0), 0, 0);
+			final GridBagConstraints tournamentC = new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(8, 0, 8, 0), 0, 0);
 			{
 				final JPanel addTournamentPanel = new JPanel();
 				addTournamentPanel.setLayout(new ProportionalGridLayout(1, 5, 2, 2));
@@ -251,28 +253,34 @@ public class UITabPanelRCRManage extends UITabPanel {
 	}
 
 	private void refreshTournament() {
-		comboBoxTournament.removeActionListener(comboBoxTournamentActionListener);
-		comboBoxGameTournament.removeActionListener(comboBoxGameTournamentActionListener);
-		comboBoxTournament.removeAllItems();
-		comboBoxGameTournament.removeAllItems();
+		new Thread(() -> {
+			try {
+				comboBoxTournament.removeActionListener(comboBoxTournamentActionListener);
+				comboBoxGameTournament.removeActionListener(comboBoxGameTournamentActionListener);
+				comboBoxTournament.removeAllItems();
+				comboBoxGameTournament.removeAllItems();
 
-		listTournament.clear();
-		listTournament.addAll(dataAccess.getRCRTournaments());
-		for (int index = 0; index < listTournament.size(); index++) {
-			final String name = listTournament.get(index).getName();
-			comboBoxTournament.addItem(name);
-			comboBoxGameTournament.addItem(name);
-		}
+				listTournament.clear();
+				listTournament.addAll(dataAccess.getRCRTournaments());
+				for (int index = 0; index < listTournament.size(); index++) {
+					final String name = listTournament.get(index).getName();
+					comboBoxTournament.addItem(name);
+					comboBoxGameTournament.addItem(name);
+				}
 
-		comboBoxTournament.addActionListener(comboBoxTournamentActionListener);
-		comboBoxGameTournament.addActionListener(comboBoxGameTournamentActionListener);
-		if (listTournament.size() > 0) {
-			comboBoxTournament.setSelectedIndex(0);
-			comboBoxGameTournament.setSelectedIndex(0);
-		} else {
-			comboBoxTournament.setSelectedIndex(-1);
-			comboBoxGameTournament.setSelectedIndex(-1);
-		}
+				comboBoxTournament.addActionListener(comboBoxTournamentActionListener);
+				comboBoxGameTournament.addActionListener(comboBoxGameTournamentActionListener);
+				if (listTournament.size() > 0) {
+					comboBoxTournament.setSelectedIndex(0);
+					comboBoxGameTournament.setSelectedIndex(0);
+				} else {
+					comboBoxTournament.setSelectedIndex(-1);
+					comboBoxGameTournament.setSelectedIndex(-1);
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void addTournament() {

@@ -226,24 +226,30 @@ public class UITabPanelManagePlayer extends UITabPanel {
 	}
 
 	private void refreshPlayer() {
-		comboBoxPlayer.removeActionListener(comboBoxPlayerActionListener);
-		comboBoxPlayer.removeAllItems();
+		new Thread(() -> {
+			try {
+				comboBoxPlayer.removeActionListener(comboBoxPlayerActionListener);
+				comboBoxPlayer.removeAllItems();
 
-		listPlayer.clear();
-		listPlayer.addAll(dataAccess.getAllPlayers());
-		Collections.sort(listPlayer, new ComparatorAscendingPlayerDisplayName());
-		for (int playerIndex = 0; playerIndex < listPlayer.size(); playerIndex++) {
-			final Player player = listPlayer.get(playerIndex);
-			final String displayString = Integer.toString(player.getPlayerID()) + " - " + player.getPlayerName() + " - " + player.getDisplayName();
-			comboBoxPlayer.addItem(displayString);
-		}
+				listPlayer.clear();
+				listPlayer.addAll(dataAccess.getAllPlayers());
+				Collections.sort(listPlayer, new ComparatorAscendingPlayerDisplayName());
+				for (int playerIndex = 0; playerIndex < listPlayer.size(); playerIndex++) {
+					final Player player = listPlayer.get(playerIndex);
+					final String displayString = Integer.toString(player.getPlayerID()) + " - " + player.getPlayerName() + " - " + player.getDisplayName();
+					comboBoxPlayer.addItem(displayString);
+				}
 
-		comboBoxPlayer.addActionListener(comboBoxPlayerActionListener);
-		if (listPlayer.size() > 0) {
-			comboBoxPlayer.setSelectedIndex(0);
-		} else {
-			comboBoxPlayer.setSelectedIndex(-1);
-		}
+				comboBoxPlayer.addActionListener(comboBoxPlayerActionListener);
+				if (listPlayer.size() > 0) {
+					comboBoxPlayer.setSelectedIndex(0);
+				} else {
+					comboBoxPlayer.setSelectedIndex(-1);
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void addPlayer() {
@@ -326,49 +332,55 @@ public class UITabPanelManagePlayer extends UITabPanel {
 
 	@Override
 	public void export() {
-		final File fileSaveFile = askSaveFileName("Players.csv");
-		if (fileSaveFile != null) {
-			BufferedWriter writer = null;
+		new Thread(() -> {
 			try {
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
-				writer.write("Id");
-				writer.write(SEPARATOR);
-				writer.write("Display Name");
-				writer.write(SEPARATOR);
-				writer.write("Name");
-				writer.write(SEPARATOR);
-				writer.write("Frequent");
-				writer.write(SEPARATOR);
-				writer.write("Regular");
-				writer.newLine();
-				writer.write("License");
-				writer.newLine();
-
-				for (int index = 0; index < listPlayer.size(); index++) {
-					final Player player = listPlayer.get(index);
-					writer.write(Integer.toString(player.getPlayerID()));
-					writer.write(SEPARATOR);
-					writer.write(player.getDisplayName());
-					writer.write(SEPARATOR);
-					writer.write(player.getPlayerName());
-					writer.write(SEPARATOR);
-					writer.write(Boolean.toString(player.isFrequent()));
-					writer.write(SEPARATOR);
-					writer.write(Boolean.toString(player.isRegular()));
-					writer.newLine();
-					writer.write(SEPARATOR);
-					writer.write(player.getLicense() != null ? player.getLicense() : "");
-				}
-			} catch (final Exception e) {
-				JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
-			} finally {
-				if (writer != null) {
+				final File fileSaveFile = askSaveFileName("Players.csv");
+				if (fileSaveFile != null) {
+					BufferedWriter writer = null;
 					try {
-						writer.close();
+						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
+						writer.write("Id");
+						writer.write(SEPARATOR);
+						writer.write("Display Name");
+						writer.write(SEPARATOR);
+						writer.write("Name");
+						writer.write(SEPARATOR);
+						writer.write("Frequent");
+						writer.write(SEPARATOR);
+						writer.write("Regular");
+						writer.newLine();
+						writer.write("License");
+						writer.newLine();
+
+						for (int index = 0; index < listPlayer.size(); index++) {
+							final Player player = listPlayer.get(index);
+							writer.write(Integer.toString(player.getPlayerID()));
+							writer.write(SEPARATOR);
+							writer.write(player.getDisplayName());
+							writer.write(SEPARATOR);
+							writer.write(player.getPlayerName());
+							writer.write(SEPARATOR);
+							writer.write(Boolean.toString(player.isFrequent()));
+							writer.write(SEPARATOR);
+							writer.write(Boolean.toString(player.isRegular()));
+							writer.newLine();
+							writer.write(SEPARATOR);
+							writer.write(player.getLicense() != null ? player.getLicense() : "");
+						}
 					} catch (final Exception e) {
+						JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
+					} finally {
+						if (writer != null) {
+							try {
+								writer.close();
+							} catch (final Exception e) {
+							}
+						}
 					}
 				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		}).start();
 	}
 }

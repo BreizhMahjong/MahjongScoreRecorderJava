@@ -265,72 +265,88 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 	@Override
 	public void refresh() {
-		listTournament.clear();
-		final List<Tournament> newTournaments = dataAccess.getRCRTournaments();
-		if (newTournaments.size() > 0) {
-			listTournament.addAll(newTournaments);
-			Collections.sort(listTournament, new ComparatorDescendingTournamentID());
+		refreshTournament();
+	}
 
-			comboTournament.removeActionListener(tournamentComboBoxActionListener);
-			comboTournament.removeAllItems();
-			for (int index = 0; index < listTournament.size(); index++) {
-				final Tournament tournament = listTournament.get(index);
-				comboTournament.addItem(tournament.getName());
-			}
+	private void refreshTournament() {
+		new Thread(() -> {
+			try {
+				listTournament.clear();
+				final List<Tournament> newTournaments = dataAccess.getRCRTournaments();
+				if (newTournaments.size() > 0) {
+					listTournament.addAll(newTournaments);
+					Collections.sort(listTournament, new ComparatorDescendingTournamentID());
 
-			comboTournament.addActionListener(tournamentComboBoxActionListener);
-			if (listTournament.size() > 0) {
-				comboTournament.setSelectedIndex(0);
-			} else {
-				comboTournament.setSelectedIndex(-1);
+					comboTournament.removeActionListener(tournamentComboBoxActionListener);
+					comboTournament.removeAllItems();
+					for (int index = 0; index < listTournament.size(); index++) {
+						final Tournament tournament = listTournament.get(index);
+						comboTournament.addItem(tournament.getName());
+					}
+
+					comboTournament.addActionListener(tournamentComboBoxActionListener);
+					if (listTournament.size() > 0) {
+						comboTournament.setSelectedIndex(0);
+					} else {
+						comboTournament.setSelectedIndex(-1);
+					}
+				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		}).start();
 	}
 
 	private void refreshTree() {
-		invalidate();
-		final String monthStrings[] = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
-		final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-		if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-			final Tournament tournament = listTournament.get(selectedTournamentIndex);
-			final List<Integer> yearList = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
-			Collections.sort(yearList);
+		new Thread(() -> {
+			try {
+				invalidate();
+				final String monthStrings[] = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final List<Integer> yearList = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
+					Collections.sort(yearList);
 
-			final DefaultMutableTreeNode root = new DefaultMutableTreeNode(tournament.getName());
-			for (int index = 0; index < yearList.size(); index++) {
-				final int year = yearList.get(index);
-				final DefaultMutableTreeNode nodeYear = new DefaultMutableTreeNode(year);
-				root.add(nodeYear);
+					final DefaultMutableTreeNode root = new DefaultMutableTreeNode(tournament.getName());
+					for (int index = 0; index < yearList.size(); index++) {
+						final int year = yearList.get(index);
+						final DefaultMutableTreeNode nodeYear = new DefaultMutableTreeNode(year);
+						root.add(nodeYear);
 
-				for (int month = 0; month < 12; month++) {
-					final List<Integer> days = dataAccess.getRCRGameDays(tournament, year, month);
-					if (days.size() > 0) {
-						Collections.sort(days);
-						final DefaultMutableTreeNode nodeMonth = new DefaultMutableTreeNode(monthStrings[month]);
-						nodeYear.add(nodeMonth);
+						for (int month = 0; month < 12; month++) {
+							final List<Integer> days = dataAccess.getRCRGameDays(tournament, year, month);
+							if (days.size() > 0) {
+								Collections.sort(days);
+								final DefaultMutableTreeNode nodeMonth = new DefaultMutableTreeNode(monthStrings[month]);
+								nodeYear.add(nodeMonth);
 
-						for (int dayIndex = 0; dayIndex < days.size(); dayIndex++) {
-							final int day = days.get(dayIndex);
-							final List<Integer> idList = dataAccess.getRCRGameIds(tournament, year, month, day);
-							Collections.sort(idList);
-							final DefaultMutableTreeNode nodeDay = new DefaultMutableTreeNode(day);
-							nodeMonth.add(nodeDay);
+								for (int dayIndex = 0; dayIndex < days.size(); dayIndex++) {
+									final int day = days.get(dayIndex);
+									final List<Integer> idList = dataAccess.getRCRGameIds(tournament, year, month, day);
+									Collections.sort(idList);
+									final DefaultMutableTreeNode nodeDay = new DefaultMutableTreeNode(day);
+									nodeMonth.add(nodeDay);
 
-							for (int idIndex = 0; idIndex < idList.size(); idIndex++) {
-								final DefaultMutableTreeNode nodeId = new DefaultMutableTreeNode(idList.get(idIndex));
-								nodeDay.add(nodeId);
+									for (int idIndex = 0; idIndex < idList.size(); idIndex++) {
+										final DefaultMutableTreeNode nodeId = new DefaultMutableTreeNode(idList.get(idIndex));
+										nodeDay.add(nodeId);
+									}
+								}
 							}
 						}
 					}
+					treeModel.setRoot(root);
+				} else {
+					treeModel.setRoot(null);
 				}
+				selectedPath = null;
+				validate();
+				repaint();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-			treeModel.setRoot(root);
-		} else {
-			treeModel.setRoot(null);
-		}
-		selectedPath = null;
-		validate();
-		repaint();
+		}).start();
 	}
 
 	private void selectGame() {
@@ -349,67 +365,79 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 	}
 
 	private void displayGame() {
-		if (selectedId != null) {
-			final RCRGame game = dataAccess.getRCRGame(selectedId);
-			if (game != null) {
-				calendar.set(game.getYear(), game.getMonth(), game.getDay());
-				labelDate.setText(dateFormat.format(calendar.getTime()));
-				labelRounds.setText(normalDecimalFormat.format(game.getNbRounds()));
+		new Thread(() -> {
+			try {
+				if (selectedId != null) {
+					final RCRGame game = dataAccess.getRCRGame(selectedId);
+					if (game != null) {
+						calendar.set(game.getYear(), game.getMonth(), game.getDay());
+						labelDate.setText(dateFormat.format(calendar.getTime()));
+						labelRounds.setText(normalDecimalFormat.format(game.getNbRounds()));
 
-				if (displayFullName) {
-					for (int index = 0; index < game.getScores().size(); index++) {
-						final RCRScore score = game.getScores().get(index);
-						labelGameInfos[index][0].setText(normalDecimalFormat.format(score.getPlace()));
-						labelGameInfos[index][1].setText(score.getPlayerName());
-						labelGameInfos[index][2].setText(normalDecimalFormat.format(score.getGameScore()));
-						labelGameInfos[index][3].setText(normalDecimalFormat.format(score.getUmaScore()));
-						final int finalScore = score.getFinalScore();
-						labelGameInfos[index][4].setText(finalScoreDecimalFormat.format(finalScore));
-						if (finalScore >= 0) {
-							labelGameInfos[index][4].setForeground(Color.BLACK);
+						if (displayFullName) {
+							for (int index = 0; index < game.getScores().size(); index++) {
+								final RCRScore score = game.getScores().get(index);
+								labelGameInfos[index][0].setText(normalDecimalFormat.format(score.getPlace()));
+								labelGameInfos[index][1].setText(score.getPlayerName());
+								labelGameInfos[index][2].setText(normalDecimalFormat.format(score.getGameScore()));
+								labelGameInfos[index][3].setText(normalDecimalFormat.format(score.getUmaScore()));
+								final int finalScore = score.getFinalScore();
+								labelGameInfos[index][4].setText(finalScoreDecimalFormat.format(finalScore));
+								if (finalScore >= 0) {
+									labelGameInfos[index][4].setForeground(Color.BLACK);
+								} else {
+									labelGameInfos[index][4].setForeground(Color.RED);
+								}
+							}
 						} else {
-							labelGameInfos[index][4].setForeground(Color.RED);
+							for (int index = 0; index < game.getScores().size(); index++) {
+								final RCRScore score = game.getScores().get(index);
+								labelGameInfos[index][0].setText(normalDecimalFormat.format(score.getPlace()));
+								labelGameInfos[index][1].setText(score.getDisplayName());
+								labelGameInfos[index][2].setText(normalDecimalFormat.format(score.getGameScore()));
+								labelGameInfos[index][3].setText(normalDecimalFormat.format(score.getUmaScore()));
+								final int finalScore = score.getFinalScore();
+								labelGameInfos[index][4].setText(finalScoreDecimalFormat.format(finalScore));
+								if (finalScore >= 0) {
+									labelGameInfos[index][4].setForeground(Color.BLACK);
+								} else {
+									labelGameInfos[index][4].setForeground(Color.RED);
+								}
+							}
 						}
+
+						for (int playerIndex = game.getScores().size(); playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
+							for (int columnIndex = 0; columnIndex < NUMBER_OF_COLUMNS; columnIndex++) {
+								labelGameInfos[playerIndex][columnIndex].setText("");
+							}
+						}
+					} else {
+						clearGame();
 					}
 				} else {
-					for (int index = 0; index < game.getScores().size(); index++) {
-						final RCRScore score = game.getScores().get(index);
-						labelGameInfos[index][0].setText(normalDecimalFormat.format(score.getPlace()));
-						labelGameInfos[index][1].setText(score.getDisplayName());
-						labelGameInfos[index][2].setText(normalDecimalFormat.format(score.getGameScore()));
-						labelGameInfos[index][3].setText(normalDecimalFormat.format(score.getUmaScore()));
-						final int finalScore = score.getFinalScore();
-						labelGameInfos[index][4].setText(finalScoreDecimalFormat.format(finalScore));
-						if (finalScore >= 0) {
-							labelGameInfos[index][4].setForeground(Color.BLACK);
-						} else {
-							labelGameInfos[index][4].setForeground(Color.RED);
-						}
-					}
+					clearGame();
 				}
+				repaint();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
+	}
 
-				for (int playerIndex = game.getScores().size(); playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
+	private void clearGame() {
+		new Thread(() -> {
+			try {
+				labelDate.setText("");
+				labelRounds.setText("");
+				for (int playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
 					for (int columnIndex = 0; columnIndex < NUMBER_OF_COLUMNS; columnIndex++) {
 						labelGameInfos[playerIndex][columnIndex].setText("");
 					}
 				}
-			} else {
-				clearGame();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		} else {
-			clearGame();
-		}
-		repaint();
-	}
-
-	private void clearGame() {
-		labelDate.setText("");
-		labelRounds.setText("");
-		for (int playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
-			for (int columnIndex = 0; columnIndex < NUMBER_OF_COLUMNS; columnIndex++) {
-				labelGameInfos[playerIndex][columnIndex].setText("");
-			}
-		}
+		}).start();
 	}
 
 	@Override
@@ -419,35 +447,41 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 	@Override
 	public void export() {
-		if (selectedPath != null) {
-			final Object[] path = selectedPath.getPath();
-			if (path != null && path.length >= 1) {
-				final StringBuffer proposedSaveFileName = new StringBuffer();
-				proposedSaveFileName.append(((DefaultMutableTreeNode) path[0]).getUserObject().toString());
-				for (int index = 1; index < path.length; index++) {
-					proposedSaveFileName.append("_");
-					proposedSaveFileName.append(((DefaultMutableTreeNode) path[index]).getUserObject().toString());
-				}
-				proposedSaveFileName.append(".csv");
-				final File fileSaveFile = askSaveFileName(proposedSaveFileName.toString());
-				if (fileSaveFile != null) {
-					BufferedWriter writer = null;
-					try {
-						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
-						exportChildren((DefaultMutableTreeNode) selectedPath.getLastPathComponent(), writer);
-					} catch (final Exception e) {
-						JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
-					} finally {
-						if (writer != null) {
+		new Thread(() -> {
+			try {
+				if (selectedPath != null) {
+					final Object[] path = selectedPath.getPath();
+					if (path != null && path.length >= 1) {
+						final StringBuffer proposedSaveFileName = new StringBuffer();
+						proposedSaveFileName.append(((DefaultMutableTreeNode) path[0]).getUserObject().toString());
+						for (int index = 1; index < path.length; index++) {
+							proposedSaveFileName.append("_");
+							proposedSaveFileName.append(((DefaultMutableTreeNode) path[index]).getUserObject().toString());
+						}
+						proposedSaveFileName.append(".csv");
+						final File fileSaveFile = askSaveFileName(proposedSaveFileName.toString());
+						if (fileSaveFile != null) {
+							BufferedWriter writer = null;
 							try {
-								writer.close();
+								writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
+								exportChildren((DefaultMutableTreeNode) selectedPath.getLastPathComponent(), writer);
 							} catch (final Exception e) {
+								JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
+							} finally {
+								if (writer != null) {
+									try {
+										writer.close();
+									} catch (final Exception e) {
+									}
+								}
 							}
 						}
 					}
 				}
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		}).start();
 	}
 
 	private void exportChildren(final DefaultMutableTreeNode node, final BufferedWriter writer) throws Exception {
