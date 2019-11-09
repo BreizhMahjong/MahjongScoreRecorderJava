@@ -28,8 +28,8 @@ public class RCRDataPackageAnalyze {
 	private final List<Integer> listSum;
 	private int numberOfGames;
 
-	private int scoreMax;
-	private int scoreMin;
+	private int maxScore;
+	private int minScore;
 
 	private int positiveGames;
 	private int positiveGamesPercent;
@@ -41,8 +41,8 @@ public class RCRDataPackageAnalyze {
 	private int scoreMean;
 	private int scoreStandardDeviation;
 
-	private int totalMax;
-	private int totalMin;
+	private int positiveTotal;
+	private int negativeTotal;
 
 	private int numberOfFourPlayerGames;
 	private final int fourPlayerGamePlaces[];
@@ -57,8 +57,8 @@ public class RCRDataPackageAnalyze {
 		listScore = new ArrayList<>();
 		listSum = new ArrayList<>();
 		numberOfGames = 0;
-		scoreMax = 0;
-		scoreMin = 0;
+		maxScore = 0;
+		minScore = 0;
 		positiveGames = 0;
 		positiveGamesPercent = 0;
 		negativeGames = 0;
@@ -66,8 +66,8 @@ public class RCRDataPackageAnalyze {
 		scoreTotal = 0;
 		scoreMean = 0;
 		scoreStandardDeviation = 0;
-		totalMax = 0;
-		totalMin = 0;
+		positiveTotal = 0;
+		negativeTotal = 0;
 		numberOfFourPlayerGames = 0;
 		fourPlayerGamePlaces = new int[4];
 		fourPlayerGamePlacePercent = new int[4];
@@ -108,36 +108,36 @@ public class RCRDataPackageAnalyze {
 		this.scoreStandardDeviation = scoreStandardDeviation;
 	}
 
-	public int getTotalMax() {
-		return totalMax;
+	public int getPositiveTotal() {
+		return positiveTotal;
 	}
 
-	public void setTotalMax(final int totalMax) {
-		this.totalMax = totalMax;
+	public void setPositiveTotal(final int positiveTotal) {
+		this.positiveTotal = positiveTotal;
 	}
 
-	public int getTotalMin() {
-		return totalMin;
+	public int getNegativeTotal() {
+		return negativeTotal;
 	}
 
-	public void setTotalMin(final int totalMin) {
-		this.totalMin = totalMin;
+	public void setNegativeTotal(final int negativeTotal) {
+		this.negativeTotal = negativeTotal;
 	}
 
-	public int getScoreMax() {
-		return scoreMax;
+	public int getMaxScore() {
+		return maxScore;
 	}
 
-	public void setScoreMax(final int scoreMax) {
-		this.scoreMax = scoreMax;
+	public void setMaxScore(final int maxScore) {
+		this.maxScore = maxScore;
 	}
 
-	public int getScoreMin() {
-		return scoreMin;
+	public int getMinScore() {
+		return minScore;
 	}
 
-	public void setScoreMin(final int scoreMin) {
-		this.scoreMin = scoreMin;
+	public void setMinScore(final int minScore) {
+		this.minScore = minScore;
 	}
 
 	public int getPositiveGames() {

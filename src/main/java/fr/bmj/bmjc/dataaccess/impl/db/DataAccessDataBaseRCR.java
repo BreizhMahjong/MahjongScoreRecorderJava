@@ -526,8 +526,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			final int placeFivePlayersPercent[] = new int[5];
 			int maxScore = Integer.MIN_VALUE;
 			int minScore = Integer.MAX_VALUE;
-			int maxTotal = Integer.MIN_VALUE;
-			int minTotal = Integer.MAX_VALUE;
+			int positiveTotal = 0;
+			int negativeTotal = 0;
 
 			while (result.next()) {
 				final int gameID = result.getInt(1);
@@ -540,16 +540,16 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 
 				if (score >= 0) {
 					positiveGames++;
+					positiveTotal += score;
 				} else {
 					negativeGames++;
+					negativeTotal += score;
 				}
 				maxScore = Math.max(maxScore, score);
 				minScore = Math.min(minScore, score);
 
 				totalScore += score;
 				listSum.add(numberOfGames, totalScore);
-				maxTotal = Math.max(maxTotal, totalScore);
-				minTotal = Math.min(minTotal, totalScore);
 
 				if (nbPlayers == 4) {
 					placeFourPlayers[ranking - 1]++;
@@ -577,8 +577,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			dataPackage.setLists(listGameID, listScore, listSum);
 			dataPackage.setNumberOfGames(numberOfGames);
 
-			dataPackage.setScoreMax(maxScore);
-			dataPackage.setScoreMin(minScore);
+			dataPackage.setMaxScore(maxScore);
+			dataPackage.setMinScore(minScore);
 
 			dataPackage.setPositiveGames(positiveGames);
 			dataPackage.setPositiveGamesPercent(Math.round(positiveGames * 100f / numberOfGames));
@@ -590,8 +590,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			dataPackage.setScoreMean((int) Math.round(averageScore));
 			dataPackage.setScoreStandardDeviation((int) standardDeviation);
 
-			dataPackage.setTotalMax(maxTotal);
-			dataPackage.setTotalMin(minTotal);
+			dataPackage.setPositiveTotal(positiveTotal);
+			dataPackage.setNegativeTotal(negativeTotal);
 
 			dataPackage.setNumberOfFourPlayerGames(numberOfFourPlayersGames);
 			dataPackage.setFourPlayerGamePlaces(placeFourPlayers);

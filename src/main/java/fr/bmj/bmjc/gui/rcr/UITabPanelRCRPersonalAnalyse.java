@@ -112,10 +112,10 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private final JLabel labelNumberOfGames;
 	private final JLabel labelTotalScore;
 	private final JLabel labelMeanScore;
-	private final JLabel labelMaxTotal;
-	private final JLabel labelMinTotal;
-	private final JLabel labelMaxScore;
-	private final JLabel labelMinScore;
+	private final JLabel labelPositiveTotal;
+	private final JLabel labelNegativeTotal;
+	private final JLabel labelScoreMax;
+	private final JLabel labelScoreMin;
 
 	private final JLabel labelPositiveGames;
 	private final JLabel labelPositivePercentage;
@@ -272,39 +272,39 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				panelBasicAnalyze.add(new JLabel("Positif", SwingConstants.CENTER));
 				panelBasicAnalyze.add(new JLabel("Négatif", SwingConstants.CENTER));
 				panelBasicAnalyze.add(new JLabel("Score total", SwingConstants.CENTER));
-				panelBasicAnalyze.add(new JLabel("Total max", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Total positif", SwingConstants.CENTER));
 
 				labelNumberOfGames = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelNumberOfGames);
-				labelMaxScore = new JLabel("", SwingConstants.CENTER);
-				panelBasicAnalyze.add(labelMaxScore);
+				labelScoreMax = new JLabel("", SwingConstants.CENTER);
+				panelBasicAnalyze.add(labelScoreMax);
 				labelPositiveGames = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelPositiveGames);
 				labelNegativeGames = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelNegativeGames);
 				labelTotalScore = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelTotalScore);
-				labelMaxTotal = new JLabel("", SwingConstants.CENTER);
-				panelBasicAnalyze.add(labelMaxTotal);
+				labelPositiveTotal = new JLabel("", SwingConstants.CENTER);
+				panelBasicAnalyze.add(labelPositiveTotal);
 
 				panelBasicAnalyze.add(new JLabel("", SwingConstants.CENTER));
 				panelBasicAnalyze.add(new JLabel("Score min", SwingConstants.CENTER));
 				panelBasicAnalyze.add(new JLabel("Positif %", SwingConstants.CENTER));
 				panelBasicAnalyze.add(new JLabel("Négatif %", SwingConstants.CENTER));
 				panelBasicAnalyze.add(new JLabel("Moyenne", SwingConstants.CENTER));
-				panelBasicAnalyze.add(new JLabel("Total min", SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Total négatif", SwingConstants.CENTER));
 
 				panelBasicAnalyze.add(new JLabel("", SwingConstants.CENTER));
-				labelMinScore = new JLabel("", SwingConstants.CENTER);
-				panelBasicAnalyze.add(labelMinScore);
+				labelScoreMin = new JLabel("", SwingConstants.CENTER);
+				panelBasicAnalyze.add(labelScoreMin);
 				labelPositivePercentage = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelPositivePercentage);
 				labelNegativePercentage = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelNegativePercentage);
 				labelMeanScore = new JLabel("", SwingConstants.CENTER);
 				panelBasicAnalyze.add(labelMeanScore);
-				labelMinTotal = new JLabel("", SwingConstants.CENTER);
-				panelBasicAnalyze.add(labelMinTotal);
+				labelNegativeTotal = new JLabel("", SwingConstants.CENTER);
+				panelBasicAnalyze.add(labelNegativeTotal);
 			}
 
 			{
@@ -614,8 +614,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 						// Stats
 						{
 							labelNumberOfGames.setText(format.format(dataPackage.getNumberOfGames()));
-							labelMaxScore.setText(format.format(dataPackage.getScoreMax()));
-							labelMinScore.setText(format.format(dataPackage.getScoreMin()));
+							labelScoreMax.setText(format.format(dataPackage.getMaxScore()));
+							labelScoreMin.setText(format.format(dataPackage.getMinScore()));
 							labelPositiveGames.setText(format.format(dataPackage.getPositiveGames()));
 							labelPositivePercentage.setText(format.format(dataPackage.getPositiveGamesPercent()) + PERCENTAGE_STRING);
 							labelNegativeGames.setText(format.format(dataPackage.getNegativeGames()));
@@ -623,8 +623,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 							labelTotalScore.setText(format.format(dataPackage.getScoreTotal()));
 							labelMeanScore
 								.setText(format.format(dataPackage.getScoreMean()) + PLUS_MINUS + format.format(dataPackage.getScoreStandardDeviation()));
-							labelMaxTotal.setText(format.format(dataPackage.getTotalMax()));
-							labelMinTotal.setText(format.format(dataPackage.getTotalMin()));
+							labelPositiveTotal.setText(format.format(dataPackage.getPositiveTotal()));
+							labelNegativeTotal.setText(format.format(dataPackage.getNegativeTotal()));
 
 							labelNumberOfFourPlayersGames.setText(format.format(dataPackage.getNumberOfFourPlayerGames()));
 							if (dataPackage.getNumberOfFourPlayerGames() > 0) {
@@ -768,15 +768,15 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	private void clearGameInfo() {
 		labelNumberOfGames.setText(ZERO_STRING);
 		labelTotalScore.setText(ZERO_STRING);
-		labelMinScore.setText(ZERO_STRING);
+		labelScoreMin.setText(ZERO_STRING);
 		labelPositiveGames.setText(ZERO_STRING);
 		labelPositivePercentage.setText(ZERO_STRING + PERCENTAGE_STRING);
 		labelNegativeGames.setText(ZERO_STRING);
 		labelNegativePercentage.setText(ZERO_STRING + PERCENTAGE_STRING);
 		labelMeanScore.setText(ZERO_STRING);
-		labelMaxScore.setText(ZERO_STRING);
-		labelMaxTotal.setText(ZERO_STRING);
-		labelMinTotal.setText(ZERO_STRING);
+		labelScoreMax.setText(ZERO_STRING);
+		labelPositiveTotal.setText(ZERO_STRING);
+		labelNegativeTotal.setText(ZERO_STRING);
 
 		labelNumberOfFourPlayersGames.setText(ZERO_STRING);
 		for (int index = 0; index < 4; index++) {
