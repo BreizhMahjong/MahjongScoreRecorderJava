@@ -506,6 +506,9 @@ public class UITabPanelRCRScoreAnalyze extends UITabPanel {
 									labelScore.setBackground(Color.BLACK);
 								} else {
 									labelScore.setText(Long.toString(Math.round(score.scores[x][y])));
+									if (score.scores[x][y] < 0) {
+										labelScore.setForeground(Color.RED);
+									}
 									if (y % 2 == 0) {
 										labelScore.setOpaque(true);
 										labelScore.setBackground(Color.LIGHT_GRAY);

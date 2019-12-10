@@ -19,19 +19,25 @@ package fr.bmj.bmjc.data.stat.rcr;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class RCRTotalScoreFieldAccessMeanGameScore implements RCRTotalScoreFieldAccess {
-	private final DecimalFormat format;
+public class RCRTotalScoreFieldAccessMeanScore implements RCRTotalScoreFieldAccess {
+	private final DecimalFormat meanScoreFormat;
+	private final DecimalFormat stdDevFormat;
 
-	public RCRTotalScoreFieldAccessMeanGameScore() {
-		format = new DecimalFormat("#,000");
-		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+	public RCRTotalScoreFieldAccessMeanScore() {
+		meanScoreFormat = new DecimalFormat("+#,##0;-#,##0");
+		DecimalFormatSymbols symbols = meanScoreFormat.getDecimalFormatSymbols();
 		symbols.setGroupingSeparator(' ');
-		format.setDecimalFormatSymbols(symbols);
+		meanScoreFormat.setDecimalFormatSymbols(symbols);
+
+		stdDevFormat = new DecimalFormat("#,##0");
+		symbols = stdDevFormat.getDecimalFormatSymbols();
+		symbols.setGroupingSeparator(' ');
+		stdDevFormat.setDecimalFormatSymbols(symbols);
 	}
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return format.format(data.totalScore) + " (" + format.format(data.umaScore) + ")";
+		return meanScoreFormat.format(data.totalScore) + " (" + stdDevFormat.format(data.umaScore) + ")";
 	}
 
 }

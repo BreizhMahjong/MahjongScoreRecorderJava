@@ -234,7 +234,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private void setOnlyRegularPlayers() {
 		dataAccess.setRCROnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
-		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING]) {
+		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING] || tab == tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] || tab == tabPanels[INDEX_PANEL_RCR_TREND]) {
 			tab.refresh();
 		}
 	}

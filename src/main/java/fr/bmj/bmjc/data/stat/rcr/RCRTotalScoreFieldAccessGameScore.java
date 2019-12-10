@@ -23,7 +23,7 @@ public class RCRTotalScoreFieldAccessGameScore implements RCRTotalScoreFieldAcce
 	private final DecimalFormat format;
 
 	public RCRTotalScoreFieldAccessGameScore() {
-		format = new DecimalFormat("#,000");
+		format = new DecimalFormat("+#,000;-#,000");
 		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
 		symbols.setGroupingSeparator(' ');
 		format.setDecimalFormatSymbols(symbols);

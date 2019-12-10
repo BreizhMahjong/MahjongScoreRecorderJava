@@ -55,9 +55,7 @@ import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessDay;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessDisplayName;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessFinalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessFractionNumberOfGames;
-import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessGameScore;
-import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanFinalScore;
-import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanGameScore;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMonth;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessNumberOfGames;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessPercentage;
@@ -318,11 +316,12 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 	private void togglePeriodMode(final boolean toRefresh) {
 		final EnumRankingMode rankingMode = rankingModes[comboRankingMode.getSelectedIndex()];
 		switch (rankingMode) {
-			case TOTAL_SCORE:
-			case FINAL_SCORE:
+			case TOTAL_FINAL_SCORE:
 			case MEAN_FINAL_SCORE:
-			case GAME_SCORE:
+			case BEST_FINAL_SCORE:
+			case TOTAL_GAME_SCORE:
 			case MEAN_GAME_SCORE:
+			case BEST_GAME_SCORE:
 			case WIN_RATE:
 			case POSITIVE_RATE:
 				comboBoxActivated[COMBOBOX_PERIOD] = true;
@@ -537,40 +536,47 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 							access.add(1, new RCRTotalScoreFieldAccessDisplayName());
 						}
 						switch (rankingMode) {
-							case TOTAL_SCORE:
+							case TOTAL_FINAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 								break;
-							case FINAL_SCORE:
+							case MEAN_FINAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessMeanScore());
+								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
+								break;
+							case BEST_FINAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString() + " (Uma)");
 								labelTitles[3].setText("Date");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
 								access.add(2, new RCRTotalScoreFieldAccessFinalScore());
 								access.add(3, new RCRTotalScoreFieldAccessDay());
 								break;
-							case MEAN_FINAL_SCORE:
-								labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
+							case TOTAL_GAME_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-								access.add(2, new RCRTotalScoreFieldAccessMeanFinalScore());
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
-								break;
-							case GAME_SCORE:
-								labelTitles[2].setText(rankingMode.toString());
-								labelTitles[3].setText("Date");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
-								access.add(2, new RCRTotalScoreFieldAccessGameScore());
-								access.add(3, new RCRTotalScoreFieldAccessDay());
 								break;
 							case MEAN_GAME_SCORE:
 								labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 30000;
-								access.add(2, new RCRTotalScoreFieldAccessMeanGameScore());
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessMeanScore());
 								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
+								break;
+							case BEST_GAME_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								access.add(2, new RCRTotalScoreFieldAccessFinalScore());
+								access.add(3, new RCRTotalScoreFieldAccessDay());
 								break;
 							case WIN_RATE:
 								labelTitles[2].setText(rankingMode.toString());

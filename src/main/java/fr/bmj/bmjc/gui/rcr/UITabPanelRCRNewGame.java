@@ -541,28 +541,17 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 				JOptionPane.showMessageDialog(this, "Certain score n'est pas multiple de 100", "Erreur", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			playerScore.finalScore = playerScore.gameScore - initialScore;
+			playerScore.gameScore = playerScore.gameScore - initialScore;
 			totalScore += playerScore.gameScore;
 		}
 
 		// Check total score
-		final int sumDifference = totalScore - initialScore * nbPlayers;
-		if (sumDifference != 0) {
+		if (totalScore != 0) {
 			JOptionPane.showMessageDialog(this, "Le total des scores n'est pas correct", "Erreur", JOptionPane.WARNING_MESSAGE);
-			labelScoreError.setText(Integer.toString(sumDifference));
+			labelScoreError.setText(Integer.toString(totalScore));
 			return;
 		} else {
 			labelScoreError.setText(STRING_SPACE);
-		}
-
-		// If initial score is not 30000, adjust
-		if (initialScore != INITIAL_GAME_SCORES) {
-			final int diff = initialScore - INITIAL_GAME_SCORES;
-			for (int playerIndex = 0; playerIndex < nbPlayers; playerIndex++) {
-				playerScoreList.get(playerIndex).gameScore -= diff;
-			}
-			spinnerInitialScore.setValue(INITIAL_GAME_SCORES);
-			JOptionPane.showMessageDialog(this, "Les stacks ont été ajustés à la base de 30000", "Info", JOptionPane.INFORMATION_MESSAGE);
 		}
 
 		// Sort score list
@@ -585,7 +574,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			for (int index = playerIndex; index < equalityPlayerIndex; index++) {
 				final PlayerScore playerScore = playerScoreList.get(index);
 				playerScore.uma = totalUma;
-				playerScore.finalScore = playerScore.finalScore + totalUma;
+				playerScore.finalScore = playerScore.gameScore + totalUma;
 				playerScore.place = playerIndex + 1;
 			}
 			playerIndex = equalityPlayerIndex;
@@ -612,7 +601,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			final PlayerScore playerScore = playerScoreList.get(index);
 			labelPlayerRankings.get(index).setText(Integer.toString(playerScore.place));
 			comboBoxPlayers.get(index).setSelectedIndex(playerScore.index);
-			spinnerPlayerGameScores.get(index).setValue(playerScore.gameScore);
+			spinnerPlayerGameScores.get(index).setValue(playerScore.gameScore + initialScore);
 			labelPlayerUmaScores.get(index).setText(Integer.toString(playerScore.uma));
 			labelPlayerFinalScores.get(index).setText(Integer.toString(playerScore.finalScore));
 		}

@@ -71,9 +71,13 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		final List<Player> playerList = new ArrayList<Player>();
 		if (isConnected()) {
 			try {
+				final String querySelectPart = "SELECT DISTINCT player.id, player.name, player.display_name FROM player, rcr_game_score";
+				final String queryWherePart = " WHERE player.id=rcr_game_score.player_id";
+				final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
+				final String queryOrderPart = "  ORDER BY player.id";
+
 				final Statement statement = dataBaseConnection.createStatement();
-				final ResultSet result = statement.executeQuery(
-					"SELECT DISTINCT player.id, player.name, player.display_name FROM player, rcr_game_score WHERE player.id=rcr_game_score.player_id ORDER BY player.id");
+				final ResultSet result = statement.executeQuery(querySelectPart + queryWherePart + queryRegularPart + queryOrderPart);
 				while (result.next()) {
 					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false, true, ""));
 				}
@@ -481,9 +485,6 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 				case FINAL_SCORE:
 					fieldString = "final_score";
 					break;
-				case NET_SCORE:
-					fieldString = "game_score - 30000";
-					break;
 				case GAME_SCORE:
 					fieldString = "game_score";
 					break;
@@ -695,7 +696,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 		final List<RCRTotalScore> rankingScores = new ArrayList<>();
 		try {
 			switch (rankingMode) {
-				case TOTAL_SCORE: {
+				case TOTAL_FINAL_SCORE: {
 					final String querySelectPart = "SELECT player.name, player.display_name, SUM(rcr_game_score.final_score) AS total, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
 					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
 					final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
@@ -721,38 +722,6 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
 						total.totalScore = result.getInt(3);
 						total.numberOfGame = result.getInt(4);
-						rankingScores.add(total);
-					}
-					result.close();
-					statement.close();
-				}
-					break;
-				case FINAL_SCORE: {
-					final String querySelectPart = " SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.final_score, rcr_game_score.uma_score FROM player, rcr_game_id, rcr_game_score";
-					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
-					final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
-					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY rcr_game_score.final_score DESC"
-						: " ORDER BY rcr_game_score.final_score ASC";
-					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
-					PreparedStatement statement = null;
-					if (periodMode == EnumPeriodMode.ALL) {
-						statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryRegularPart + queryOrderPart + queryFetchPart);
-						statement.setInt(1, tournament.getId());
-					} else {
-						statement = dataBaseConnection
-							.prepareStatement(querySelectPart + queryWherePart + queryRegularPart + queryPeriodPart + queryOrderPart + queryFetchPart);
-						statement.setInt(1, tournament.getId());
-						statement.setDate(2, new Date(calendarFrom.getTimeInMillis()));
-						statement.setDate(3, new Date(calendarTo.getTimeInMillis()));
-					}
-
-					final ResultSet result = statement.executeQuery();
-					while (result.next()) {
-						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4),
-							result.getInt(5));
-						total.totalScore = result.getInt(6);
-						total.umaScore = result.getInt(7);
 						rankingScores.add(total);
 					}
 					result.close();
@@ -792,13 +761,13 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					statement.close();
 				}
 					break;
-				case GAME_SCORE: {
-					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.game_score FROM player, rcr_game_id, rcr_game_score";
+				case BEST_FINAL_SCORE: {
+					final String querySelectPart = " SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.final_score, rcr_game_score.uma_score FROM player, rcr_game_id, rcr_game_score";
 					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
 					final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
 					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
-					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY rcr_game_score.game_score DESC"
-						: " ORDER BY rcr_game_score.game_score ASC";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY rcr_game_score.final_score DESC"
+						: " ORDER BY rcr_game_score.final_score ASC";
 					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
 					PreparedStatement statement = null;
 					if (periodMode == EnumPeriodMode.ALL) {
@@ -817,6 +786,39 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4),
 							result.getInt(5));
 						total.totalScore = result.getInt(6);
+						total.umaScore = result.getInt(7);
+						rankingScores.add(total);
+					}
+					result.close();
+					statement.close();
+				}
+					break;
+				case TOTAL_GAME_SCORE: {
+					final String querySelectPart = "SELECT player.name, player.display_name, SUM(rcr_game_score.game_score) AS total, COUNT(*) AS nb_games FROM player, rcr_game_id, rcr_game_score";
+					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+					final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
+					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+					final String queryGroupPart = " GROUP BY player.name, player.display_name";
+					final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY total DESC" : " ORDER BY total ASC";
+					PreparedStatement statement = null;
+					if (periodMode == EnumPeriodMode.ALL) {
+						statement = dataBaseConnection
+							.prepareStatement(querySelectPart + queryWherePart + queryRegularPart + queryGroupPart + queryHavingPart + queryOrderPart);
+						statement.setInt(1, tournament.getId());
+					} else {
+						statement = dataBaseConnection.prepareStatement(
+							querySelectPart + queryWherePart + queryRegularPart + queryPeriodPart + queryGroupPart + queryHavingPart + queryOrderPart);
+						statement.setInt(1, tournament.getId());
+						statement.setDate(2, new Date(calendarFrom.getTimeInMillis()));
+						statement.setDate(3, new Date(calendarTo.getTimeInMillis()));
+					}
+
+					final ResultSet result = statement.executeQuery();
+					while (result.next()) {
+						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
+						total.totalScore = result.getInt(3);
+						total.numberOfGame = result.getInt(4);
 						rankingScores.add(total);
 					}
 					result.close();
@@ -850,6 +852,37 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						total.totalScore = result.getInt(3);
 						total.umaScore = (int) Math.round(result.getDouble(4));
 						total.numberOfGame = result.getInt(5);
+						rankingScores.add(total);
+					}
+					result.close();
+					statement.close();
+				}
+					break;
+				case BEST_GAME_SCORE: {
+					final String querySelectPart = "SELECT player.name, player.display_name, YEAR(rcr_game_id.date), MONTH(rcr_game_id.date)-1, DAY(rcr_game_id.date), rcr_game_score.game_score FROM player, rcr_game_id, rcr_game_score";
+					final String queryWherePart = " WHERE player.id=rcr_game_score.player_id AND rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_id.rcr_tournament_id=?";
+					final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
+					final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
+					final String queryOrderPart = sortingMode == EnumSortingMode.DESCENDING ? " ORDER BY rcr_game_score.game_score DESC"
+						: " ORDER BY rcr_game_score.game_score ASC";
+					final String queryFetchPart = " FETCH FIRST " + Integer.toString(NUMBER_TOP) + " ROWS ONLY";
+					PreparedStatement statement = null;
+					if (periodMode == EnumPeriodMode.ALL) {
+						statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryRegularPart + queryOrderPart + queryFetchPart);
+						statement.setInt(1, tournament.getId());
+					} else {
+						statement = dataBaseConnection
+							.prepareStatement(querySelectPart + queryWherePart + queryRegularPart + queryPeriodPart + queryOrderPart + queryFetchPart);
+						statement.setInt(1, tournament.getId());
+						statement.setDate(2, new Date(calendarFrom.getTimeInMillis()));
+						statement.setDate(3, new Date(calendarTo.getTimeInMillis()));
+					}
+
+					final ResultSet result = statement.executeQuery();
+					while (result.next()) {
+						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4),
+							result.getInt(5));
+						total.totalScore = result.getInt(6);
 						rankingScores.add(total);
 					}
 					result.close();
@@ -1327,7 +1360,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					int nbPositives;
 					double totalPositive;
 
-					final String querySelectPart = "SELECT rcr_game_score.player_id, rcr_game_score.game_score - 30000 FROM rcr_game_score";
+					final String querySelectPart = "SELECT rcr_game_score.player_id, rcr_game_score.game_score FROM rcr_game_score";
 					final String queryWherePart = " WHERE rcr_game_score.rcr_game_id=?";
 					final String queryOrderPart = " ORDER BY rcr_game_score.game_score DESC";
 					final PreparedStatement statement = dataBaseConnection.prepareStatement(querySelectPart + queryWherePart + queryOrderPart);

@@ -17,11 +17,12 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumRankingMode {
-	TOTAL_SCORE("Total"),
-	FINAL_SCORE("Score"),
+	TOTAL_FINAL_SCORE("Score Total"),
 	MEAN_FINAL_SCORE("Score moyen"),
-	GAME_SCORE("Stack"),
+	BEST_FINAL_SCORE("Meilleur Score"),
+	TOTAL_GAME_SCORE("Stack Total"),
 	MEAN_GAME_SCORE("Stack moyen"),
+	BEST_GAME_SCORE("Meilleur Stack"),
 	WIN_RATE("Taux victoire"),
 	POSITIVE_RATE("Taux positif"),
 	MENSUAL_SCORE("Total mensuel"),
