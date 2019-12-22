@@ -97,7 +97,6 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 	};
 	private static final int DEFAULT_UMA_SET_INDEX = 0;
 
-	private static final int INITIAL_GAME_SCORES = 30000;
 	// UMA[UMA_SET][NB_PLAYERS][RANKING]
 	private static final int UMA[][][] = {
 		{
@@ -563,8 +562,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 		final int uma[] = UMA[umaSetIndex][nbPlayersIndex];
 		int playerIndex = 0;
 		while (playerIndex < nbPlayers) {
-			int equalityPlayerIndex = playerIndex;
-			int totalUma = 0;
+			int equalityPlayerIndex = playerIndex + 1;
+			int totalUma = uma[playerIndex];
 			while (equalityPlayerIndex < nbPlayers && playerScoreList.get(playerIndex).gameScore == playerScoreList.get(equalityPlayerIndex).gameScore) {
 				totalUma += uma[equalityPlayerIndex];
 				equalityPlayerIndex++;

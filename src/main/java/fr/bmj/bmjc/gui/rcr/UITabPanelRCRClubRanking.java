@@ -55,6 +55,7 @@ import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessDay;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessDisplayName;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessFinalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessFractionNumberOfGames;
+import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessGameScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMeanScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessMonth;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessNumberOfGames;
@@ -322,7 +323,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 			case TOTAL_GAME_SCORE:
 			case MEAN_GAME_SCORE:
 			case BEST_GAME_SCORE:
-			case WIN_RATE:
+			case WIN_RATE_4:
+			case WIN_RATE_5:
 			case POSITIVE_RATE:
 				comboBoxActivated[COMBOBOX_PERIOD] = true;
 				comboPeriodMode.setEnabled(true);
@@ -575,13 +577,20 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
-								access.add(2, new RCRTotalScoreFieldAccessFinalScore());
+								access.add(2, new RCRTotalScoreFieldAccessGameScore());
 								access.add(3, new RCRTotalScoreFieldAccessDay());
 								break;
-							case WIN_RATE:
+							case WIN_RATE_4:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 250;
+								access.add(2, new RCRTotalScoreFieldAccessPercentage());
+								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
+								break;
+							case WIN_RATE_5:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 200;
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
