@@ -67,7 +67,7 @@ import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
-import fr.bri.swing.JDatePicker;
+import fr.bri.swing.JDatePickerMonth;
 
 public class UITabPanelRCRNewGame extends UITabPanel {
 	private static final long serialVersionUID = -7499477137622830228L;
@@ -427,15 +427,15 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 	}
 
 	private void getDate() {
-		final JDatePicker picker = new JDatePicker(SwingUtilities.getWindowAncestor(this), Calendar.MONDAY, calendar.getTime());
+		final JDatePickerMonth picker = new JDatePickerMonth(SwingUtilities.getWindowAncestor(this), Calendar.MONDAY, calendar.getTime());
 		final Rectangle bounds = labelDate.getGraphicsConfiguration().getBounds();
 		final Point labelDateScreenLocation = labelDate.getLocationOnScreen();
 		final int x = Math.min(labelDateScreenLocation.x, bounds.x + bounds.width - picker.getWidth());
 		final int y = Math.min(labelDateScreenLocation.y, bounds.y + bounds.height - picker.getHeight());
 		picker.setLocation(x, y);
 		picker.setVisible(true);
-		if (picker.dateSelected()) {
-			final Date selectedDate = picker.getSelectedDate();
+		final Date selectedDate = picker.getSelectedDate();
+		if (selectedDate != null) {
 			calendar.setTime(selectedDate);
 			labelDate.setText(dateFormat.format(selectedDate));
 		}
