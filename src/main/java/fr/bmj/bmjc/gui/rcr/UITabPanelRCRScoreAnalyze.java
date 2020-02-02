@@ -118,7 +118,7 @@ public class UITabPanelRCRScoreAnalyze extends UITabPanel {
 				c.gridWidth = 1;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = new EnumPeriodMode[] {
-					EnumPeriodMode.ALL, EnumPeriodMode.SEASON, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
+					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
 				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -126,7 +126,7 @@ public class UITabPanelRCRScoreAnalyze extends UITabPanel {
 				}
 				comboPeriodMode = new JComboBox<String>(periodModeStrings);
 				comboPeriodMode.setEditable(false);
-				comboPeriodMode.setSelectedIndex(3);
+				comboPeriodMode.setSelectedIndex(2);
 				c.x = 1;
 				panelNorth.add(comboPeriodMode, c);
 
@@ -277,12 +277,6 @@ public class UITabPanelRCRScoreAnalyze extends UITabPanel {
 		switch (periodMode) {
 			case ALL:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = false;
-				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
-				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
-				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
-				break;
-			case SEASON:
-				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
 				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;

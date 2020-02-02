@@ -171,7 +171,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				c.x = 0;
 				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
 				periodModes = new EnumPeriodMode[] {
-					EnumPeriodMode.ALL, EnumPeriodMode.SEASON, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
+					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH, EnumPeriodMode.DAY
 				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
@@ -179,7 +179,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				}
 				comboPeriodMode = new JComboBox<String>(periodModeStrings);
 				comboPeriodMode.setEditable(false);
-				comboPeriodMode.setSelectedIndex(3);
+				comboPeriodMode.setSelectedIndex(2);
 				c.x = 1;
 				panelNorth.add(comboPeriodMode, c);
 
@@ -325,7 +325,8 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 			case BEST_GAME_SCORE:
 			case WIN_RATE_4:
 			case WIN_RATE_5:
-			case POSITIVE_RATE:
+			case POSITIVE_RATE_4:
+			case POSITIVE_RATE_5:
 				comboBoxActivated[COMBOBOX_PERIOD] = true;
 				comboPeriodMode.setEnabled(true);
 				break;
@@ -346,12 +347,6 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 		switch (periodMode) {
 			case ALL:
 				comboBoxActivated[COMBOBOX_YEAR_INDEX] = false;
-				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
-				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
-				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
-				break;
-			case SEASON:
-				comboBoxActivated[COMBOBOX_YEAR_INDEX] = true;
 				comboBoxActivated[COMBOBOX_TRIMESTER_INDEX] = false;
 				comboBoxActivated[COMBOBOX_MONTH_INDEX] = false;
 				comboBoxActivated[COMBOBOX_DAY_INDEX] = false;
@@ -594,10 +589,17 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
-							case POSITIVE_RATE:
+							case POSITIVE_RATE_4:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 500;
+								access.add(2, new RCRTotalScoreFieldAccessPercentage());
+								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
+								break;
+							case POSITIVE_RATE_5:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Nombre de parties");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 400;
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
@@ -712,9 +714,6 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 						switch (periodMode) {
 							case ALL:
 								break;
-							case SEASON:
-								proposedSaveFileName.append(Integer.toString(year));
-								break;
 							case YEAR:
 								proposedSaveFileName.append(Integer.toString(year));
 								break;
@@ -762,9 +761,6 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 								switch (periodMode) {
 									case ALL:
 										writer.write("Tout");
-										break;
-									case SEASON:
-										writer.write(Integer.toString(year));
 										break;
 									case YEAR:
 										writer.write(Integer.toString(year));
