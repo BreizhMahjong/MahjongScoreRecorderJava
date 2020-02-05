@@ -536,91 +536,91 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 							case TOTAL_FINAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 								break;
 							case MEAN_FINAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessMeanScore());
 								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 								break;
 							case BEST_FINAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString() + " (Uma)");
 								labelTitles[3].setText("Date");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessFinalScore());
 								access.add(3, new RCRTotalScoreFieldAccessDay());
 								break;
 							case TOTAL_GAME_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 								break;
 							case MEAN_GAME_SCORE:
 								labelTitles[2].setText(rankingMode.toString() + " (Écart type)");
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessMeanScore());
 								access.add(3, new RCRTotalScoreFieldAccessNumberOfGames());
 								break;
 							case BEST_GAME_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessGameScore());
 								access.add(3, new RCRTotalScoreFieldAccessDay());
 								break;
 							case WIN_RATE_4:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 250;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.doubleValue() < 25.0;
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
 							case WIN_RATE_5:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 200;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.doubleValue() < 20.0;
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
 							case POSITIVE_RATE_4:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 500;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.doubleValue() < 50.0;
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
 							case POSITIVE_RATE_5:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Nombre de parties");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 400;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.doubleValue() < 40.0;
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
 							case ANNUAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessYear());
 								break;
 							case TRIMESTRIAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessTrimester());
 								break;
 							case MENSUAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
-								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore < 0;
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessMonth());
 								break;

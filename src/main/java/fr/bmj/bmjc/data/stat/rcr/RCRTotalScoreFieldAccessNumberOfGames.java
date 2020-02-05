@@ -20,7 +20,7 @@ public class RCRTotalScoreFieldAccessNumberOfGames implements RCRTotalScoreField
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return Integer.toString(data.numberOfGame);
+		return data.numberOfGame.toString();
 	}
 
 }

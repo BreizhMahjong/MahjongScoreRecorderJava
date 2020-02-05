@@ -719,8 +719,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
-						total.totalScore = result.getInt(3);
-						total.numberOfGame = result.getInt(4);
+						total.totalScore = new Integer(result.getInt(3));
+						total.numberOfGame = new Integer(result.getInt(4));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -752,8 +752,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
 						total.totalScore = result.getInt(3);
-						total.umaScore = (int) Math.round(result.getDouble(4));
-						total.numberOfGame = result.getInt(5);
+						total.umaScore = new Long(Math.round(result.getDouble(4)));
+						total.numberOfGame = new Integer(result.getInt(5));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -784,8 +784,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4),
 							result.getInt(5));
-						total.totalScore = result.getInt(6);
-						total.umaScore = result.getInt(7);
+						total.totalScore = new Integer(result.getInt(6));
+						total.umaScore = new Integer(result.getInt(7));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -816,8 +816,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
-						total.totalScore = result.getInt(3);
-						total.numberOfGame = result.getInt(4);
+						total.totalScore = new Integer(result.getInt(3));
+						total.numberOfGame = new Integer(result.getInt(4));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -849,8 +849,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
 						total.totalScore = result.getInt(3);
-						total.umaScore = (int) Math.round(result.getDouble(4));
-						total.numberOfGame = result.getInt(5);
+						total.umaScore = new Long(Math.round(result.getDouble(4)));
+						total.numberOfGame = new Integer(result.getInt(5));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -881,7 +881,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4),
 							result.getInt(5));
-						total.totalScore = result.getInt(6);
+						total.totalScore = new Integer(result.getInt(6));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -913,7 +913,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final ResultSet result = statement.executeQuery();
 						while (result.next()) {
 							final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
-							total.numberOfGame = result.getInt(3);
+							total.numberOfGame = new Integer(result.getInt(3));
 							mapNameScore.put(total.displayName, total);
 						}
 						result.close();
@@ -942,18 +942,25 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 							final String name = result.getString(1);
 							final RCRTotalScore total = mapNameScore.get(name);
 							if (total != null) {
-								total.umaScore = result.getInt(2);
-								total.totalScore = Math.round(total.umaScore * 1000.0f / total.numberOfGame);
+								total.umaScore = new Integer(result.getInt(2));
+								total.totalScore = new Double(total.umaScore.doubleValue() * 100.0 / total.numberOfGame.doubleValue());
 							}
 						}
 						result.close();
 						statement.close();
 					}
 					rankingScores.addAll(mapNameScore.values());
-					if (sortingMode == EnumSortingMode.DESCENDING) {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> -Integer.compare(o1.totalScore, o2.totalScore));
-					} else {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> Integer.compare(o1.totalScore, o2.totalScore));
+					switch (sortingMode) {
+						case DESCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> -Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						case ASCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						default:
+							break;
 					}
 				}
 					break;
@@ -965,7 +972,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
 						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
 						final String queryGroupPart = " GROUP BY player.name, player.display_name";
-						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
+						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames / 4) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
 							statement = dataBaseConnection
@@ -982,7 +989,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final ResultSet result = statement.executeQuery();
 						while (result.next()) {
 							final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
-							total.numberOfGame = result.getInt(3);
+							total.numberOfGame = new Integer(result.getInt(3));
 							mapNameScore.put(total.displayName, total);
 						}
 						result.close();
@@ -1012,17 +1019,24 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 							final RCRTotalScore total = mapNameScore.get(name);
 							if (total != null) {
 								total.umaScore = result.getInt(2);
-								total.totalScore = Math.round(total.umaScore * 1000.0f / total.numberOfGame);
+								total.totalScore = new Double(total.umaScore.doubleValue() * 100.0 / total.numberOfGame.doubleValue());
 							}
 						}
 						result.close();
 						statement.close();
 					}
 					rankingScores.addAll(mapNameScore.values());
-					if (sortingMode == EnumSortingMode.DESCENDING) {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> -Integer.compare(o1.totalScore, o2.totalScore));
-					} else {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> Integer.compare(o1.totalScore, o2.totalScore));
+					switch (sortingMode) {
+						case DESCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> -Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						case ASCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						default:
+							break;
 					}
 				}
 					break;
@@ -1051,7 +1065,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final ResultSet result = statement.executeQuery();
 						while (result.next()) {
 							final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
-							total.numberOfGame = result.getInt(3);
+							total.numberOfGame = new Integer(result.getInt(3));
 							mapNameScore.put(total.displayName, total);
 						}
 						result.close();
@@ -1081,17 +1095,24 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 							final RCRTotalScore total = mapNameScore.get(name);
 							if (total != null) {
 								total.umaScore = result.getInt(2);
-								total.totalScore = Math.round(total.umaScore * 1000.0f / total.numberOfGame);
+								total.totalScore = new Double(total.umaScore.doubleValue() * 100.0 / total.numberOfGame.doubleValue());
 							}
 						}
 						result.close();
 						statement.close();
 					}
 					rankingScores.addAll(mapNameScore.values());
-					if (sortingMode == EnumSortingMode.DESCENDING) {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> -Integer.compare(o1.totalScore, o2.totalScore));
-					} else {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> Integer.compare(o1.totalScore, o2.totalScore));
+					switch (sortingMode) {
+						case DESCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> -Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						case ASCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						default:
+							break;
 					}
 				}
 					break;
@@ -1103,7 +1124,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final String queryRegularPart = onlyRegularPlayers ? " AND player.regular=TRUE" : "";
 						final String queryPeriodPart = " AND rcr_game_id.date>=? AND rcr_game_id.date<?";
 						final String queryGroupPart = " GROUP BY player.name, player.display_name";
-						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames) : "";
+						final String queryHavingPart = useMinimumGame ? " HAVING COUNT(*)>=" + Integer.toString(minimumGames / 4) : "";
 						PreparedStatement statement = null;
 						if (periodMode == EnumPeriodMode.ALL) {
 							statement = dataBaseConnection
@@ -1120,7 +1141,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 						final ResultSet result = statement.executeQuery();
 						while (result.next()) {
 							final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), 0, 0, 0);
-							total.numberOfGame = result.getInt(3);
+							total.numberOfGame = new Integer(result.getInt(3));
 							mapNameScore.put(total.displayName, total);
 						}
 						result.close();
@@ -1150,17 +1171,24 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 							final RCRTotalScore total = mapNameScore.get(name);
 							if (total != null) {
 								total.umaScore = result.getInt(2);
-								total.totalScore = Math.round(total.umaScore * 1000.0f / total.numberOfGame);
+								total.totalScore = new Double(total.umaScore.doubleValue() * 100.0 / total.numberOfGame.doubleValue());
 							}
 						}
 						result.close();
 						statement.close();
 					}
 					rankingScores.addAll(mapNameScore.values());
-					if (sortingMode == EnumSortingMode.DESCENDING) {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> -Integer.compare(o1.totalScore, o2.totalScore));
-					} else {
-						Collections.sort(rankingScores, (final RCRTotalScore o1, final RCRTotalScore o2) -> Integer.compare(o1.totalScore, o2.totalScore));
+					switch (sortingMode) {
+						case DESCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> -Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						case ASCENDING:
+							Collections.sort(rankingScores,
+								(final RCRTotalScore o1, final RCRTotalScore o2) -> Double.compare(o1.totalScore.doubleValue(), o2.totalScore.doubleValue()));
+							break;
+						default:
+							break;
 					}
 				}
 					break;
@@ -1181,8 +1209,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), 0, 0);
-						total.totalScore = result.getInt(4);
-						total.numberOfGame = result.getInt(5);
+						total.totalScore = new Integer(result.getInt(4));
+						total.numberOfGame = new Integer(result.getInt(5));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -1206,8 +1234,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), 0);
-						total.totalScore = result.getInt(5);
-						total.numberOfGame = result.getInt(6);
+						total.totalScore = new Integer(result.getInt(5));
+						total.numberOfGame = new Integer(result.getInt(6));
 						rankingScores.add(total);
 					}
 					result.close();
@@ -1231,8 +1259,8 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 					final ResultSet result = statement.executeQuery();
 					while (result.next()) {
 						final RCRTotalScore total = new RCRTotalScore(result.getString(1), result.getString(2), result.getInt(3), result.getInt(4), 0);
-						total.totalScore = result.getInt(5);
-						total.numberOfGame = result.getInt(6);
+						total.totalScore = new Integer(result.getInt(5));
+						total.numberOfGame = new Integer(result.getInt(6));
 						rankingScores.add(total);
 					}
 					result.close();

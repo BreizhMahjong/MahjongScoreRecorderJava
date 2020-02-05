@@ -20,9 +20,9 @@ public class RCRTotalScore {
 
 	public final String playerName;
 	public final String displayName;
-	public int totalScore;
-	public int umaScore;
-	public int numberOfGame;
+	public Number totalScore;
+	public Number umaScore;
+	public Number numberOfGame;
 	public final int year;
 	public final int month;
 	public final int day;

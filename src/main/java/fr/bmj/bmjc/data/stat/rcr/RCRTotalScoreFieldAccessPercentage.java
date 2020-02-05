@@ -17,18 +17,19 @@
 package fr.bmj.bmjc.data.stat.rcr;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class RCRTotalScoreFieldAccessPercentage implements RCRTotalScoreFieldAccess {
 	private final DecimalFormat format;
 
 	public RCRTotalScoreFieldAccessPercentage() {
-		format = new DecimalFormat("#00");
+		format = new DecimalFormat("#0.0", new DecimalFormatSymbols(Locale.FRANCE));
 	}
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		final String percent = format.format(data.totalScore);
-		return percent.substring(0, percent.length() - 1) + "," + percent.substring(percent.length() - 1) + "%";
+		return format.format(data.totalScore) + " %";
 	}
 
 }
