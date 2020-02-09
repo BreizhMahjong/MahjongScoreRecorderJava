@@ -231,7 +231,7 @@ public class DataAccessDataBaseRCR extends DataAccessDataBaseCommon implements D
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
 			statement.setDate(1, date);
 			final ResultSet result = statement.executeQuery();
-			newId = ((game.getYear() % 100 * 100 + game.getMonth() + 1) * 100 + game.getDay()) * 100 + 1;
+			newId = ((game.getYear() * 100 + game.getMonth() + 1) * 100 + game.getDay()) * 100 + 1;
 			while (result.next()) {
 				if (newId == result.getInt(1)) {
 					newId++;
