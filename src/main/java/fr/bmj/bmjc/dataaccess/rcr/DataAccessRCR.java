@@ -38,11 +38,11 @@ public interface DataAccessRCR extends DataAccessCommon {
 
 	public UpdateResult addRCRTournament(final String tournamentName);
 
-	public UpdateResult modifyRCRTournament(final int tournamentId, final String tournamentName);
+	public UpdateResult modifyRCRTournament(final short tournamentId, final String tournamentName);
 
 	public List<Tournament> getRCRTournaments();
 
-	public UpdateResult deleteRCRTournament(final int tournamentId);
+	public UpdateResult deleteRCRTournament(final short tournamentId);
 
 	public UpdateResult addRCRGame(final RCRGame game);
 
@@ -50,17 +50,17 @@ public interface DataAccessRCR extends DataAccessCommon {
 
 	public List<Integer> getRCRGameDays(final Tournament tournament, final int year, final int month);
 
-	public List<Integer> getRCRGameIds(final Tournament tournament, final int year, final int month, final int day);
+	public List<Long> getRCRGameIds(final Tournament tournament, final int year, final int month, final int day);
 
-	public RCRGame getRCRGame(final int id);
+	public RCRGame getRCRGame(final long id);
 
-	public UpdateResult deleteRCRGame(final int id);
+	public UpdateResult deleteRCRGame(final long id);
 
 	public void setRCRUseMinimumGame(boolean useMinimumGame);
 
 	public void setRCROnlyRegularPlayers(boolean onlyRegularPlayers);
 
-	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode,
+	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final short playerId, final EnumScoreMode scoreMode,
 		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day);
 
 	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode,
@@ -69,7 +69,7 @@ public interface DataAccessRCR extends DataAccessCommon {
 	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
 		final int month, final int day);
 
-	public RCRDataPackageScoreAnalyze getRCRDataPackageScoreAnalyze(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
-		final int month, final int day);
+	public RCRDataPackageScoreAnalyze getRCRDataPackageScoreAnalyze(final Tournament tournament, final EnumPeriodMode periodMode, final int year,
+		final int trimester, final int month, final int day);
 
 }

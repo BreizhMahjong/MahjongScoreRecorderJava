@@ -75,7 +75,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 	private static final String STRING_SPACE = " ";
 	private static final String STRING_EMPTY = "";
 
-	private static final int NUMBER_OF_PLAYERS[] = {
+	private static final short NUMBER_OF_PLAYERS[] = {
 		4, 5
 	};
 	private static final String NUMBER_OF_PLAYERS_STRINGS[] = {
@@ -84,7 +84,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 	private static final int DEFAULT_NUMBER_OF_PLAYERS_INDEX = 0;
 	private static final int MAX_NUMBER_OF_PLAYERS = NUMBER_OF_PLAYERS[NUMBER_OF_PLAYERS.length - 1];
 
-	private static final int NUMBER_OF_ROUNDS[] = {
+	private static final short NUMBER_OF_ROUNDS[] = {
 		1, 2, 4
 	};
 	private static final String NUMBER_OF_ROUNDS_STRINGS[] = {
@@ -498,7 +498,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 
 	private class PlayerScore {
 		public int index;
-		public int place;
+		public short place;
 		public int gameScore;
 		public int uma;
 		public int finalScore;
@@ -509,7 +509,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 	private void calculateFinalScore() {
 		disableSaveButton();
 		final int nbPlayersIndex = comboBoxNumberPlayers.getSelectedIndex();
-		final int nbPlayers = NUMBER_OF_PLAYERS[nbPlayersIndex];
+		final short nbPlayers = NUMBER_OF_PLAYERS[nbPlayersIndex];
 
 		final int umaSetIndex = comboBoxUma.getSelectedIndex();
 		final int initialScore = (int) spinnerInitialScore.getValue();
@@ -560,9 +560,10 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 
 		// Distribute UMA
 		final int uma[] = UMA[umaSetIndex][nbPlayersIndex];
-		int playerIndex = 0;
+		short playerIndex = 0;
 		while (playerIndex < nbPlayers) {
-			int equalityPlayerIndex = playerIndex + 1;
+			short equalityPlayerIndex = playerIndex;
+			equalityPlayerIndex++;
 			int totalUma = uma[playerIndex];
 			while (equalityPlayerIndex < nbPlayers && playerScoreList.get(playerIndex).gameScore == playerScoreList.get(equalityPlayerIndex).gameScore) {
 				totalUma += uma[equalityPlayerIndex];
@@ -574,7 +575,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 				final PlayerScore playerScore = playerScoreList.get(index);
 				playerScore.uma = totalUma;
 				playerScore.finalScore = playerScore.gameScore + totalUma;
-				playerScore.place = playerIndex + 1;
+				playerScore.place = playerIndex;
+				playerScore.place++;
 			}
 			playerIndex = equalityPlayerIndex;
 		}
@@ -621,8 +623,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 		if (listTournament.size() > 0) {
 			try {
 				final Tournament tournament = listTournament.get(comboBoxTournament.getSelectedIndex());
-				final int nbPlayers = playerScoreList.size();
-				final int nbRounds = NUMBER_OF_ROUNDS[comboBoxNumberRounds.getSelectedIndex()];
+				final short nbPlayers = NUMBER_OF_PLAYERS[comboBoxNumberPlayers.getSelectedIndex()];
+				final short nbRounds = NUMBER_OF_ROUNDS[comboBoxNumberRounds.getSelectedIndex()];
 				final List<RCRScore> scores = new ArrayList<RCRScore>(nbPlayers);
 				for (int playerIndex = 0; playerIndex < nbPlayers; playerIndex++) {
 					final PlayerScore p = playerScoreList.get(playerIndex);

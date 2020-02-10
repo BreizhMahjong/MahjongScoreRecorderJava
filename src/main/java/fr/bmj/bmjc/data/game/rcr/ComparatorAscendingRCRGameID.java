@@ -32,7 +32,7 @@ public class ComparatorAscendingRCRGameID implements Comparator<RCRGame> {
 			if (o2 == null) {
 				return 1;
 			} else {
-				return Integer.compare(o1.getId(), o2.getId());
+				return Long.compare(o1.getId(), o2.getId());
 			}
 		}
 	}

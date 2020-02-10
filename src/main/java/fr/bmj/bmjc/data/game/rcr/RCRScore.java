@@ -18,15 +18,16 @@ package fr.bmj.bmjc.data.game.rcr;
 
 public class RCRScore {
 
-	private final int playerId;
+	private final short playerId;
 	private final String playerName;
 	private final String displayName;
-	private final int place;
+	private final short place;
 	private final int gameScore;
 	private final int umaScore;
 	private final int finalScore;
 
-	public RCRScore(final int playerId, final String playerName, final String displayName, final int place, final int gameScore, final int umaScore, final int finalScore) {
+	public RCRScore(final short playerId, final String playerName, final String displayName, final short place, final int gameScore, final int umaScore,
+		final int finalScore) {
 		this.playerId = playerId;
 		this.playerName = playerName;
 		this.displayName = displayName;
@@ -36,7 +37,7 @@ public class RCRScore {
 		this.finalScore = finalScore;
 	}
 
-	public int getPlayerId() {
+	public short getPlayerId() {
 		return playerId;
 	}
 
@@ -48,7 +49,7 @@ public class RCRScore {
 		return displayName;
 	}
 
-	public int getPlace() {
+	public short getPlace() {
 		return place;
 	}
 

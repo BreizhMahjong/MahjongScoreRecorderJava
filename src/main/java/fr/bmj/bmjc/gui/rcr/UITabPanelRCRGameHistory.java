@@ -84,7 +84,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 	private final JTree treeIds;
 	private final DefaultTreeModel treeModel;
 	private TreePath selectedPath;
-	private Integer selectedId;
+	private Long selectedId;
 
 	private final SimpleDateFormat dateFormat;
 	private final Calendar calendar;
@@ -323,7 +323,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 
 								for (int dayIndex = 0; dayIndex < days.size(); dayIndex++) {
 									final int day = days.get(dayIndex);
-									final List<Integer> idList = dataAccess.getRCRGameIds(tournament, year, month, day);
+									final List<Long> idList = dataAccess.getRCRGameIds(tournament, year, month, day);
 									Collections.sort(idList);
 									final DefaultMutableTreeNode nodeDay = new DefaultMutableTreeNode(day);
 									nodeMonth.add(nodeDay);
@@ -354,7 +354,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 		if (selectedPath != null) {
 			final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
 			if (selectedNode.isLeaf()) {
-				selectedId = (Integer) selectedNode.getUserObject();
+				selectedId = (Long) selectedNode.getUserObject();
 			} else {
 				selectedId = null;
 			}
@@ -497,7 +497,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 					calendar.set(game.getYear(), game.getMonth(), game.getDay());
 					writer.write("#");
 					writer.write(SEPARATOR);
-					writer.write(Integer.toString(game.getId()));
+					writer.write(Long.toString(game.getId()));
 					writer.write(SEPARATOR);
 					writer.write(Integer.toString(game.getTournamentId()));
 					writer.write(SEPARATOR);
@@ -513,7 +513,7 @@ public class UITabPanelRCRGameHistory extends UITabPanel {
 						final RCRScore score = game.getScores().get(index);
 						writer.write("*");
 						writer.write(SEPARATOR);
-						writer.write(Integer.toString(game.getId()));
+						writer.write(Long.toString(game.getId()));
 						writer.write(SEPARATOR);
 						writer.write(Integer.toString(score.getPlayerId()));
 						writer.write(SEPARATOR);

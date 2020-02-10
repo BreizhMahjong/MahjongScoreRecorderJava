@@ -21,16 +21,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class RCRGame {
-	private final int id;
-	private final int tournamentId;
+	private final long id;
+	private final short tournamentId;
 	private final int year;
 	private final int month;
 	private final int day;
-	private final int nbRounds;
-	private final int nbPlayers;
+	private final short nbRounds;
+	private final short nbPlayers;
 	private final List<RCRScore> scores;
 
-	public RCRGame(final int id, final int tournamentId, final int year, final int month, final int day, final int nbRounds, final int nbPlayers, final List<RCRScore> scores) {
+	public RCRGame(final long id, final short tournamentId, final int year, final int month, final int day, final short nbRounds, final short nbPlayers,
+		final List<RCRScore> scores) {
 		super();
 		this.id = id;
 		this.tournamentId = tournamentId;
@@ -44,11 +45,11 @@ public class RCRGame {
 		this.scores = Collections.unmodifiableList(s);
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public int getTournamentId() {
+	public short getTournamentId() {
 		return tournamentId;
 	}
 
@@ -64,11 +65,11 @@ public class RCRGame {
 		return day;
 	}
 
-	public int getNbRounds() {
+	public short getNbRounds() {
 		return nbRounds;
 	}
 
-	public int getNbPlayers() {
+	public short getNbPlayers() {
 		return nbPlayers;
 	}
 

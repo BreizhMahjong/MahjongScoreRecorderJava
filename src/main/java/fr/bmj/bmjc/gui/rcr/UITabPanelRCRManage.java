@@ -66,7 +66,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 	private final ActionListener comboBoxYearMonthActionListener;
 	private final JComboBox<Integer> comboBoxDay;
 	private final ActionListener comboBoxDayActionListener;
-	private final JComboBox<Integer> comboBoxId;
+	private final JComboBox<Long> comboBoxId;
 	private final JButton buttonDeleteGame;
 
 	private final List<Tournament> listTournament;
@@ -189,7 +189,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 			deleteGameC.y = 2;
 			deleteGameC.x = 0;
 			gamePanel.add(new JLabel("ID: ", SwingConstants.RIGHT), deleteGameC);
-			comboBoxId = new JComboBox<Integer>();
+			comboBoxId = new JComboBox<Long>();
 			deleteGameC.x = 1;
 			deleteGameC.gridWidth = 3;
 			gamePanel.add(comboBoxId, deleteGameC);
@@ -400,7 +400,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 		if (selectedTournamentIndex != -1 && selectedYear != null && selectedDay != null) {
 			final Tournament tournament = listTournament.get(selectedTournamentIndex);
 
-			final List<Integer> ids = new ArrayList<Integer>();
+			final List<Long> ids = new ArrayList<Long>();
 			ids.addAll(dataAccess.getRCRGameIds(tournament, selectedYear, selectedMonth, selectedDay));
 			for (int idIndex = 0; idIndex < ids.size(); idIndex++) {
 				comboBoxId.addItem(ids.get(idIndex));
@@ -413,7 +413,7 @@ public class UITabPanelRCRManage extends UITabPanel {
 	}
 
 	private void deleteGame() {
-		final Integer selectedId = (Integer) comboBoxId.getSelectedItem();
+		final Long selectedId = (Long) comboBoxId.getSelectedItem();
 		if (selectedId != null) {
 			final UpdateResult result = dataAccess.deleteRCRGame(selectedId);
 			if (result.getResult()) {

@@ -661,12 +661,12 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 							{
 								final XYSeries scoreSeries = new XYSeries("Score");
 								final List<Integer> listScore = dataPackage.getListScore();
-								final List<Integer> listGameID = dataPackage.getListGameID();
+								final List<Long> listGameID = dataPackage.getListGameID();
 								final List<String> listToolTipText = new ArrayList<String>();
 								for (int index = 0; index < numberOfGames; index++) {
 									scoreSeries.add(index + 1, listScore.get(index));
 									listToolTipText.add(index, "<html>Score : " + Integer.toString(listScore.get(index)) + "<br>ID : "
-										+ Integer.toString(listGameID.get(index)) + "</html>");
+										+ Long.toString(listGameID.get(index)) + "</html>");
 								}
 								final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
 								toolTip.addToolTipSeries(listToolTipText);

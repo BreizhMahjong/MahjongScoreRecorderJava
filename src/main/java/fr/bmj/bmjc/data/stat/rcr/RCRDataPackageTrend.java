@@ -17,19 +17,19 @@
 package fr.bmj.bmjc.data.stat.rcr;
 
 import java.util.List;
+import java.util.SortedMap;
 
 public class RCRDataPackageTrend {
 
 	public final List<Long> dates;
-	public final List<String> playerNames;
-	public final List<String> displayNames;
-	public final List<List<Integer>> data;
+	public final SortedMap<String, List<Integer>> dataWithPlayerName;
+	public final SortedMap<String, List<Integer>> dataWithDisplayName;
 
-	public RCRDataPackageTrend(final List<Long> dates, final List<String> playerNames, final List<String> displayNames, final List<List<Integer>> data) {
+	public RCRDataPackageTrend(final List<Long> dates, final SortedMap<String, List<Integer>> dataWithPlayerName,
+		final SortedMap<String, List<Integer>> dataWithDisplayName) {
 		this.dates = dates;
-		this.playerNames = playerNames;
-		this.displayNames = displayNames;
-		this.data = data;
+		this.dataWithPlayerName = dataWithPlayerName;
+		this.dataWithDisplayName = dataWithDisplayName;
 	}
 
 }

@@ -48,7 +48,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 			return new UpdateResult(false, "Le nom ne peut pas être vide");
 		}
 
-		int newId;
+		short newId;
 		boolean added;
 		try {
 			final String query = "SELECT id FROM player ORDER BY id";
@@ -72,7 +72,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 		try {
 			final String query = "INSERT INTO player(id, name, display_name, frequent, regular) VALUES(?, ?, ?, ?, ?)";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
-			statement.setInt(1, newId);
+			statement.setShort(1, newId);
 			statement.setString(2, name);
 			statement.setString(3, displayName);
 			statement.setBoolean(4, true);
@@ -99,7 +99,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 				final Statement statement = dataBaseConnection.createStatement();
 				final ResultSet result = statement.executeQuery("SELECT id, name, display_name, frequent, regular, license FROM player ORDER BY id");
 				while (result.next()) {
-					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), result.getBoolean(4), result.getBoolean(5),
+					playerList.add(new Player(result.getShort(1), result.getString(2), result.getString(3), result.getBoolean(4), result.getBoolean(5),
 						result.getString(6)));
 				}
 				result.close();
@@ -112,7 +112,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean frequent, final boolean regular,
+	public UpdateResult modifyPlayer(final short id, final String name, final String displayName, final boolean frequent, final boolean regular,
 		final String license) {
 		if (!isConnected()) {
 			return new UpdateResult(false, "Pas de connxion à la base de données");
@@ -134,7 +134,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 			} else {
 				statement.setString(5, license);
 			}
-			statement.setInt(6, id);
+			statement.setShort(6, id);
 			modified = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {
@@ -150,7 +150,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 	}
 
 	@Override
-	public UpdateResult deletePlayer(final int id) {
+	public UpdateResult deletePlayer(final short id) {
 		if (!isConnected()) {
 			return new UpdateResult(false, "Pas de connxion à la base de données");
 		}
@@ -159,7 +159,7 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 		try {
 			final String query = "DELETE FROM player WHERE id=?";
 			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
-			statement.setInt(1, id);
+			statement.setShort(1, id);
 			modified = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {

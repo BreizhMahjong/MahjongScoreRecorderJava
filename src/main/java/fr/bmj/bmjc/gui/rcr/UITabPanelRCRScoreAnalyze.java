@@ -517,6 +517,9 @@ public class UITabPanelRCRScoreAnalyze extends UITabPanel {
 							constraintsScore.y = nbPlayers;
 							for (int x = 0; x < nbPlayers; x++) {
 								final JLabel labelScore = new JLabel(Long.toString(Math.round(score.sums[x])), SwingConstants.CENTER);
+								if (score.sums[x] < 0) {
+									labelScore.setForeground(Color.RED);
+								}
 								labelScore.setPreferredSize(labelSize);
 								labelScore.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 								constraintsScore.x = x;

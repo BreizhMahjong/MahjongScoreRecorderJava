@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.SortedMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -513,7 +514,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 				validate();
 				repaint();
 
-				if (trend.data.size() > 0) {
+				if (trend.dates.size() > 0) {
 					final Set<String> selectedNames = new HashSet<String>();
 					if (displayFullName) {
 						for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
@@ -529,16 +530,14 @@ public class UITabPanelRCRTrend extends UITabPanel {
 						}
 					}
 
-					final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
-					final List<List<Integer>> scores = trend.data;
+					final SortedMap<String, List<Integer>> data = displayFullName ? trend.dataWithPlayerName : trend.dataWithDisplayName;
 					final List<Long> dates = trend.dates;
 
 					final TimeSeriesCollection series = new TimeSeriesCollection();
 					final XYItemRenderer sumRender = new XYLineAndShapeRenderer();
-					for (int playerIndex = 0; playerIndex < listName.size(); playerIndex++) {
-						final String playerName = listName.get(playerIndex);
+					for (final String playerName : data.keySet()) {
 						if (selectedNames.contains(playerName)) {
-							final List<Integer> score = scores.get(playerIndex);
+							final List<Integer> score = data.get(playerName);
 							final TimeSeries sumSeries = new TimeSeries(playerName);
 							for (int index = 1; index < score.size(); index++) {
 								sumSeries.add(new Day(new Date(dates.get(index))), score.get(index));
@@ -603,7 +602,7 @@ public class UITabPanelRCRTrend extends UITabPanel {
 					final Tournament tournament = listTournament.get(selectedTournamentIndex);
 					final int year = (Integer) comboYear.getSelectedItem();
 
-					if (trend != null && trend.data.size() > 0) {
+					if (trend != null && trend.dates.size() > 0) {
 						final StringBuffer proposedSaveFileName = new StringBuffer();
 						proposedSaveFileName.append(tournament.getName());
 						proposedSaveFileName.append("_tendance_");
@@ -635,26 +634,25 @@ public class UITabPanelRCRTrend extends UITabPanel {
 							try {
 								writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
 
-								final List<String> listName = displayFullName ? trend.playerNames : trend.displayNames;
-								final List<List<Integer>> scores = trend.data;
+								final SortedMap<String, List<Integer>> data = displayFullName ? trend.dataWithPlayerName : trend.dataWithDisplayName;
 								final List<Long> dates = trend.dates;
 
 								final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
 								final Calendar calendar = Calendar.getInstance();
 
-								for (int index = 0; index < listName.size(); index++) {
+								for (int index = 0; index < dates.size(); index++) {
 									writer.write(SEPARATOR);
-									writer.write(listName.get(index));
+									calendar.setTimeInMillis(dates.get(index));
+									writer.write(dateFormat.format(calendar.getTime()));
 								}
 								writer.newLine();
 
-								for (int dateIndex = 1; dateIndex < dates.size(); dateIndex++) {
-									calendar.setTimeInMillis(dates.get(dateIndex));
-									writer.write(dateFormat.format(calendar.getTime()));
-
-									for (int playerIndex = 0; playerIndex < scores.size(); playerIndex++) {
+								for (final String playerName : data.keySet()) {
+									writer.write(playerName);
+									final List<Integer> score = data.get(playerName);
+									for (int dateIndex = 0; dateIndex < score.size(); dateIndex++) {
 										writer.write(SEPARATOR);
-										writer.write(Integer.toString(scores.get(playerIndex).get(dateIndex)));
+										writer.write(Integer.toString(score.get(dateIndex)));
 									}
 									writer.newLine();
 								}

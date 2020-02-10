@@ -18,15 +18,15 @@ package fr.bmj.bmjc.data.game;
 
 public class Tournament {
 
-	private final int id;
+	private final short id;
 	private final String name;
 
-	public Tournament(final int id, final String name) {
+	public Tournament(final short id, final String name) {
 		this.id = id;
 		this.name = name;
 	}
 
-	public int getId() {
+	public short getId() {
 		return id;
 	}
 

@@ -53,7 +53,7 @@ public class DataAccessDataBaseCommon implements DataAccessCommon {
 				final Statement statement = dataBaseConnection.createStatement();
 				final ResultSet result = statement.executeQuery(query);
 				while (result.next()) {
-					playerList.add(new Player(result.getInt(1), result.getString(2), result.getString(3), false, true, ""));
+					playerList.add(new Player(result.getShort(1), result.getString(2), result.getString(3), false, true, ""));
 				}
 				result.close();
 				statement.close();

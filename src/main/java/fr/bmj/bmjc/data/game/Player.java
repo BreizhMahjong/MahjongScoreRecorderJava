@@ -18,14 +18,15 @@ package fr.bmj.bmjc.data.game;
 
 public class Player {
 
-	private final int playerID;
+	private final short playerID;
 	private final String playerName;
 	private final String displayName;
 	private final boolean frequent;
 	private final boolean regular;
 	private final String license;
 
-	public Player(final int playerID, final String playerName, final String displayName, final boolean frequent, final boolean regular, final String license) {
+	public Player(final short playerID, final String playerName, final String displayName, final boolean frequent, final boolean regular,
+		final String license) {
 		this.playerID = playerID;
 		this.playerName = playerName;
 		this.displayName = displayName;
@@ -34,7 +35,7 @@ public class Player {
 		this.license = license;
 	}
 
-	public int getPlayerID() {
+	public short getPlayerID() {
 		return playerID;
 	}
 

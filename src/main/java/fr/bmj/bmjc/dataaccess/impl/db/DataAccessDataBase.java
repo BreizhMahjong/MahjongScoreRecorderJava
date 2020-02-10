@@ -97,7 +97,7 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult modifyPlayer(final int id, final String name, final String displayName, final boolean frequent, final boolean regular,
+	public UpdateResult modifyPlayer(final short id, final String name, final String displayName, final boolean frequent, final boolean regular,
 		final String license) {
 		return dataAccessManagePlayer.modifyPlayer(id, name, displayName, frequent, regular, license);
 	}
@@ -108,7 +108,7 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult deletePlayer(final int id) {
+	public UpdateResult deletePlayer(final short id) {
 		return dataAccessManagePlayer.deletePlayer(id);
 	}
 
@@ -123,7 +123,7 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult modifyRCRTournament(final int tournamentId, final String tournamentName) {
+	public UpdateResult modifyRCRTournament(final short tournamentId, final String tournamentName) {
 		return dataAccessRCR.modifyRCRTournament(tournamentId, tournamentName);
 	}
 
@@ -133,7 +133,7 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult deleteRCRTournament(final int tournamentId) {
+	public UpdateResult deleteRCRTournament(final short tournamentId) {
 		return dataAccessRCR.deleteRCRTournament(tournamentId);
 	}
 
@@ -153,17 +153,17 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public List<Integer> getRCRGameIds(final Tournament tournament, final int year, final int month, final int day) {
+	public List<Long> getRCRGameIds(final Tournament tournament, final int year, final int month, final int day) {
 		return dataAccessRCR.getRCRGameIds(tournament, year, month, day);
 	}
 
 	@Override
-	public RCRGame getRCRGame(final int id) {
+	public RCRGame getRCRGame(final long id) {
 		return dataAccessRCR.getRCRGame(id);
 	}
 
 	@Override
-	public UpdateResult deleteRCRGame(final int id) {
+	public UpdateResult deleteRCRGame(final long id) {
 		return dataAccessRCR.deleteRCRGame(id);
 	}
 
@@ -178,7 +178,7 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final int playerId, final EnumScoreMode scoreMode,
+	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final short playerId, final EnumScoreMode scoreMode,
 		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
 		return dataAccessRCR.getRCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month, day);
 	}
@@ -196,8 +196,8 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public RCRDataPackageScoreAnalyze getRCRDataPackageScoreAnalyze(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
-		final int month, final int day) {
+	public RCRDataPackageScoreAnalyze getRCRDataPackageScoreAnalyze(final Tournament tournament, final EnumPeriodMode periodMode, final int year,
+		final int trimester, final int month, final int day) {
 		return dataAccessRCR.getRCRDataPackageScoreAnalyze(tournament, periodMode, year, trimester, month, day);
 	}
 

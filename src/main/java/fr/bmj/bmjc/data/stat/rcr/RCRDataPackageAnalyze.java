@@ -23,7 +23,7 @@ import java.util.List;
 
 public class RCRDataPackageAnalyze {
 
-	private final List<Integer> listGameID;
+	private final List<Long> listGameID;
 	private final List<Integer> listScore;
 	private final List<Integer> listSum;
 	private int numberOfGames;
@@ -188,7 +188,7 @@ public class RCRDataPackageAnalyze {
 		this.numberOfFivePlayerGames = numberOfFivePlayerGames;
 	}
 
-	public void setLists(final List<Integer> listGameID, final List<Integer> listScore, final List<Integer> listSum) {
+	public void setLists(final List<Long> listGameID, final List<Integer> listScore, final List<Integer> listSum) {
 		if (listGameID != null && listScore != null && listSum != null && listGameID.size() == listScore.size() && listScore.size() == listSum.size()) {
 			this.listGameID.clear();
 			this.listScore.clear();
@@ -201,7 +201,7 @@ public class RCRDataPackageAnalyze {
 		}
 	}
 
-	public List<Integer> getListGameID() {
+	public List<Long> getListGameID() {
 		return Collections.unmodifiableList(listGameID);
 	}
 
