@@ -64,7 +64,7 @@ import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessPlayName;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTotalScore;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessTrimester;
 import fr.bmj.bmjc.data.stat.rcr.RCRTotalScoreFieldAccessYear;
-import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
+import fr.bmj.bmjc.dataaccess.abs.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumRankingMode;
 import fr.bmj.bmjc.enums.EnumSortingMode;
@@ -73,7 +73,7 @@ import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
 
-public class UITabPanelRCRClubRanking extends UITabPanel {
+public class UITabPanelRCRRanking extends UITabPanel {
 	private static final long serialVersionUID = -2831122708393360423L;
 
 	private final int NB_COLUMNS = 4;
@@ -118,7 +118,7 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 
 	private final List<Tournament> listTournament;
 
-	public UITabPanelRCRClubRanking(final DataAccessRCR dataAccess) {
+	public UITabPanelRCRRanking(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
 
 		setLayout(new BorderLayout());
@@ -330,9 +330,12 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 				comboBoxActivated[COMBOBOX_PERIOD] = true;
 				comboPeriodMode.setEnabled(true);
 				break;
-			case ANNUAL_SCORE:
-			case TRIMESTRIAL_SCORE:
-			case MENSUAL_SCORE:
+			case ANNUAL_TOTAL_FINAL_SCORE:
+			case TRIMESTRIAL_TOTAL_FINAL_SCORE:
+			case MENSUAL_TOTAL_FINAL_SCORE:
+			case ANNUAL_TOTAL_GAME_SCORE:
+			case TRIMESTRIAL_TOTAL_GAME_SCORE:
+			case MENSUAL_TOTAL_GAME_SCORE:
 				comboBoxActivated[COMBOBOX_PERIOD] = false;
 				comboPeriodMode.setEnabled(false);
 				break;
@@ -603,21 +606,42 @@ public class UITabPanelRCRClubRanking extends UITabPanel {
 								access.add(2, new RCRTotalScoreFieldAccessPercentage());
 								access.add(3, new RCRTotalScoreFieldAccessFractionNumberOfGames());
 								break;
-							case ANNUAL_SCORE:
+							case ANNUAL_TOTAL_FINAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessYear());
 								break;
-							case TRIMESTRIAL_SCORE:
+							case TRIMESTRIAL_TOTAL_FINAL_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
 								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
 								access.add(3, new RCRTotalScoreFieldAccessTrimester());
 								break;
-							case MENSUAL_SCORE:
+							case MENSUAL_TOTAL_FINAL_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+								access.add(3, new RCRTotalScoreFieldAccessMonth());
+								break;
+							case ANNUAL_TOTAL_GAME_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+								access.add(3, new RCRTotalScoreFieldAccessYear());
+								break;
+							case TRIMESTRIAL_TOTAL_GAME_SCORE:
+								labelTitles[2].setText(rankingMode.toString());
+								labelTitles[3].setText("Date");
+								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;
+								access.add(2, new RCRTotalScoreFieldAccessTotalScore());
+								access.add(3, new RCRTotalScoreFieldAccessTrimester());
+								break;
+							case MENSUAL_TOTAL_GAME_SCORE:
 								labelTitles[2].setText(rankingMode.toString());
 								labelTitles[3].setText("Date");
 								scoreFieldHighlighted = (final RCRTotalScore data) -> data.totalScore.intValue() < 0;

@@ -14,20 +14,24 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.dataaccess;
+package fr.bmj.bmjc.dataaccess.abs;
 
-import java.util.List;
+public class UpdateResult {
 
-import fr.bmj.bmjc.data.game.Player;
+	private final boolean result;
+	private final String message;
 
-public interface DataAccessManagePlayer extends DataAccessCommon {
+	public UpdateResult(final boolean result, final String message) {
+		this.result = result;
+		this.message = message;
+	}
 
-	public UpdateResult addPlayer(String name, final String displayName);
+	public boolean getResult() {
+		return result;
+	}
 
-	public List<Player> getAllPlayers();
-
-	public UpdateResult modifyPlayer(final short id, String name, final String displayName, boolean frequent, boolean regular, String license);
-
-	public UpdateResult deletePlayer(final short id);
+	public String getMessage() {
+		return message;
+	}
 
 }

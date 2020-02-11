@@ -19,23 +19,12 @@ package fr.bmj.bmjc.dataaccess.impl.db;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.List;
 
-import fr.bmj.bmjc.data.game.Player;
-import fr.bmj.bmjc.data.game.Tournament;
-import fr.bmj.bmjc.data.game.rcr.RCRGame;
-import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageAnalyze;
-import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageScoreAnalyze;
-import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageTrend;
-import fr.bmj.bmjc.data.stat.rcr.RCRTotalScore;
-import fr.bmj.bmjc.dataaccess.DataAccess;
-import fr.bmj.bmjc.dataaccess.DataAccessManagePlayer;
-import fr.bmj.bmjc.dataaccess.UpdateResult;
-import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
-import fr.bmj.bmjc.enums.EnumPeriodMode;
-import fr.bmj.bmjc.enums.EnumRankingMode;
-import fr.bmj.bmjc.enums.EnumScoreMode;
-import fr.bmj.bmjc.enums.EnumSortingMode;
+import fr.bmj.bmjc.dataaccess.abs.DataAccess;
+import fr.bmj.bmjc.dataaccess.abs.player.DataAccessManagePlayer;
+import fr.bmj.bmjc.dataaccess.abs.rcr.DataAccessRCR;
+import fr.bmj.bmjc.dataaccess.impl.db.player.DataAccessDataBaseManagePlayer;
+import fr.bmj.bmjc.dataaccess.impl.db.rcr.DataAccessDataBaseRCR;
 
 public class DataAccessDataBase implements DataAccess {
 
@@ -82,123 +71,13 @@ public class DataAccessDataBase implements DataAccess {
 	}
 
 	@Override
-	public UpdateResult addPlayer(final String name, final String displayName) {
-		return dataAccessManagePlayer.addPlayer(name, displayName);
+	public DataAccessManagePlayer getManagePlayer() {
+		return dataAccessManagePlayer;
 	}
 
 	@Override
-	public void setOnlyFrequentPlayers(final boolean onlyFrequentPlayers) {
-		dataAccessManagePlayer.setOnlyFrequentPlayers(onlyFrequentPlayers);
-	}
-
-	@Override
-	public List<Player> getAllPlayers() {
-		return dataAccessManagePlayer.getAllPlayers();
-	}
-
-	@Override
-	public UpdateResult modifyPlayer(final short id, final String name, final String displayName, final boolean frequent, final boolean regular,
-		final String license) {
-		return dataAccessManagePlayer.modifyPlayer(id, name, displayName, frequent, regular, license);
-	}
-
-	@Override
-	public List<Player> getPlayers() {
-		return dataAccessManagePlayer.getPlayers();
-	}
-
-	@Override
-	public UpdateResult deletePlayer(final short id) {
-		return dataAccessManagePlayer.deletePlayer(id);
-	}
-
-	@Override
-	public List<Player> getRCRPlayers() {
-		return dataAccessRCR.getRCRPlayers();
-	}
-
-	@Override
-	public UpdateResult addRCRTournament(final String tournamentName) {
-		return dataAccessRCR.addRCRTournament(tournamentName);
-	}
-
-	@Override
-	public UpdateResult modifyRCRTournament(final short tournamentId, final String tournamentName) {
-		return dataAccessRCR.modifyRCRTournament(tournamentId, tournamentName);
-	}
-
-	@Override
-	public List<Tournament> getRCRTournaments() {
-		return dataAccessRCR.getRCRTournaments();
-	}
-
-	@Override
-	public UpdateResult deleteRCRTournament(final short tournamentId) {
-		return dataAccessRCR.deleteRCRTournament(tournamentId);
-	}
-
-	@Override
-	public UpdateResult addRCRGame(final RCRGame game) {
-		return dataAccessRCR.addRCRGame(game);
-	}
-
-	@Override
-	public List<Integer> getRCRYears(final Tournament tournament) {
-		return dataAccessRCR.getRCRYears(tournament);
-	}
-
-	@Override
-	public List<Integer> getRCRGameDays(final Tournament tournament, final int year, final int month) {
-		return dataAccessRCR.getRCRGameDays(tournament, year, month);
-	}
-
-	@Override
-	public List<Long> getRCRGameIds(final Tournament tournament, final int year, final int month, final int day) {
-		return dataAccessRCR.getRCRGameIds(tournament, year, month, day);
-	}
-
-	@Override
-	public RCRGame getRCRGame(final long id) {
-		return dataAccessRCR.getRCRGame(id);
-	}
-
-	@Override
-	public UpdateResult deleteRCRGame(final long id) {
-		return dataAccessRCR.deleteRCRGame(id);
-	}
-
-	@Override
-	public void setRCRUseMinimumGame(final boolean useMinimumGame) {
-		dataAccessRCR.setRCRUseMinimumGame(useMinimumGame);
-	}
-
-	@Override
-	public void setRCROnlyRegularPlayers(final boolean onlyRegularPlayers) {
-		dataAccessRCR.setRCROnlyRegularPlayers(onlyRegularPlayers);
-	}
-
-	@Override
-	public RCRDataPackageAnalyze getRCRDataPackageAnalyze(final Tournament tournament, final short playerId, final EnumScoreMode scoreMode,
-		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
-		return dataAccessRCR.getRCRDataPackageAnalyze(tournament, playerId, scoreMode, periodMode, year, trimester, month, day);
-	}
-
-	@Override
-	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode,
-		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
-		return dataAccessRCR.getRCRDataPackageRanking(tournament, rankingMode, sortingMode, periodMode, year, trimester, month, day);
-	}
-
-	@Override
-	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
-		final int month, final int day) {
-		return dataAccessRCR.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, day);
-	}
-
-	@Override
-	public RCRDataPackageScoreAnalyze getRCRDataPackageScoreAnalyze(final Tournament tournament, final EnumPeriodMode periodMode, final int year,
-		final int trimester, final int month, final int day) {
-		return dataAccessRCR.getRCRDataPackageScoreAnalyze(tournament, periodMode, year, trimester, month, day);
+	public DataAccessRCR getRCR() {
+		return dataAccessRCR;
 	}
 
 }

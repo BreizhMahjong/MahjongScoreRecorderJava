@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class RCRDataPackageAnalyze {
+public class RCRDataPackagePersonalAnalyze {
 
 	private final List<Long> listGameID;
 	private final List<Integer> listScore;
@@ -52,7 +52,7 @@ public class RCRDataPackageAnalyze {
 	private final int fivePlayerGamePlaces[];
 	private final int fivePlayerGamePlacePercent[];
 
-	public RCRDataPackageAnalyze() {
+	public RCRDataPackagePersonalAnalyze() {
 		listGameID = new ArrayList<>();
 		listScore = new ArrayList<>();
 		listSum = new ArrayList<>();

@@ -74,7 +74,7 @@ import fr.bmj.bmjc.data.game.ComparatorDescendingTournamentID;
 import fr.bmj.bmjc.data.game.Player;
 import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageTrend;
-import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
+import fr.bmj.bmjc.dataaccess.abs.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumTrimester;
 import fr.bmj.bmjc.gui.UITabPanel;

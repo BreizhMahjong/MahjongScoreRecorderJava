@@ -62,8 +62,9 @@ import fr.bmj.bmjc.data.game.Player;
 import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.game.rcr.RCRScore;
-import fr.bmj.bmjc.dataaccess.UpdateResult;
-import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
+import fr.bmj.bmjc.dataaccess.abs.UpdateResult;
+import fr.bmj.bmjc.dataaccess.abs.player.DataAccessManagePlayer;
+import fr.bmj.bmjc.dataaccess.abs.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
@@ -115,7 +116,8 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 	};
 
 	private boolean displayFullName;
-	private final DataAccessRCR dataAccess;
+	private final DataAccessRCR dataAccessRCR;
+	private final DataAccessManagePlayer dataAccessPlayer;
 
 	private final JComboBox<String> comboBoxTournament;
 	private final JLabel labelDate;
@@ -144,8 +146,9 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 	private final List<String> normalizedPlayerNames;
 	private final List<Tournament> listTournament;
 
-	public UITabPanelRCRNewGame(final DataAccessRCR dataAccess) {
-		this.dataAccess = dataAccess;
+	public UITabPanelRCRNewGame(final DataAccessRCR dataAccessRCR, final DataAccessManagePlayer dataAccessPlayer) {
+		this.dataAccessRCR = dataAccessRCR;
+		this.dataAccessPlayer = dataAccessPlayer;
 
 		final Dimension buttonMinSize = new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT);
 		final JPanel innerPanel = new JPanel();
@@ -379,7 +382,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 			try {
 				comboBoxTournament.removeAllItems();
 				listTournament.clear();
-				listTournament.addAll(dataAccess.getRCRTournaments());
+				listTournament.addAll(dataAccessRCR.getRCRTournaments());
 				Collections.sort(listTournament, new ComparatorDescendingTournamentID());
 				for (int index = 0; index < listTournament.size(); index++) {
 					comboBoxTournament.addItem(listTournament.get(index).getName());
@@ -390,7 +393,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 				for (int comboBoxIndex = 0; comboBoxIndex < comboBoxPlayers.size(); comboBoxIndex++) {
 					comboBoxPlayers.get(comboBoxIndex).removeAllItems();
 				}
-				players.addAll(dataAccess.getPlayers());
+				players.addAll(dataAccessPlayer.getPlayers());
 				if (displayFullName) {
 					Collections.sort(players, new ComparatorAscendingPlayerName());
 				} else {
@@ -635,7 +638,7 @@ public class UITabPanelRCRNewGame extends UITabPanel {
 
 				final RCRGame newGame = new RCRGame(0, tournament.getId(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
 					calendar.get(Calendar.DAY_OF_MONTH), nbRounds, nbPlayers, scores);
-				final UpdateResult result = dataAccess.addRCRGame(newGame);
+				final UpdateResult result = dataAccessRCR.addRCRGame(newGame);
 				if (result.getResult()) {
 					JOptionPane.showMessageDialog(this, result.getMessage(), "Succès", JOptionPane.INFORMATION_MESSAGE);
 					reset();

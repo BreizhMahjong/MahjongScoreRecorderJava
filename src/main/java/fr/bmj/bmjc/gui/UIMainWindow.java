@@ -39,12 +39,13 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 
-import fr.bmj.bmjc.dataaccess.DataAccess;
-import fr.bmj.bmjc.gui.rcr.UITabPanelRCRClubRanking;
+import fr.bmj.bmjc.dataaccess.abs.DataAccess;
+import fr.bmj.bmjc.gui.player.UITabPanelManagePlayer;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRGameHistory;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRManage;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRNewGame;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRPersonalAnalyse;
+import fr.bmj.bmjc.gui.rcr.UITabPanelRCRRanking;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRScoreAnalyze;
 import fr.bmj.bmjc.gui.rcr.UITabPanelRCRTrend;
 
@@ -61,8 +62,8 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private static final int INDEX_PANEL_RCR_SCORE_ANALYZE = 6;
 	private static final int INDEX_PANEL_RCR_GAME_HISTORY = 7;
 
-	private static final int WINDOW_HEIGHT = 768;
-	private static final int WINDOW_WIDTH = 1024;
+	private static final int WINDOW_HEIGHT = 800;
+	private static final int WINDOW_WIDTH = 1280;
 	private static final String MAIN_LOGO_URL = "fr/bmj/bmjc/image/logo.png";
 
 	private static final boolean DISPLAY_REAL_NAME = false;
@@ -87,9 +88,9 @@ public class UIMainWindow extends JFrame implements WindowListener {
 
 		this.dataAccess = dataAccess;
 		dataAccess.initialize();
-		dataAccess.setRCRUseMinimumGame(USE_MIN_GAME);
-		dataAccess.setRCROnlyRegularPlayers(ONLY_REGULAR_PLAYERS);
-		dataAccess.setOnlyFrequentPlayers(ONLY_FREQUENT_PLAYERS);
+		dataAccess.getRCR().setUseMinimumGame(USE_MIN_GAME);
+		dataAccess.getRCR().setOnlyRegularPlayers(ONLY_REGULAR_PLAYERS);
+		dataAccess.getManagePlayer().setOnlyFrequentPlayers(ONLY_FREQUENT_PLAYERS);
 
 		try {
 			final URL icon = ClassLoader.getSystemResource(MAIN_LOGO_URL);
@@ -103,14 +104,14 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		mainPane.add(tabbedPane, BorderLayout.CENTER);
 
 		tabPanels = new UITabPanel[NB_PANELS];
-		tabPanels[INDEX_PANEL_MANAGE_PLAYER] = new UITabPanelManagePlayer(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_MANAGE_GAME] = new UITabPanelRCRManage(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_NEW_GAME] = new UITabPanelRCRNewGame(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_RANKING] = new UITabPanelRCRClubRanking(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_TREND] = new UITabPanelRCRTrend(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] = new UITabPanelRCRPersonalAnalyse(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_SCORE_ANALYZE] = new UITabPanelRCRScoreAnalyze(dataAccess);
-		tabPanels[INDEX_PANEL_RCR_GAME_HISTORY] = new UITabPanelRCRGameHistory(dataAccess);
+		tabPanels[INDEX_PANEL_MANAGE_PLAYER] = new UITabPanelManagePlayer(dataAccess.getManagePlayer());
+		tabPanels[INDEX_PANEL_RCR_MANAGE_GAME] = new UITabPanelRCRManage(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_NEW_GAME] = new UITabPanelRCRNewGame(dataAccess.getRCR(), dataAccess.getManagePlayer());
+		tabPanels[INDEX_PANEL_RCR_RANKING] = new UITabPanelRCRRanking(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_TREND] = new UITabPanelRCRTrend(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] = new UITabPanelRCRPersonalAnalyse(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_SCORE_ANALYZE] = new UITabPanelRCRScoreAnalyze(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_GAME_HISTORY] = new UITabPanelRCRGameHistory(dataAccess.getRCR());
 		for (int indexTabPanel = 0; indexTabPanel < tabPanels.length; indexTabPanel++) {
 			tabbedPane.addTab(tabPanels[indexTabPanel].getTabName(), tabPanels[indexTabPanel]);
 		}
@@ -224,7 +225,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	}
 
 	private void setUseMinGame() {
-		dataAccess.setRCRUseMinimumGame(menuSettingsUseMinGame.isSelected());
+		dataAccess.getRCR().setUseMinimumGame(menuSettingsUseMinGame.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING]) {
 			tab.refresh();
@@ -232,7 +233,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	}
 
 	private void setOnlyRegularPlayers() {
-		dataAccess.setRCROnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
+		dataAccess.getRCR().setOnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING] || tab == tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] || tab == tabPanels[INDEX_PANEL_RCR_TREND]) {
 			tab.refresh();
@@ -240,7 +241,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	}
 
 	private void setOnlyFrequentPlayers() {
-		dataAccess.setOnlyFrequentPlayers(menuSettingsOnlyFrequentPlayers.isSelected());
+		dataAccess.getManagePlayer().setOnlyFrequentPlayers(menuSettingsOnlyFrequentPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		if (tab == tabPanels[INDEX_PANEL_RCR_NEW_GAME]) {
 			tab.refresh();

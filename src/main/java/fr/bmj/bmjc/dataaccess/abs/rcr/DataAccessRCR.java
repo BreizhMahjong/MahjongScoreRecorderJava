@@ -14,24 +14,9 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.dataaccess;
+package fr.bmj.bmjc.dataaccess.abs.rcr;
 
-public class UpdateResult {
-
-	private final boolean result;
-	private final String message;
-
-	public UpdateResult(final boolean result, final String message) {
-		this.result = result;
-		this.message = message;
-	}
-
-	public boolean getResult() {
-		return result;
-	}
-
-	public String getMessage() {
-		return message;
-	}
+public interface DataAccessRCR
+	extends DataAccessRCRTournament, DataAccessRCRGame, DataAccessRCRRanking, DataAccessRCRTrend, DataAccessRCRPersonalAnalyze, DataAccessRCRScoreAnalyze {
 
 }

@@ -59,7 +59,7 @@ import fr.bmj.bmjc.data.game.ComparatorDescendingTournamentID;
 import fr.bmj.bmjc.data.game.Tournament;
 import fr.bmj.bmjc.data.game.rcr.RCRGame;
 import fr.bmj.bmjc.data.game.rcr.RCRScore;
-import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
+import fr.bmj.bmjc.dataaccess.abs.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
 
 public class UITabPanelRCRGameHistory extends UITabPanel {

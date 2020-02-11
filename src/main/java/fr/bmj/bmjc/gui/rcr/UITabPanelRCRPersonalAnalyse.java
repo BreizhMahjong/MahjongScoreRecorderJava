@@ -58,8 +58,8 @@ import fr.bmj.bmjc.data.game.ComparatorAscendingPlayerName;
 import fr.bmj.bmjc.data.game.ComparatorDescendingTournamentID;
 import fr.bmj.bmjc.data.game.Player;
 import fr.bmj.bmjc.data.game.Tournament;
-import fr.bmj.bmjc.data.stat.rcr.RCRDataPackageAnalyze;
-import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
+import fr.bmj.bmjc.data.stat.rcr.RCRDataPackagePersonalAnalyze;
+import fr.bmj.bmjc.dataaccess.abs.rcr.DataAccessRCR;
 import fr.bmj.bmjc.enums.EnumPeriodMode;
 import fr.bmj.bmjc.enums.EnumScoreMode;
 import fr.bmj.bmjc.enums.EnumTrimester;
@@ -599,8 +599,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 					final int trimester = comboTrimester.getSelectedIndex();
 					final int month = comboMonth.getSelectedIndex();
 					final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
-					final RCRDataPackageAnalyze dataPackage = dataAccess.getRCRDataPackageAnalyze(tournament, player.getPlayerID(), scoreMode, periodMode, year,
-						trimester, month, day);
+					final RCRDataPackagePersonalAnalyze dataPackage = dataAccess.getRCRDataPackagePersonalAnalyze(tournament, player.getPlayerID(), scoreMode,
+						periodMode, year, trimester, month, day);
 
 					if (dataPackage != null && dataPackage.getNumberOfGames() > 0) {
 						final int numberOfGames = dataPackage.getNumberOfGames();

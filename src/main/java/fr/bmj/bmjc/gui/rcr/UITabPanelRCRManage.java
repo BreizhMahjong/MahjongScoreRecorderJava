@@ -39,8 +39,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 import fr.bmj.bmjc.data.game.Tournament;
-import fr.bmj.bmjc.dataaccess.UpdateResult;
-import fr.bmj.bmjc.dataaccess.rcr.DataAccessRCR;
+import fr.bmj.bmjc.dataaccess.abs.UpdateResult;
+import fr.bmj.bmjc.dataaccess.abs.rcr.DataAccessRCR;
 import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;

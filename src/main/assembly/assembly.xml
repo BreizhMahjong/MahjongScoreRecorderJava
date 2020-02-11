@@ -15,8 +15,8 @@
 	</dependencySets>
 	<fileSets>
 		<fileSet>
-			<outputDirectory></outputDirectory>
 			<directory>${project.build.outputDirectory}</directory>
+			<outputDirectory></outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>

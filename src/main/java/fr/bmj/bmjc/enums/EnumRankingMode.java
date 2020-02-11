@@ -27,9 +27,12 @@ public enum EnumRankingMode {
 	WIN_RATE_5("Taux victoire (5j)"),
 	POSITIVE_RATE_4("Taux positif (4j)"),
 	POSITIVE_RATE_5("Taux positif (5j)"),
-	MENSUAL_SCORE("Total mensuel"),
-	TRIMESTRIAL_SCORE("Total trimestriel"),
-	ANNUAL_SCORE("Total annuel");
+	MENSUAL_TOTAL_FINAL_SCORE("Score total mensuel"),
+	TRIMESTRIAL_TOTAL_FINAL_SCORE("Score total trimestriel"),
+	ANNUAL_TOTAL_FINAL_SCORE("Score total annuel"),
+	MENSUAL_TOTAL_GAME_SCORE("Stack total mensuel"),
+	TRIMESTRIAL_TOTAL_GAME_SCORE("Stack total trimestriel"),
+	ANNUAL_TOTAL_GAME_SCORE("Stack total annuel");
 
 	private final String display;
 

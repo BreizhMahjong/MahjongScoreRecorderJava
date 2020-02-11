@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.dataaccess.impl.db;
+package fr.bmj.bmjc.dataaccess.impl.db.player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,13 +26,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.bmj.bmjc.data.game.Player;
-import fr.bmj.bmjc.dataaccess.DataAccessManagePlayer;
-import fr.bmj.bmjc.dataaccess.UpdateResult;
+import fr.bmj.bmjc.dataaccess.abs.UpdateResult;
+import fr.bmj.bmjc.dataaccess.abs.player.DataAccessManagePlayer;
 
-public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon implements DataAccessManagePlayer {
+public class DataAccessDataBaseManagePlayer implements DataAccessManagePlayer {
+
+	protected final Connection dataBaseConnection;
+
+	private boolean onlyFrequentPlayers;
 
 	public DataAccessDataBaseManagePlayer(final Connection dataBaseConnection) {
-		super(dataBaseConnection);
+		this.dataBaseConnection = dataBaseConnection;
 	}
 
 	private boolean isConnected() {
@@ -172,6 +176,35 @@ public class DataAccessDataBaseManagePlayer extends DataAccessDataBaseCommon imp
 		} else {
 			return new UpdateResult(false, "Le joueur n'a pas été supprimé");
 		}
+	}
+
+	@Override
+	public void setOnlyFrequentPlayers(final boolean onlyFrequentPlayers) {
+		this.onlyFrequentPlayers = onlyFrequentPlayers;
+	}
+
+	@Override
+	public List<Player> getPlayers() {
+		final List<Player> playerList = new ArrayList<Player>();
+		if (dataBaseConnection != null) {
+			try {
+				String query = "SELECT id, name, display_name FROM player ";
+				if (onlyFrequentPlayers) {
+					query = query + "WHERE frequent=true ";
+				}
+				query = query + "ORDER BY id";
+				final Statement statement = dataBaseConnection.createStatement();
+				final ResultSet result = statement.executeQuery(query);
+				while (result.next()) {
+					playerList.add(new Player(result.getShort(1), result.getString(2), result.getString(3), false, true, ""));
+				}
+				result.close();
+				statement.close();
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return playerList;
 	}
 
 }

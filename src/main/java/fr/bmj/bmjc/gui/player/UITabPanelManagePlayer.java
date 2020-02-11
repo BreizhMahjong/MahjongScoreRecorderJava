@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * Breizh Mahjong Recorder. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.bmj.bmjc.gui;
+package fr.bmj.bmjc.gui.player;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -45,8 +45,9 @@ import javax.swing.border.EtchedBorder;
 
 import fr.bmj.bmjc.data.game.ComparatorAscendingPlayerDisplayName;
 import fr.bmj.bmjc.data.game.Player;
-import fr.bmj.bmjc.dataaccess.DataAccessManagePlayer;
-import fr.bmj.bmjc.dataaccess.UpdateResult;
+import fr.bmj.bmjc.dataaccess.abs.UpdateResult;
+import fr.bmj.bmjc.dataaccess.abs.player.DataAccessManagePlayer;
+import fr.bmj.bmjc.gui.UITabPanel;
 import fr.bri.awt.ProportionalGridLayout;
 import fr.bri.awt.ProportionalGridLayoutConstraint;
 
