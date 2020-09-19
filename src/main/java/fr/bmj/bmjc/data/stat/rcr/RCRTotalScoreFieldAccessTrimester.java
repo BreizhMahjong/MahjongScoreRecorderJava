@@ -21,12 +21,16 @@ import fr.bmj.bmjc.enums.EnumTrimester;
 public class RCRTotalScoreFieldAccessTrimester implements RCRTotalScoreFieldAccess {
 
 	private static final String TRIMESTER_STRINGS[] = {
-		EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(), EnumTrimester.TRIMESTER_4.toString()
+		EnumTrimester.TRIMESTER_1.toString(),
+		EnumTrimester.TRIMESTER_2.toString(),
+		EnumTrimester.TRIMESTER_3.toString(),
+		EnumTrimester.TRIMESTER_4.toString()
 	};
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return Integer.toString(data.year) + " " + TRIMESTER_STRINGS[data.month];
+		return Integer.toString(
+			data.year) + " " + TRIMESTER_STRINGS[data.month];
 	}
 
 }

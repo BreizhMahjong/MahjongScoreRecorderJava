@@ -127,127 +127,276 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	public UITabPanelRCRTrend(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
 
-		setLayout(new BorderLayout());
+		setLayout(
+			new BorderLayout());
 		{
 			final JPanel panelNorth = new JPanel();
-			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2, 11, 8, 2);
-			northLayout.setWeightX(4, 5, 3, 5, 3, 5, 3, 5, 3, 5, 2);
-			panelNorth.setLayout(northLayout);
-			panelNorth.setBorder(BorderFactory.createLoweredBevelBorder());
-			add(panelNorth, BorderLayout.NORTH);
-			final ProportionalGridLayoutConstraint c = new ProportionalGridLayoutConstraint(0, 1, 0, 1);
+			final ProportionalGridLayout northLayout = new ProportionalGridLayout(
+				2,
+				11,
+				8,
+				2);
+			northLayout.setWeightX(
+				4,
+				5,
+				3,
+				5,
+				3,
+				5,
+				3,
+				5,
+				3,
+				5,
+				2);
+			panelNorth.setLayout(
+				northLayout);
+			panelNorth.setBorder(
+				BorderFactory.createLoweredBevelBorder());
+			add(
+				panelNorth,
+				BorderLayout.NORTH);
+			final ProportionalGridLayoutConstraint c = new ProportionalGridLayoutConstraint(
+				0,
+				1,
+				0,
+				1);
 
 			{
 				c.y = 0;
 				c.x = 2;
-				panelNorth.add(new JLabel("Tournoi :", SwingConstants.RIGHT), c);
+				panelNorth.add(
+					new JLabel(
+						"Tournoi :",
+						SwingConstants.RIGHT),
+					c);
 				comboTournament = new JComboBox<String>();
-				comboTournament.setEditable(false);
+				comboTournament.setEditable(
+					false);
 				c.x = 3;
 				c.gridWidth = 5;
-				panelNorth.add(comboTournament, c);
+				panelNorth.add(
+					comboTournament,
+					c);
 
 				c.y = 1;
 				c.x = 0;
 				c.gridWidth = 1;
-				panelNorth.add(new JLabel("Période :", SwingConstants.RIGHT), c);
+				panelNorth.add(
+					new JLabel(
+						"Période :",
+						SwingConstants.RIGHT),
+					c);
 				periodModes = new EnumPeriodMode[] {
-					EnumPeriodMode.ALL, EnumPeriodMode.YEAR, EnumPeriodMode.TRIMESTER, EnumPeriodMode.MONTH
+					EnumPeriodMode.ALL,
+					EnumPeriodMode.YEAR,
+					EnumPeriodMode.TRIMESTER,
+					EnumPeriodMode.MONTH
 				};
 				final String periodModeStrings[] = new String[periodModes.length];
 				for (int index = 0; index < periodModes.length; index++) {
 					periodModeStrings[index] = periodModes[index].toString();
 				}
-				comboPeriodMode = new JComboBox<String>(periodModeStrings);
-				comboPeriodMode.setEditable(false);
-				comboPeriodMode.setSelectedIndex(2);
+				comboPeriodMode = new JComboBox<String>(
+					periodModeStrings);
+				comboPeriodMode.setEditable(
+					false);
+				comboPeriodMode.setSelectedIndex(
+					2);
 				c.x = 1;
-				panelNorth.add(comboPeriodMode, c);
+				panelNorth.add(
+					comboPeriodMode,
+					c);
 
 				c.x = 2;
-				panelNorth.add(new JLabel("Année :", SwingConstants.RIGHT), c);
+				panelNorth.add(
+					new JLabel(
+						"Année :",
+						SwingConstants.RIGHT),
+					c);
 				comboYear = new JComboBox<Integer>();
-				comboYear.setEditable(false);
+				comboYear.setEditable(
+					false);
 				c.x = 3;
-				panelNorth.add(comboYear, c);
+				panelNorth.add(
+					comboYear,
+					c);
 
 				c.x = 4;
-				panelNorth.add(new JLabel("Trimestre :", SwingConstants.RIGHT), c);
+				panelNorth.add(
+					new JLabel(
+						"Trimestre :",
+						SwingConstants.RIGHT),
+					c);
 				final String trimesters[] = {
-					EnumTrimester.TRIMESTER_1.toString(), EnumTrimester.TRIMESTER_2.toString(), EnumTrimester.TRIMESTER_3.toString(),
+					EnumTrimester.TRIMESTER_1.toString(),
+					EnumTrimester.TRIMESTER_2.toString(),
+					EnumTrimester.TRIMESTER_3.toString(),
 					EnumTrimester.TRIMESTER_4.toString()
 				};
-				comboTrimester = new JComboBox<String>(trimesters);
-				comboTrimester.setEditable(false);
-				comboTrimester.setSelectedIndex(0);
+				comboTrimester = new JComboBox<String>(
+					trimesters);
+				comboTrimester.setEditable(
+					false);
+				comboTrimester.setSelectedIndex(
+					0);
 				c.x = 5;
-				panelNorth.add(comboTrimester, c);
+				panelNorth.add(
+					comboTrimester,
+					c);
 
 				c.x = 6;
-				panelNorth.add(new JLabel("Mois :", SwingConstants.RIGHT), c);
+				panelNorth.add(
+					new JLabel(
+						"Mois :",
+						SwingConstants.RIGHT),
+					c);
 				final String months[] = new String[12];
-				System.arraycopy(DateFormatSymbols.getInstance(Locale.FRANCE).getMonths(), 0, months, 0, 12);
-				comboMonth = new JComboBox<>(months);
-				comboMonth.setEditable(false);
-				comboMonth.setSelectedIndex(0);
+				System.arraycopy(
+					DateFormatSymbols.getInstance(
+						Locale.FRANCE).getMonths(),
+					0,
+					months,
+					0,
+					12);
+				comboMonth = new JComboBox<>(
+					months);
+				comboMonth.setEditable(
+					false);
+				comboMonth.setSelectedIndex(
+					0);
 				c.x = 7;
-				panelNorth.add(comboMonth, c);
+				panelNorth.add(
+					comboMonth,
+					c);
 
 				c.x = 8;
-				panelNorth.add(new JLabel("Jour :", SwingConstants.RIGHT), c);
+				panelNorth.add(
+					new JLabel(
+						"Jour :",
+						SwingConstants.RIGHT),
+					c);
 				comboDay = new JComboBox<Integer>();
-				comboDay.setEditable(false);
-				comboDay.setSelectedIndex(-1);
+				comboDay.setEditable(
+					false);
+				comboDay.setSelectedIndex(
+					-1);
 				c.x = 9;
-				panelNorth.add(comboDay, c);
+				panelNorth.add(
+					comboDay,
+					c);
 			}
 		}
 
 		{
 			listCheckBoxPlayerSelect = new ArrayList<JCheckBox>();
 
-			final JPanel panelCenter = new JPanel(new BorderLayout());
-			add(panelCenter, BorderLayout.CENTER);
+			final JPanel panelCenter = new JPanel(
+				new BorderLayout());
+			add(
+				panelCenter,
+				BorderLayout.CENTER);
 			{
-				final JPanel panelCenterWest = new JPanel(new BorderLayout());
-				panelCenterWest.setBorder(BorderFactory.createLoweredBevelBorder());
-				panelCenter.add(panelCenterWest, BorderLayout.WEST);
+				final JPanel panelCenterWest = new JPanel(
+					new BorderLayout());
+				panelCenterWest.setBorder(
+					BorderFactory.createLoweredBevelBorder());
+				panelCenter.add(
+					panelCenterWest,
+					BorderLayout.WEST);
 
 				{
-					final JPanel panelCenterWestNorth = new JPanel(new GridBagLayout());
-					panelCenterWestNorth.setMinimumSize(new Dimension(160, 0));
-					panelCenterWest.add(panelCenterWestNorth, BorderLayout.NORTH);
-					final GridBagConstraints constraintsCenterWestNorth = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+					final JPanel panelCenterWestNorth = new JPanel(
+						new GridBagLayout());
+					panelCenterWestNorth.setMinimumSize(
+						new Dimension(
+							160,
+							0));
+					panelCenterWest.add(
+						panelCenterWestNorth,
+						BorderLayout.NORTH);
+					final GridBagConstraints constraintsCenterWestNorth = new GridBagConstraints(
+						0,
+						0,
+						1,
+						1,
+						0.0,
+						0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.NONE,
+						new Insets(
+							0,
+							0,
+							0,
+							0),
+						0,
+						0);
 
-					buttonFilter = new JButton("Filtrer");
-					buttonFilter.setPreferredSize(new Dimension(BUTTON_MIN_WIDTH, BUTTON_MIN_HEIGHT));
-					panelCenterWestNorth.add(buttonFilter, constraintsCenterWestNorth);
+					buttonFilter = new JButton(
+						"Filtrer");
+					buttonFilter.setPreferredSize(
+						new Dimension(
+							BUTTON_MIN_WIDTH,
+							BUTTON_MIN_HEIGHT));
+					panelCenterWestNorth.add(
+						buttonFilter,
+						constraintsCenterWestNorth);
 
-					checkBoxSelectAll = new JCheckBox("Tous sélectionner", true);
+					checkBoxSelectAll = new JCheckBox(
+						"Tous sélectionner",
+						true);
 					constraintsCenterWestNorth.gridy = 1;
 					constraintsCenterWestNorth.fill = GridBagConstraints.HORIZONTAL;
 					constraintsCenterWestNorth.weightx = 1.0;
-					panelCenterWestNorth.add(checkBoxSelectAll, constraintsCenterWestNorth);
+					panelCenterWestNorth.add(
+						checkBoxSelectAll,
+						constraintsCenterWestNorth);
 				}
 
 				{
 					panelPlayerSelect = new JPanel();
-					panelPlayerSelect.setLayout(new BoxLayout(panelPlayerSelect, BoxLayout.Y_AXIS));
-					final JPanel panelPlayerSelectSupport = new JPanel(new GridBagLayout());
-					final GridBagConstraints constraintsSupport = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
-						GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
-					panelPlayerSelectSupport.add(panelPlayerSelect, constraintsSupport);
-					final JScrollPane scrollPlayerSelect = new JScrollPane(panelPlayerSelectSupport, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+					panelPlayerSelect.setLayout(
+						new BoxLayout(
+							panelPlayerSelect,
+							BoxLayout.Y_AXIS));
+					final JPanel panelPlayerSelectSupport = new JPanel(
+						new GridBagLayout());
+					final GridBagConstraints constraintsSupport = new GridBagConstraints(
+						0,
+						0,
+						1,
+						1,
+						1.0,
+						1.0,
+						GridBagConstraints.NORTH,
+						GridBagConstraints.HORIZONTAL,
+						new Insets(
+							0,
+							0,
+							0,
+							0),
+						0,
+						0);
+					panelPlayerSelectSupport.add(
+						panelPlayerSelect,
+						constraintsSupport);
+					final JScrollPane scrollPlayerSelect = new JScrollPane(
+						panelPlayerSelectSupport,
+						ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 						ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-					scrollPlayerSelect.getVerticalScrollBar().setUnitIncrement(16);
-					panelCenterWest.add(scrollPlayerSelect, BorderLayout.CENTER);
+					scrollPlayerSelect.getVerticalScrollBar().setUnitIncrement(
+						16);
+					panelCenterWest.add(
+						scrollPlayerSelect,
+						BorderLayout.CENTER);
 				}
 			}
 
 			{
-				panelChart = new JPanel(new BorderLayout());
-				panelCenter.add(panelChart, BorderLayout.CENTER);
+				panelChart = new JPanel(
+					new BorderLayout());
+				panelCenter.add(
+					panelChart,
+					BorderLayout.CENTER);
 			}
 		}
 
@@ -258,17 +407,22 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		selectAllCheckBoxActionListener = (final ActionEvent e) -> selectAll();
 		filterButtonActionListeneer = (final ActionEvent e) -> displayData();
 
-		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
+		comboPeriodMode.addActionListener(
+			(final ActionEvent e) -> changePeriodParameters(
+				true));
 		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
 
 		periodParametersComboBoxHighLevelActionListener = (final ActionEvent e) -> refreshDay();
 		periodParametersComboBoxLowLevelActionListener = (final ActionEvent e) -> refreshData();
 
-		comboTrimester.addActionListener(periodParametersComboBoxLowLevelActionListener);
-		comboMonth.addActionListener(periodParametersComboBoxHighLevelActionListener);
+		comboTrimester.addActionListener(
+			periodParametersComboBoxLowLevelActionListener);
+		comboMonth.addActionListener(
+			periodParametersComboBoxHighLevelActionListener);
 
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
-		changePeriodParameters(false);
+		changePeriodParameters(
+			false);
 	}
 
 	@Override
@@ -329,66 +483,102 @@ public class UITabPanelRCRTrend extends UITabPanel {
 	}
 
 	private void disableComboBoxes() {
-		comboTournament.setEnabled(false);
-		comboPeriodMode.setEnabled(false);
-		comboYear.setEnabled(false);
-		comboTrimester.setEnabled(false);
-		comboMonth.setEnabled(false);
-		comboDay.setEnabled(false);
+		comboTournament.setEnabled(
+			false);
+		comboPeriodMode.setEnabled(
+			false);
+		comboYear.setEnabled(
+			false);
+		comboTrimester.setEnabled(
+			false);
+		comboMonth.setEnabled(
+			false);
+		comboDay.setEnabled(
+			false);
 	}
 
 	private void enableComboBoxes() {
-		comboTournament.setEnabled(true);
-		comboPeriodMode.setEnabled(true);
-		comboYear.setEnabled(comboBoxActivated[COMBOBOX_YEAR_INDEX]);
-		comboTrimester.setEnabled(comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
-		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
-		comboDay.setEnabled(comboBoxActivated[COMBOBOX_DAY_INDEX]);
+		comboTournament.setEnabled(
+			true);
+		comboPeriodMode.setEnabled(
+			true);
+		comboYear.setEnabled(
+			comboBoxActivated[COMBOBOX_YEAR_INDEX]);
+		comboTrimester.setEnabled(
+			comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
+		comboMonth.setEnabled(
+			comboBoxActivated[COMBOBOX_MONTH_INDEX]);
+		comboDay.setEnabled(
+			comboBoxActivated[COMBOBOX_DAY_INDEX]);
 	}
 
 	@Override
 	public void refresh() {
-		new Thread(() -> {
-			try {
-				refreshPlayerName();
-				refreshTournament();
-			} catch (final Exception e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
-		}).start();
+		new Thread(
+			() -> {
+				try {
+					refreshPlayerName();
+					refreshTournament();
+				} catch (final Exception e) {
+					JOptionPane.showMessageDialog(
+						this,
+						e.getMessage(),
+						"Erreur",
+						JOptionPane.ERROR_MESSAGE);
+				}
+			}).start();
 	}
 
 	private void refreshPlayerName() {
 		listPlayers.clear();
-		listPlayers.addAll(dataAccess.getRCRPlayers());
+		listPlayers.addAll(
+			dataAccess.getRCRPlayers());
 		if (listPlayers.size() > 0) {
-			checkBoxSelectAll.removeActionListener(selectAllCheckBoxActionListener);
-			buttonFilter.removeActionListener(filterButtonActionListeneer);
+			checkBoxSelectAll.removeActionListener(
+				selectAllCheckBoxActionListener);
+			buttonFilter.removeActionListener(
+				filterButtonActionListeneer);
 
 			panelPlayerSelect.removeAll();
 			listCheckBoxPlayerSelect.clear();
 			for (int index = 0; index < listPlayers.size(); index++) {
-				final JCheckBox checkBox = new JCheckBox("", true);
-				panelPlayerSelect.add(checkBox);
-				listCheckBoxPlayerSelect.add(checkBox);
+				final JCheckBox checkBox = new JCheckBox(
+					"",
+					true);
+				panelPlayerSelect.add(
+					checkBox);
+				listCheckBoxPlayerSelect.add(
+					checkBox);
 			}
 			displayPlayerName();
 
-			checkBoxSelectAll.addActionListener(selectAllCheckBoxActionListener);
-			buttonFilter.addActionListener(filterButtonActionListeneer);
+			checkBoxSelectAll.addActionListener(
+				selectAllCheckBoxActionListener);
+			buttonFilter.addActionListener(
+				filterButtonActionListeneer);
 		}
 	}
 
 	private void displayPlayerName() {
 		if (displayFullName) {
-			Collections.sort(listPlayers, new ComparatorAscendingPlayerName());
+			Collections.sort(
+				listPlayers,
+				new ComparatorAscendingPlayerName());
 			for (int index = 0; index < listPlayers.size(); index++) {
-				listCheckBoxPlayerSelect.get(index).setText(listPlayers.get(index).getPlayerName());
+				listCheckBoxPlayerSelect.get(
+					index).setText(
+						listPlayers.get(
+							index).getPlayerName());
 			}
 		} else {
-			Collections.sort(listPlayers, new ComparatorAscendingPlayerDisplayName());
+			Collections.sort(
+				listPlayers,
+				new ComparatorAscendingPlayerDisplayName());
 			for (int index = 0; index < listPlayers.size(); index++) {
-				listCheckBoxPlayerSelect.get(index).setText(listPlayers.get(index).getDisplayName());
+				listCheckBoxPlayerSelect.get(
+					index).setText(
+						listPlayers.get(
+							index).getDisplayName());
 			}
 		}
 		repaint();
@@ -398,189 +588,307 @@ public class UITabPanelRCRTrend extends UITabPanel {
 		listTournament.clear();
 		final List<Tournament> newTournaments = dataAccess.getRCRTournaments();
 		if (newTournaments.size() > 0) {
-			listTournament.addAll(newTournaments);
-			Collections.sort(listTournament, new ComparatorDescendingTournamentID());
+			listTournament.addAll(
+				newTournaments);
+			Collections.sort(
+				listTournament,
+				new ComparatorDescendingTournamentID());
 
-			comboTournament.removeActionListener(tournamentComboBoxActionListener);
+			comboTournament.removeActionListener(
+				tournamentComboBoxActionListener);
 			comboTournament.removeAllItems();
 			for (int index = 0; index < listTournament.size(); index++) {
-				final Tournament tournament = listTournament.get(index);
-				comboTournament.addItem(tournament.getName());
+				final Tournament tournament = listTournament.get(
+					index);
+				comboTournament.addItem(
+					tournament.getName());
 			}
-			comboTournament.addActionListener(tournamentComboBoxActionListener);
+			comboTournament.addActionListener(
+				tournamentComboBoxActionListener);
 			if (listTournament.size() > 0) {
-				comboTournament.setSelectedIndex(0);
+				comboTournament.setSelectedIndex(
+					0);
 			}
 		}
 	}
 
 	private void refreshYear() {
-		new Thread(() -> {
-			try {
-				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-				if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-					comboYear.removeActionListener(periodParametersComboBoxHighLevelActionListener);
-					comboYear.removeAllItems();
+		new Thread(
+			() -> {
+				try {
+					final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+					if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
+						comboYear.removeActionListener(
+							periodParametersComboBoxHighLevelActionListener);
+						comboYear.removeAllItems();
 
-					final Tournament tournament = listTournament.get(selectedTournamentIndex);
-					final List<Integer> years = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
-					Collections.sort(years);
-					Collections.reverse(years);
-					for (int index = 0; index < years.size(); index++) {
-						comboYear.addItem(years.get(index));
-					}
+						final Tournament tournament = listTournament.get(
+							selectedTournamentIndex);
+						final List<Integer> years = new ArrayList<Integer>(
+							dataAccess.getRCRYears(
+								tournament));
+						Collections.sort(
+							years);
+						Collections.reverse(
+							years);
+						for (int index = 0; index < years.size(); index++) {
+							comboYear.addItem(
+								years.get(
+									index));
+						}
 
-					comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
-					if (years.size() > 0) {
-						comboYear.setSelectedIndex(0);
-					} else {
-						comboYear.setSelectedIndex(-1);
+						comboYear.addActionListener(
+							periodParametersComboBoxHighLevelActionListener);
+						if (years.size() > 0) {
+							comboYear.setSelectedIndex(
+								0);
+						} else {
+							comboYear.setSelectedIndex(
+								-1);
+						}
 					}
+				} catch (final Exception e) {
+					JOptionPane.showMessageDialog(
+						this,
+						e.getMessage(),
+						"Erreur",
+						JOptionPane.ERROR_MESSAGE);
 				}
-			} catch (final Exception e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
-		}).start();
+			}).start();
 	}
 
 	private void refreshDay() {
-		new Thread(() -> {
-			try {
-				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-				final int selectedYearIndex = comboYear.getSelectedIndex();
-				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-					comboDay.removeActionListener(periodParametersComboBoxLowLevelActionListener);
-					comboDay.removeAllItems();
+		new Thread(
+			() -> {
+				try {
+					final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+					final int selectedYearIndex = comboYear.getSelectedIndex();
+					if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+						comboDay.removeActionListener(
+							periodParametersComboBoxLowLevelActionListener);
+						comboDay.removeAllItems();
 
-					final Tournament tournament = listTournament.get(selectedTournamentIndex);
-					final int year = (Integer) comboYear.getSelectedItem();
-					final int month = comboMonth.getSelectedIndex();
-					final List<Integer> days = new ArrayList<Integer>(dataAccess.getRCRGameDays(tournament, year, month));
-					Collections.sort(days);
-					for (int index = 0; index < days.size(); index++) {
-						comboDay.addItem(days.get(index));
-					}
+						final Tournament tournament = listTournament.get(
+							selectedTournamentIndex);
+						final int year = (Integer) comboYear.getSelectedItem();
+						final int month = comboMonth.getSelectedIndex();
+						final List<Integer> days = new ArrayList<Integer>(
+							dataAccess.getRCRGameDays(
+								tournament,
+								year,
+								month));
+						Collections.sort(
+							days);
+						for (int index = 0; index < days.size(); index++) {
+							comboDay.addItem(
+								days.get(
+									index));
+						}
 
-					comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
-					if (days.size() > 0) {
-						comboDay.setSelectedIndex(0);
-					} else {
-						comboDay.setSelectedIndex(-1);
+						comboDay.addActionListener(
+							periodParametersComboBoxLowLevelActionListener);
+						if (days.size() > 0) {
+							comboDay.setSelectedIndex(
+								0);
+						} else {
+							comboDay.setSelectedIndex(
+								-1);
+						}
 					}
+				} catch (final Exception e) {
+					JOptionPane.showMessageDialog(
+						this,
+						e.getMessage(),
+						"Erreur",
+						JOptionPane.ERROR_MESSAGE);
 				}
-			} catch (final Exception e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
-		}).start();
+			}).start();
 	}
 
 	private void refreshData() {
-		new Thread(() -> {
-			try {
-				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		new Thread(
+			() -> {
+				try {
+					final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
-				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-				final int selectedYearIndex = comboYear.getSelectedIndex();
-				final int selectedDayIndex = comboDay.getSelectedIndex();
-				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-					final Tournament tournament = listTournament.get(selectedTournamentIndex);
-					final int year = (Integer) comboYear.getSelectedItem();
-					final int trimester = comboTrimester.getSelectedIndex();
-					final int month = comboMonth.getSelectedIndex();
-					final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
-					trend = dataAccess.getRCRDataPackageTrend(tournament, periodMode, year, trimester, month, day);
+					final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+					final int selectedYearIndex = comboYear.getSelectedIndex();
+					final int selectedDayIndex = comboDay.getSelectedIndex();
+					if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+						final Tournament tournament = listTournament.get(
+							selectedTournamentIndex);
+						final int year = (Integer) comboYear.getSelectedItem();
+						final int trimester = comboTrimester.getSelectedIndex();
+						final int month = comboMonth.getSelectedIndex();
+						final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
+						trend = dataAccess.getRCRDataPackageTrend(
+							tournament,
+							periodMode,
+							year,
+							trimester,
+							month,
+							day);
+					}
+
+					displayData();
+				} catch (final Exception e) {
+					JOptionPane.showMessageDialog(
+						this,
+						e.getMessage(),
+						"Erreur",
+						JOptionPane.ERROR_MESSAGE);
 				}
-
-				displayData();
-			} catch (final Exception e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
-		}).start();
+			}).start();
 	}
 
 	private void selectAll() {
 		final boolean selected = checkBoxSelectAll.isSelected();
 		for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-			listCheckBoxPlayerSelect.get(index).setSelected(selected);
+			listCheckBoxPlayerSelect.get(
+				index).setSelected(
+					selected);
 		}
 		repaint();
 	}
 
 	private void displayData() {
-		new Thread(() -> {
-			try {
-				disableComboBoxes();
-				panelChart.removeAll();
-				validate();
-				repaint();
+		new Thread(
+			() -> {
+				try {
+					disableComboBoxes();
+					panelChart.removeAll();
+					validate();
+					repaint();
 
-				if (trend.dates.size() > 0) {
-					final Set<String> selectedNames = new HashSet<String>();
-					if (displayFullName) {
-						for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-							if (listCheckBoxPlayerSelect.get(index).isSelected()) {
-								selectedNames.add(listPlayers.get(index).getPlayerName());
+					if (trend.dates.size() > 0) {
+						final Set<String> selectedNames = new HashSet<String>();
+						if (displayFullName) {
+							for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
+								if (listCheckBoxPlayerSelect.get(
+									index).isSelected()) {
+									selectedNames.add(
+										listPlayers.get(
+											index).getPlayerName());
+								}
+							}
+						} else {
+							for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
+								if (listCheckBoxPlayerSelect.get(
+									index).isSelected()) {
+									selectedNames.add(
+										listPlayers.get(
+											index).getDisplayName());
+								}
 							}
 						}
-					} else {
-						for (int index = 0; index < listCheckBoxPlayerSelect.size(); index++) {
-							if (listCheckBoxPlayerSelect.get(index).isSelected()) {
-								selectedNames.add(listPlayers.get(index).getDisplayName());
+
+						final SortedMap<String, List<Integer>> data = displayFullName ? trend.dataWithPlayerName : trend.dataWithDisplayName;
+						final List<Long> dates = trend.dates;
+
+						final TimeSeriesCollection series = new TimeSeriesCollection();
+						final XYItemRenderer sumRender = new XYLineAndShapeRenderer();
+						for (final String playerName : data.keySet()) {
+							if (selectedNames.contains(
+								playerName)) {
+								final List<Integer> score = data.get(
+									playerName);
+								final TimeSeries sumSeries = new TimeSeries(
+									playerName);
+								for (int index = 1; index < score.size(); index++) {
+									sumSeries.add(
+										new Day(
+											new Date(
+												dates.get(
+													index))),
+										score.get(
+											index));
+								}
+								series.addSeries(
+									sumSeries);
 							}
 						}
-					}
 
-					final SortedMap<String, List<Integer>> data = displayFullName ? trend.dataWithPlayerName : trend.dataWithDisplayName;
-					final List<Long> dates = trend.dates;
-
-					final TimeSeriesCollection series = new TimeSeriesCollection();
-					final XYItemRenderer sumRender = new XYLineAndShapeRenderer();
-					for (final String playerName : data.keySet()) {
-						if (selectedNames.contains(playerName)) {
-							final List<Integer> score = data.get(playerName);
-							final TimeSeries sumSeries = new TimeSeries(playerName);
-							for (int index = 1; index < score.size(); index++) {
-								sumSeries.add(new Day(new Date(dates.get(index))), score.get(index));
-							}
-							series.addSeries(sumSeries);
+						int tickUnit;
+						final int numberOfDays = (int) ((dates.get(
+							dates.size() - 1)
+							- dates.get(
+								1))
+							/ MILLISECONDS_PER_DAY);
+						if (numberOfDays < MAX_NUMBER_OF_TICKS) {
+							tickUnit = 1;
+						} else {
+							tickUnit = (numberOfDays / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
 						}
+
+						final DateAxis sumDomainAxis = new DateAxis(
+							"Date");
+						sumDomainAxis.setRange(
+							new Date(
+								dates.get(
+									1) - MILLISECONDS_PER_DAY),
+							new Date(
+								dates.get(
+									dates.size() - 1) + MILLISECONDS_PER_DAY));
+						sumDomainAxis.setTickUnit(
+							new DateTickUnit(
+								DateTickUnitType.DAY,
+								tickUnit));
+						sumDomainAxis.setLowerMargin(
+							0.0);
+						sumDomainAxis.setUpperMargin(
+							0.0);
+
+						final NumberAxis sumRangeAxis = new NumberAxis(
+							"Score total");
+						final XYPlot sumPlot = new XYPlot(
+							series,
+							sumDomainAxis,
+							sumRangeAxis,
+							sumRender);
+						sumPlot.setBackgroundPaint(
+							new Color(
+								255,
+								255,
+								255,
+								0));
+						sumPlot.setDomainGridlinePaint(
+							Color.BLACK);
+						sumPlot.setRangeGridlinePaint(
+							Color.BLACK);
+						final ValueMarker marker = new ValueMarker(
+							0.0,
+							Color.RED,
+							new BasicStroke(
+								1),
+							null,
+							null,
+							1.0f);
+						sumPlot.addRangeMarker(
+							marker);
+
+						final ChartPanel chartPanel = new ChartPanel(
+							new JFreeChart(
+								sumPlot));
+						chartPanel.setPopupMenu(
+							null);
+						chartPanel.setMouseZoomable(
+							false);
+						panelChart.add(
+							chartPanel,
+							BorderLayout.CENTER);
 					}
 
-					int tickUnit;
-					final int numberOfDays = (int) ((dates.get(dates.size() - 1) - dates.get(1)) / MILLISECONDS_PER_DAY);
-					if (numberOfDays < MAX_NUMBER_OF_TICKS) {
-						tickUnit = 1;
-					} else {
-						tickUnit = (numberOfDays / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
-					}
-
-					final DateAxis sumDomainAxis = new DateAxis("Date");
-					sumDomainAxis.setRange(new Date(dates.get(1) - MILLISECONDS_PER_DAY), new Date(dates.get(dates.size() - 1) + MILLISECONDS_PER_DAY));
-					sumDomainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.DAY, tickUnit));
-					sumDomainAxis.setLowerMargin(0.0);
-					sumDomainAxis.setUpperMargin(0.0);
-
-					final NumberAxis sumRangeAxis = new NumberAxis("Score total");
-					final XYPlot sumPlot = new XYPlot(series, sumDomainAxis, sumRangeAxis, sumRender);
-					sumPlot.setBackgroundPaint(new Color(255, 255, 255, 0));
-					sumPlot.setDomainGridlinePaint(Color.BLACK);
-					sumPlot.setRangeGridlinePaint(Color.BLACK);
-					final ValueMarker marker = new ValueMarker(0.0, Color.RED, new BasicStroke(1), null, null, 1.0f);
-					sumPlot.addRangeMarker(marker);
-
-					final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
-					chartPanel.setPopupMenu(null);
-					chartPanel.setMouseZoomable(false);
-					panelChart.add(chartPanel, BorderLayout.CENTER);
+					validate();
+					enableComboBoxes();
+					repaint();
+				} catch (final Exception e) {
+					JOptionPane.showMessageDialog(
+						this,
+						e.getMessage(),
+						"Erreur",
+						JOptionPane.ERROR_MESSAGE);
 				}
-
-				validate();
-				enableComboBoxes();
-				repaint();
-			} catch (final Exception e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
-		}).start();
+			}).start();
 	}
 
 	@Override
@@ -592,87 +900,131 @@ public class UITabPanelRCRTrend extends UITabPanel {
 
 	@Override
 	public void export() {
-		new Thread(() -> {
-			try {
-				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+		new Thread(
+			() -> {
+				try {
+					final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
 
-				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-				final int selectedYearIndex = comboYear.getSelectedIndex();
-				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-					final Tournament tournament = listTournament.get(selectedTournamentIndex);
-					final int year = (Integer) comboYear.getSelectedItem();
+					final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+					final int selectedYearIndex = comboYear.getSelectedIndex();
+					if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+						final Tournament tournament = listTournament.get(
+							selectedTournamentIndex);
+						final int year = (Integer) comboYear.getSelectedItem();
 
-					if (trend != null && trend.dates.size() > 0) {
-						final StringBuffer proposedSaveFileName = new StringBuffer();
-						proposedSaveFileName.append(tournament.getName());
-						proposedSaveFileName.append("_tendance_");
-						proposedSaveFileName.append(periodMode.toString());
-						proposedSaveFileName.append("_");
-						switch (periodMode) {
-							case ALL:
-								break;
-							case YEAR:
-								proposedSaveFileName.append(Integer.toString(year));
-								break;
-							case TRIMESTER:
-								proposedSaveFileName.append(Integer.toString(year));
-								proposedSaveFileName.append("_");
-								proposedSaveFileName.append(comboTrimester.getSelectedItem().toString());
-								break;
-							case MONTH:
-								proposedSaveFileName.append(Integer.toString(year));
-								proposedSaveFileName.append("_");
-								proposedSaveFileName.append(comboMonth.getSelectedItem().toString());
-								break;
-							default:
-								break;
-						}
-						proposedSaveFileName.append(".csv");
-						final File fileSaveFile = askSaveFileName(proposedSaveFileName.toString());
-						if (fileSaveFile != null) {
-							BufferedWriter writer = null;
-							try {
-								writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileSaveFile), Charset.forName("UTF-8")));
+						if (trend != null && trend.dates.size() > 0) {
+							final StringBuffer proposedSaveFileName = new StringBuffer();
+							proposedSaveFileName.append(
+								tournament.getName());
+							proposedSaveFileName.append(
+								"_tendance_");
+							proposedSaveFileName.append(
+								periodMode.toString());
+							proposedSaveFileName.append(
+								"_");
+							switch (periodMode) {
+								case ALL:
+									break;
+								case YEAR:
+									proposedSaveFileName.append(
+										Integer.toString(
+											year));
+									break;
+								case TRIMESTER:
+									proposedSaveFileName.append(
+										Integer.toString(
+											year));
+									proposedSaveFileName.append(
+										"_");
+									proposedSaveFileName.append(
+										comboTrimester.getSelectedItem().toString());
+									break;
+								case MONTH:
+									proposedSaveFileName.append(
+										Integer.toString(
+											year));
+									proposedSaveFileName.append(
+										"_");
+									proposedSaveFileName.append(
+										comboMonth.getSelectedItem().toString());
+									break;
+								default:
+									break;
+							}
+							proposedSaveFileName.append(
+								".csv");
+							final File fileSaveFile = askSaveFileName(
+								proposedSaveFileName.toString());
+							if (fileSaveFile != null) {
+								BufferedWriter writer = null;
+								try {
+									writer = new BufferedWriter(
+										new OutputStreamWriter(
+											new FileOutputStream(
+												fileSaveFile),
+											Charset.forName(
+												"UTF-8")));
 
-								final SortedMap<String, List<Integer>> data = displayFullName ? trend.dataWithPlayerName : trend.dataWithDisplayName;
-								final List<Long> dates = trend.dates;
+									final SortedMap<String, List<Integer>> data = displayFullName ? trend.dataWithPlayerName : trend.dataWithDisplayName;
+									final List<Long> dates = trend.dates;
 
-								final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
-								final Calendar calendar = Calendar.getInstance();
+									final DateFormat dateFormat = DateFormat.getDateInstance(
+										DateFormat.LONG,
+										Locale.FRANCE);
+									final Calendar calendar = Calendar.getInstance();
 
-								for (int index = 0; index < dates.size(); index++) {
-									writer.write(SEPARATOR);
-									calendar.setTimeInMillis(dates.get(index));
-									writer.write(dateFormat.format(calendar.getTime()));
-								}
-								writer.newLine();
-
-								for (final String playerName : data.keySet()) {
-									writer.write(playerName);
-									final List<Integer> score = data.get(playerName);
-									for (int dateIndex = 0; dateIndex < score.size(); dateIndex++) {
-										writer.write(SEPARATOR);
-										writer.write(Integer.toString(score.get(dateIndex)));
+									for (int index = 0; index < dates.size(); index++) {
+										writer.write(
+											SEPARATOR);
+										calendar.setTimeInMillis(
+											dates.get(
+												index));
+										writer.write(
+											dateFormat.format(
+												calendar.getTime()));
 									}
 									writer.newLine();
-								}
-							} catch (final Exception e) {
-								JOptionPane.showMessageDialog(this, "Une erreur est survenue lors de sauvegarde.", "Erreur", JOptionPane.ERROR_MESSAGE);
-							} finally {
-								if (writer != null) {
-									try {
-										writer.close();
-									} catch (final Exception e) {
+
+									for (final String playerName : data.keySet()) {
+										writer.write(
+											playerName);
+										final List<Integer> score = data.get(
+											playerName);
+										for (int dateIndex = 0; dateIndex < score.size(); dateIndex++) {
+											writer.write(
+												SEPARATOR);
+											writer.write(
+												Integer.toString(
+													score.get(
+														dateIndex)));
+										}
+										writer.newLine();
+									}
+								} catch (final Exception e) {
+									JOptionPane.showMessageDialog(
+										this,
+										"Une erreur est survenue lors de sauvegarde.",
+										"Erreur",
+										JOptionPane.ERROR_MESSAGE);
+								} finally {
+									if (writer != null) {
+										try {
+											writer.close();
+										} catch (final Exception e) {
+										}
 									}
 								}
 							}
 						}
 					}
+				} catch (final Exception e) {
+					JOptionPane.showMessageDialog(
+						this,
+						e.getMessage(),
+						"Erreur",
+						JOptionPane.ERROR_MESSAGE);
 				}
-			} catch (final Exception e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
-		}).start();
+			}).start();
 	}
 
 }

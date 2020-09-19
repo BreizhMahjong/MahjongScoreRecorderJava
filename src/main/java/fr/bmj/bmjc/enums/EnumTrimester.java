@@ -1,7 +1,10 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumTrimester {
-	TRIMESTER_1("1er"), TRIMESTER_2("2ème"), TRIMESTER_3("3ème"), TRIMESTER_4("4ème");
+	TRIMESTER_1("1er"),
+	TRIMESTER_2("2ème"),
+	TRIMESTER_3("3ème"),
+	TRIMESTER_4("4ème");
 
 	private final String display;
 

@@ -32,7 +32,6 @@ public class RCRGame {
 
 	public RCRGame(final long id, final short tournamentId, final int year, final int month, final int day, final short nbRounds, final short nbPlayers,
 		final List<RCRScore> scores) {
-		super();
 		this.id = id;
 		this.tournamentId = tournamentId;
 		this.year = year;
@@ -40,9 +39,13 @@ public class RCRGame {
 		this.day = day;
 		this.nbRounds = nbRounds;
 		this.nbPlayers = nbPlayers;
-		final List<RCRScore> s = new ArrayList<RCRScore>(scores);
-		Collections.sort(s, new ComparatorAscendingRCRScoreRanking());
-		this.scores = Collections.unmodifiableList(s);
+		final List<RCRScore> s = new ArrayList<RCRScore>(
+			scores);
+		Collections.sort(
+			s,
+			new ComparatorAscendingRCRScoreRanking());
+		this.scores = Collections.unmodifiableList(
+			s);
 	}
 
 	public long getId() {

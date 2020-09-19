@@ -22,13 +22,19 @@ import java.util.Locale;
 
 public class RCRTotalScoreFieldAccessDay implements RCRTotalScoreFieldAccess {
 
-	private final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
+	private final DateFormat dateFormat = DateFormat.getDateInstance(
+		DateFormat.LONG,
+		Locale.FRANCE);
 	private final Calendar calendar = Calendar.getInstance();
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		calendar.set(data.year, data.month, data.day);
-		return dateFormat.format(calendar.getTime());
+		calendar.set(
+			data.year,
+			data.month,
+			data.day);
+		return dateFormat.format(
+			calendar.getTime());
 	}
 
 }

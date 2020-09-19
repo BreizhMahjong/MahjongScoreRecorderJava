@@ -32,7 +32,8 @@ public class ComparatorAscendingPlayerDisplayName implements Comparator<Player> 
 			if (o2 == null) {
 				return 1;
 			} else {
-				return o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName());
+				return o1.getDisplayName().compareToIgnoreCase(
+					o2.getDisplayName());
 			}
 		}
 	}

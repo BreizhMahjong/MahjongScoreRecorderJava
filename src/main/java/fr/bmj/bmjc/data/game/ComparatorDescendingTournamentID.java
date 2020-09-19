@@ -32,7 +32,9 @@ public class ComparatorDescendingTournamentID implements Comparator<Tournament> 
 			if (o2 == null) {
 				return -1;
 			} else {
-				return -Integer.compare(o1.getId(), o2.getId());
+				return -Integer.compare(
+					o1.getId(),
+					o2.getId());
 			}
 		}
 	}

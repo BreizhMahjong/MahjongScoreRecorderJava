@@ -24,20 +24,30 @@ public class RCRTotalScoreFieldAccessMeanScore implements RCRTotalScoreFieldAcce
 	private final DecimalFormat stdDevFormat;
 
 	public RCRTotalScoreFieldAccessMeanScore() {
-		meanScoreFormat = new DecimalFormat("+#,##0;-#,##0");
+		meanScoreFormat = new DecimalFormat(
+			"+#,##0;-#,##0");
 		DecimalFormatSymbols symbols = meanScoreFormat.getDecimalFormatSymbols();
-		symbols.setGroupingSeparator(' ');
-		meanScoreFormat.setDecimalFormatSymbols(symbols);
+		symbols.setGroupingSeparator(
+			' ');
+		meanScoreFormat.setDecimalFormatSymbols(
+			symbols);
 
-		stdDevFormat = new DecimalFormat("#,##0");
+		stdDevFormat = new DecimalFormat(
+			"#,##0");
 		symbols = stdDevFormat.getDecimalFormatSymbols();
-		symbols.setGroupingSeparator(' ');
-		stdDevFormat.setDecimalFormatSymbols(symbols);
+		symbols.setGroupingSeparator(
+			' ');
+		stdDevFormat.setDecimalFormatSymbols(
+			symbols);
 	}
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return meanScoreFormat.format(data.totalScore) + " (" + stdDevFormat.format(data.umaScore) + ")";
+		return meanScoreFormat.format(
+			data.totalScore) + " ("
+			+ stdDevFormat.format(
+				data.umaScore)
+			+ ")";
 	}
 
 }

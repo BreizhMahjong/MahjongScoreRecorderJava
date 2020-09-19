@@ -40,12 +40,17 @@ public class DataAccessDataBase implements DataAccess {
 	@Override
 	public void initialize() {
 		try {
-			final File dataBaseFile = new File(DATABASE_NAME);
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+			final File dataBaseFile = new File(
+				DATABASE_NAME);
+			Class.forName(
+				"org.apache.derby.jdbc.EmbeddedDriver");
 			if (dataBaseFile.exists() && dataBaseFile.isDirectory()) {
-				dataBaseConnection = DriverManager.getConnection("jdbc:derby:" + dataBaseFile.getAbsolutePath());
-				dataAccessManagePlayer = new DataAccessDataBaseManagePlayer(dataBaseConnection);
-				dataAccessRCR = new DataAccessDataBaseRCR(dataBaseConnection);
+				dataBaseConnection = DriverManager.getConnection(
+					"jdbc:derby:" + dataBaseFile.getAbsolutePath());
+				dataAccessManagePlayer = new DataAccessDataBaseManagePlayer(
+					dataBaseConnection);
+				dataAccessRCR = new DataAccessDataBaseRCR(
+					dataBaseConnection);
 			} else {
 				dataBaseConnection = null;
 			}

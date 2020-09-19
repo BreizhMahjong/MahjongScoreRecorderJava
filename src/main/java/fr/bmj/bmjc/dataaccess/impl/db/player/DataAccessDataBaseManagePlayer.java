@@ -46,10 +46,14 @@ public class DataAccessDataBaseManagePlayer implements DataAccessManagePlayer {
 	@Override
 	public UpdateResult addPlayer(final String name, final String displayName) {
 		if (!isConnected()) {
-			return new UpdateResult(false, "Pas de connxion à la base de données");
+			return new UpdateResult(
+				false,
+				"Pas de connxion à la base de données");
 		}
 		if (name == null || displayName == null) {
-			return new UpdateResult(false, "Le nom ne peut pas être vide");
+			return new UpdateResult(
+				false,
+				"Le nom ne peut pas être vide");
 		}
 
 		short newId;
@@ -57,10 +61,12 @@ public class DataAccessDataBaseManagePlayer implements DataAccessManagePlayer {
 		try {
 			final String query = "SELECT id FROM player ORDER BY id";
 			final Statement statement = dataBaseConnection.createStatement();
-			final ResultSet result = statement.executeQuery(query);
+			final ResultSet result = statement.executeQuery(
+				query);
 			newId = 1;
 			while (result.next()) {
-				if (newId == result.getInt(1)) {
+				if (newId == result.getInt(
+					1)) {
 					newId++;
 				} else {
 					break;
@@ -70,28 +76,47 @@ public class DataAccessDataBaseManagePlayer implements DataAccessManagePlayer {
 			statement.close();
 		} catch (final SQLException e) {
 			e.printStackTrace();
-			return new UpdateResult(false, "Erreur de connexion de données");
+			return new UpdateResult(
+				false,
+				"Erreur de connexion de données");
 		}
 
 		try {
 			final String query = "INSERT INTO player(id, name, display_name, frequent, regular) VALUES(?, ?, ?, ?, ?)";
-			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
-			statement.setShort(1, newId);
-			statement.setString(2, name);
-			statement.setString(3, displayName);
-			statement.setBoolean(4, true);
-			statement.setBoolean(5, true);
+			final PreparedStatement statement = dataBaseConnection.prepareStatement(
+				query);
+			statement.setShort(
+				1,
+				newId);
+			statement.setString(
+				2,
+				name);
+			statement.setString(
+				3,
+				displayName);
+			statement.setBoolean(
+				4,
+				true);
+			statement.setBoolean(
+				5,
+				true);
 			added = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {
 			e.printStackTrace();
-			return new UpdateResult(false, "Erreur de connexion de données");
+			return new UpdateResult(
+				false,
+				"Erreur de connexion de données");
 		}
 
 		if (added) {
-			return new UpdateResult(true, "OK");
+			return new UpdateResult(
+				true,
+				"OK");
 		} else {
-			return new UpdateResult(false, "Le nom est déjà utilisé");
+			return new UpdateResult(
+				false,
+				"Le nom est déjà utilisé");
 		}
 	}
 
@@ -101,10 +126,23 @@ public class DataAccessDataBaseManagePlayer implements DataAccessManagePlayer {
 		if (dataBaseConnection != null) {
 			try {
 				final Statement statement = dataBaseConnection.createStatement();
-				final ResultSet result = statement.executeQuery("SELECT id, name, display_name, frequent, regular, license FROM player ORDER BY id");
+				final ResultSet result = statement.executeQuery(
+					"SELECT id, name, display_name, frequent, regular, license FROM player ORDER BY id");
 				while (result.next()) {
-					playerList.add(new Player(result.getShort(1), result.getString(2), result.getString(3), result.getBoolean(4), result.getBoolean(5),
-						result.getString(6)));
+					playerList.add(
+						new Player(
+							result.getShort(
+								1),
+							result.getString(
+								2),
+							result.getString(
+								3),
+							result.getBoolean(
+								4),
+							result.getBoolean(
+								5),
+							result.getString(
+								6)));
 				}
 				result.close();
 				statement.close();
@@ -119,62 +157,98 @@ public class DataAccessDataBaseManagePlayer implements DataAccessManagePlayer {
 	public UpdateResult modifyPlayer(final short id, final String name, final String displayName, final boolean frequent, final boolean regular,
 		final String license) {
 		if (!isConnected()) {
-			return new UpdateResult(false, "Pas de connxion à la base de données");
+			return new UpdateResult(
+				false,
+				"Pas de connxion à la base de données");
 		}
 		if (name == null || displayName == null) {
-			return new UpdateResult(false, "Le nom ne peut pas être vide");
+			return new UpdateResult(
+				false,
+				"Le nom ne peut pas être vide");
 		}
 
 		boolean modified;
 		try {
 			final String query = "UPDATE player SET name=?, display_name=?, frequent=?, regular=?, license=? WHERE id=?";
-			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
-			statement.setString(1, name);
-			statement.setString(2, displayName);
-			statement.setBoolean(3, frequent);
-			statement.setBoolean(4, regular);
+			final PreparedStatement statement = dataBaseConnection.prepareStatement(
+				query);
+			statement.setString(
+				1,
+				name);
+			statement.setString(
+				2,
+				displayName);
+			statement.setBoolean(
+				3,
+				frequent);
+			statement.setBoolean(
+				4,
+				regular);
 			if (license == null || license.length() == 0) {
-				statement.setNull(5, Types.VARCHAR);
+				statement.setNull(
+					5,
+					Types.VARCHAR);
 			} else {
-				statement.setString(5, license);
+				statement.setString(
+					5,
+					license);
 			}
-			statement.setShort(6, id);
+			statement.setShort(
+				6,
+				id);
 			modified = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {
 			e.printStackTrace();
-			return new UpdateResult(false, "Erreur de connexion de données");
+			return new UpdateResult(
+				false,
+				"Erreur de connexion de données");
 		}
 
 		if (modified) {
-			return new UpdateResult(true, "OK");
+			return new UpdateResult(
+				true,
+				"OK");
 		} else {
-			return new UpdateResult(false, "Le nom est déjà utilisé");
+			return new UpdateResult(
+				false,
+				"Le nom est déjà utilisé");
 		}
 	}
 
 	@Override
 	public UpdateResult deletePlayer(final short id) {
 		if (!isConnected()) {
-			return new UpdateResult(false, "Pas de connxion à la base de données");
+			return new UpdateResult(
+				false,
+				"Pas de connxion à la base de données");
 		}
 
 		boolean modified;
 		try {
 			final String query = "DELETE FROM player WHERE id=?";
-			final PreparedStatement statement = dataBaseConnection.prepareStatement(query);
-			statement.setShort(1, id);
+			final PreparedStatement statement = dataBaseConnection.prepareStatement(
+				query);
+			statement.setShort(
+				1,
+				id);
 			modified = statement.executeUpdate() == 1;
 			statement.close();
 		} catch (final SQLException e) {
 			e.printStackTrace();
-			return new UpdateResult(false, "Erreur de connexion de données");
+			return new UpdateResult(
+				false,
+				"Erreur de connexion de données");
 		}
 
 		if (modified) {
-			return new UpdateResult(true, "OK");
+			return new UpdateResult(
+				true,
+				"OK");
 		} else {
-			return new UpdateResult(false, "Le joueur n'a pas été supprimé");
+			return new UpdateResult(
+				false,
+				"Le joueur n'a pas été supprimé");
 		}
 	}
 
@@ -194,9 +268,20 @@ public class DataAccessDataBaseManagePlayer implements DataAccessManagePlayer {
 				}
 				query = query + "ORDER BY id";
 				final Statement statement = dataBaseConnection.createStatement();
-				final ResultSet result = statement.executeQuery(query);
+				final ResultSet result = statement.executeQuery(
+					query);
 				while (result.next()) {
-					playerList.add(new Player(result.getShort(1), result.getString(2), result.getString(3), false, true, ""));
+					playerList.add(
+						new Player(
+							result.getShort(
+								1),
+							result.getString(
+								2),
+							result.getString(
+								3),
+							false,
+							true,
+							""));
 				}
 				result.close();
 				statement.close();

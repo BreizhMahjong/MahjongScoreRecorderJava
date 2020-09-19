@@ -17,7 +17,8 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumScoreMode {
-	FINAL_SCORE("Score final"), GAME_SCORE("Stack");
+	FINAL_SCORE("Score final"),
+	GAME_SCORE("Stack");
 
 	private final String display;
 

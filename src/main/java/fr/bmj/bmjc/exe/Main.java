@@ -22,7 +22,8 @@ import fr.bmj.bmjc.gui.UIMainWindow;
 public class Main {
 
 	public static void main(final String[] args) throws Exception {
-		new UIMainWindow(new DataAccessDataBase());
+		new UIMainWindow(
+			new DataAccessDataBase());
 	}
 
 }

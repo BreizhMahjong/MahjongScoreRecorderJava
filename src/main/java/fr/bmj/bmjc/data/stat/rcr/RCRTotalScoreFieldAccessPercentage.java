@@ -24,12 +24,16 @@ public class RCRTotalScoreFieldAccessPercentage implements RCRTotalScoreFieldAcc
 	private final DecimalFormat format;
 
 	public RCRTotalScoreFieldAccessPercentage() {
-		format = new DecimalFormat("#0.0", new DecimalFormatSymbols(Locale.FRANCE));
+		format = new DecimalFormat(
+			"#0.0",
+			new DecimalFormatSymbols(
+				Locale.FRANCE));
 	}
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return format.format(data.totalScore) + " %";
+		return format.format(
+			data.totalScore) + " %";
 	}
 
 }

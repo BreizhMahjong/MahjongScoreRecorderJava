@@ -32,7 +32,9 @@ public class ComparatorAscendingRCRScoreRanking implements Comparator<RCRScore> 
 			if (o2 == null) {
 				return 1;
 			} else {
-				return Integer.compare(o1.getPlace(), o2.getPlace());
+				return Integer.compare(
+					o1.getPlace(),
+					o2.getPlace());
 			}
 		}
 	}

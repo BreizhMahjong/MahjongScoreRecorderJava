@@ -24,12 +24,14 @@ public class RCRTotalScoreFieldAccessMonth implements RCRTotalScoreFieldAccess {
 	private final String monthStrings[];
 
 	public RCRTotalScoreFieldAccessMonth() {
-		monthStrings = DateFormatSymbols.getInstance(Locale.FRANCE).getMonths();
+		monthStrings = DateFormatSymbols.getInstance(
+			Locale.FRANCE).getMonths();
 	}
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return monthStrings[data.month] + " " + Integer.toString(data.year);
+		return monthStrings[data.month] + " " + Integer.toString(
+			data.year);
 	}
 
 }

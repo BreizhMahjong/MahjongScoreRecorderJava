@@ -17,7 +17,11 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumPeriodMode {
-	ALL("Tout"), YEAR("Année"), TRIMESTER("Trimestre"), MONTH("Mois"), DAY("Jour");
+	ALL("Tout"),
+	YEAR("Année"),
+	TRIMESTER("Trimestre"),
+	MONTH("Mois"),
+	DAY("Jour");
 
 	private final String display;
 

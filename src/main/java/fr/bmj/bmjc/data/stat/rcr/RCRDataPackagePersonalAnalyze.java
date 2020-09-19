@@ -194,63 +194,103 @@ public class RCRDataPackagePersonalAnalyze {
 			this.listScore.clear();
 			this.listSum.clear();
 			for (int index = 0; index < listScore.size(); index++) {
-				this.listGameID.add(index, listGameID.get(index));
-				this.listScore.add(index, listScore.get(index));
-				this.listSum.add(index, listSum.get(index));
+				this.listGameID.add(
+					index,
+					listGameID.get(
+						index));
+				this.listScore.add(
+					index,
+					listScore.get(
+						index));
+				this.listSum.add(
+					index,
+					listSum.get(
+						index));
 			}
 		}
 	}
 
 	public List<Long> getListGameID() {
-		return Collections.unmodifiableList(listGameID);
+		return Collections.unmodifiableList(
+			listGameID);
 	}
 
 	public List<Integer> getListScore() {
-		return Collections.unmodifiableList(listScore);
+		return Collections.unmodifiableList(
+			listScore);
 	}
 
 	public List<Integer> getListSum() {
-		return Collections.unmodifiableList(listSum);
+		return Collections.unmodifiableList(
+			listSum);
 	}
 
 	public void setFourPlayerGamePlaces(final int fourPlayerGamePlaces[]) {
 		if (fourPlayerGamePlaces != null && fourPlayerGamePlaces.length == 4) {
-			System.arraycopy(fourPlayerGamePlaces, 0, this.fourPlayerGamePlaces, 0, 4);
+			System.arraycopy(
+				fourPlayerGamePlaces,
+				0,
+				this.fourPlayerGamePlaces,
+				0,
+				4);
 		}
 	}
 
 	public int[] getFourPlayerGamePlaces() {
-		return Arrays.copyOf(fourPlayerGamePlaces, fourPlayerGamePlaces.length);
+		return Arrays.copyOf(
+			fourPlayerGamePlaces,
+			fourPlayerGamePlaces.length);
 	}
 
 	public void setFourPlayerGamePlacePercent(final int fourPlayerGamePlacePercent[]) {
 		if (fourPlayerGamePlacePercent != null && fourPlayerGamePlacePercent.length == 4) {
-			System.arraycopy(fourPlayerGamePlacePercent, 0, this.fourPlayerGamePlacePercent, 0, 4);
+			System.arraycopy(
+				fourPlayerGamePlacePercent,
+				0,
+				this.fourPlayerGamePlacePercent,
+				0,
+				4);
 		}
 	}
 
 	public int[] getFourPlayerGamePlacePercent() {
-		return Arrays.copyOf(fourPlayerGamePlacePercent, fourPlayerGamePlacePercent.length);
+		return Arrays.copyOf(
+			fourPlayerGamePlacePercent,
+			fourPlayerGamePlacePercent.length);
 	}
 
 	public void setFivePlayerGamePlaces(final int fivePlayerGamePlaces[]) {
 		if (fivePlayerGamePlaces != null && fivePlayerGamePlaces.length == 5) {
-			System.arraycopy(fivePlayerGamePlaces, 0, this.fivePlayerGamePlaces, 0, 5);
+			System.arraycopy(
+				fivePlayerGamePlaces,
+				0,
+				this.fivePlayerGamePlaces,
+				0,
+				5);
 		}
 	}
 
 	public int[] getFivePlayerGamePlaces() {
-		return Arrays.copyOf(fivePlayerGamePlaces, fivePlayerGamePlaces.length);
+		return Arrays.copyOf(
+			fivePlayerGamePlaces,
+			fivePlayerGamePlaces.length);
 	}
 
 	public void setFivePlayerGamePlacePercent(final int fivePlayerGamePlacePercent[]) {
 		if (fivePlayerGamePlacePercent != null && fivePlayerGamePlacePercent.length == 5) {
-			System.arraycopy(fivePlayerGamePlacePercent, 0, this.fivePlayerGamePlacePercent, 0, 5);
+			System.arraycopy(
+				fivePlayerGamePlacePercent,
+				0,
+				this.fivePlayerGamePlacePercent,
+				0,
+				5);
 		}
 	}
 
 	public int[] getFivePlayerGamePlacePercent() {
-		return Arrays.copyOf(fivePlayerGamePlacePercent, fivePlayerGamePlacePercent.length);
+		return Arrays.copyOf(
+			fivePlayerGamePlacePercent,
+			fivePlayerGamePlacePercent.length);
 	}
 
 }

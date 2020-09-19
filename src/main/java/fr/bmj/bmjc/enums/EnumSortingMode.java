@@ -17,7 +17,8 @@
 package fr.bmj.bmjc.enums;
 
 public enum EnumSortingMode {
-	DESCENDING("Descendant"), ASCENDING("Ascendant");
+	DESCENDING("Descendant"),
+	ASCENDING("Ascendant");
 
 	private final String display;
 
