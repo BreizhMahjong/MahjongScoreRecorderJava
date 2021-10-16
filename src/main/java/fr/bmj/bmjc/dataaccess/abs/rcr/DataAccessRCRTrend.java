@@ -6,7 +6,11 @@ import fr.bmj.bmjc.enums.EnumPeriodMode;
 
 public interface DataAccessRCRTrend {
 
-	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament, final EnumPeriodMode periodMode, final int year, final int trimester,
-		final int month, final int day);
+	public RCRDataPackageTrend getRCRDataPackageTrend(final Tournament tournament,
+		final EnumPeriodMode periodMode,
+		final int year,
+		final int trimester,
+		final int month,
+		final int day);
 
 }

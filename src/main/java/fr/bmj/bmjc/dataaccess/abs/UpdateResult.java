@@ -21,7 +21,8 @@ public class UpdateResult {
 	private final boolean result;
 	private final String message;
 
-	public UpdateResult(final boolean result, final String message) {
+	public UpdateResult(final boolean result,
+		final String message) {
 		this.result = result;
 		this.message = message;
 	}

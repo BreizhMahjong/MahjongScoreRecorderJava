@@ -29,8 +29,9 @@ public class RCRTotalScoreFieldAccessTrimester implements RCRTotalScoreFieldAcce
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return Integer.toString(
-			data.year) + " " + TRIMESTER_STRINGS[data.month];
+		return Integer.toString(data.year)
+			+ " "
+			+ TRIMESTER_STRINGS[data.month];
 	}
 
 }

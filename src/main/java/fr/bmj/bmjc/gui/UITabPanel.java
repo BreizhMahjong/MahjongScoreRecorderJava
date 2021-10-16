@@ -32,41 +32,29 @@ public abstract class UITabPanel extends JPanel {
 
 	abstract public void refresh();
 
-	abstract public void setDisplayFullName(boolean displayFullName, boolean toRefresh);
-
-	abstract public boolean canExport();
-
-	abstract public void export();
-
-	protected static final String SEPARATOR = ";";
+	abstract public void setDisplayFullName(boolean displayFullName,
+		boolean toRefresh);
 
 	private File lastSaveFilePath = null;
 
 	protected File askSaveFileName(final String proposedSaveFileName) {
 		final JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setFileSelectionMode(
-			JFileChooser.FILES_ONLY);
-		fileChooser.setMultiSelectionEnabled(
-			false);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
 		if (lastSaveFilePath != null) {
-			fileChooser.setCurrentDirectory(
-				lastSaveFilePath);
+			fileChooser.setCurrentDirectory(lastSaveFilePath);
 		}
 		if (proposedSaveFileName != null) {
-			fileChooser.setSelectedFile(
-				new File(
-					lastSaveFilePath,
-					proposedSaveFileName));
+			fileChooser.setSelectedFile(new File(lastSaveFilePath,
+				proposedSaveFileName));
 		}
 
 		while (true) {
-			final int answer = fileChooser.showSaveDialog(
-				this);
+			final int answer = fileChooser.showSaveDialog(this);
 			if (answer == JFileChooser.APPROVE_OPTION) {
 				final File selectedFile = fileChooser.getSelectedFile();
 				if (selectedFile.exists()) {
-					final int overwriteAnswer = JOptionPane.showConfirmDialog(
-						this,
+					final int overwriteAnswer = JOptionPane.showConfirmDialog(this,
 						"Le fichier existe déjà. Voulez-vous le remplacer ?",
 						"Confirmer",
 						JOptionPane.YES_NO_CANCEL_OPTION,

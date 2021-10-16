@@ -21,7 +21,8 @@ import java.util.Comparator;
 public class ComparatorAscendingPlayerName implements Comparator<Player> {
 
 	@Override
-	public int compare(final Player o1, final Player o2) {
+	public int compare(final Player o1,
+		final Player o2) {
 		if (o1 == null) {
 			if (o2 == null) {
 				return 0;
@@ -32,8 +33,7 @@ public class ComparatorAscendingPlayerName implements Comparator<Player> {
 			if (o2 == null) {
 				return 1;
 			} else {
-				return o1.getPlayerName().compareToIgnoreCase(
-					o2.getPlayerName());
+				return o1.getPlayerName().compareToIgnoreCase(o2.getPlayerName());
 			}
 		}
 	}

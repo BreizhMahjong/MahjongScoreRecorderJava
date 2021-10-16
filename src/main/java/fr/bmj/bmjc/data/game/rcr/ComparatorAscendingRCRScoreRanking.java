@@ -21,7 +21,8 @@ import java.util.Comparator;
 public class ComparatorAscendingRCRScoreRanking implements Comparator<RCRScore> {
 
 	@Override
-	public int compare(final RCRScore o1, final RCRScore o2) {
+	public int compare(final RCRScore o1,
+		final RCRScore o2) {
 		if (o1 == null) {
 			if (o2 == null) {
 				return 0;
@@ -32,8 +33,7 @@ public class ComparatorAscendingRCRScoreRanking implements Comparator<RCRScore> 
 			if (o2 == null) {
 				return 1;
 			} else {
-				return Integer.compare(
-					o1.getPlace(),
+				return Integer.compare(o1.getPlace(),
 					o2.getPlace());
 			}
 		}

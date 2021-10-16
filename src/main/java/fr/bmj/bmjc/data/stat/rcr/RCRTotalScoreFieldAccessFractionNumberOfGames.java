@@ -20,7 +20,9 @@ public class RCRTotalScoreFieldAccessFractionNumberOfGames implements RCRTotalSc
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return data.umaScore.toString() + " / " + data.numberOfGame.toString();
+		return data.umaScore.toString()
+			+ " / "
+			+ data.numberOfGame.toString();
 	}
 
 }

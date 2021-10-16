@@ -9,7 +9,8 @@ public interface DataAccessRCRTournament {
 
 	public UpdateResult addRCRTournament(final String tournamentName);
 
-	public UpdateResult modifyRCRTournament(final short tournamentId, final String tournamentName);
+	public UpdateResult modifyRCRTournament(final short tournamentId,
+		final String tournamentName);
 
 	public List<Tournament> getRCRTournaments();
 

@@ -7,7 +7,13 @@ import fr.bmj.bmjc.enums.EnumScoreMode;
 
 public interface DataAccessRCRPersonalAnalyze {
 
-	public RCRDataPackagePersonalAnalyze getRCRDataPackagePersonalAnalyze(final Tournament tournament, final short playerId, final EnumScoreMode scoreMode,
-		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day);
+	public RCRDataPackagePersonalAnalyze getRCRDataPackagePersonalAnalyze(final Tournament tournament,
+		final short playerId,
+		final EnumScoreMode scoreMode,
+		final EnumPeriodMode periodMode,
+		final int year,
+		final int trimester,
+		final int month,
+		final int day);
 
 }

@@ -21,7 +21,8 @@ import java.util.Comparator;
 public class ComparatorDescendingTournamentID implements Comparator<Tournament> {
 
 	@Override
-	public int compare(final Tournament o1, final Tournament o2) {
+	public int compare(final Tournament o1,
+		final Tournament o2) {
 		if (o1 == null) {
 			if (o2 == null) {
 				return 0;
@@ -32,8 +33,7 @@ public class ComparatorDescendingTournamentID implements Comparator<Tournament> 
 			if (o2 == null) {
 				return -1;
 			} else {
-				return -Integer.compare(
-					o1.getId(),
+				return -Integer.compare(o1.getId(),
 					o2.getId());
 			}
 		}

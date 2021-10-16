@@ -17,80 +17,65 @@ import fr.bmj.bmjc.enums.EnumScoreMode;
 public class DataAccessDataBaseRCRPersonalAnalyze extends DataAccessDataBaseRCRCommon implements DataAccessRCRPersonalAnalyze {
 
 	public DataAccessDataBaseRCRPersonalAnalyze(final Connection dataBaseConnection) {
-		super(
-			dataBaseConnection);
+		super(dataBaseConnection);
 	}
 
 	@Override
-	public RCRDataPackagePersonalAnalyze getRCRDataPackagePersonalAnalyze(final Tournament tournament, final short playerId, final EnumScoreMode scoreMode,
-		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day) {
+	public RCRDataPackagePersonalAnalyze getRCRDataPackagePersonalAnalyze(final Tournament tournament,
+		final short playerId,
+		final EnumScoreMode scoreMode,
+		final EnumPeriodMode periodMode,
+		final int year,
+		final int trimester,
+		final int month,
+		final int day) {
 		final Calendar calendarFrom = Calendar.getInstance();
 		final Calendar calendarTo = Calendar.getInstance();
 		switch (periodMode) {
 			case ALL:
 				break;
 			case YEAR:
-				calendarFrom.set(
-					Calendar.YEAR,
+				calendarFrom.set(Calendar.YEAR,
 					year);
-				calendarFrom.set(
-					Calendar.MONTH,
+				calendarFrom.set(Calendar.MONTH,
 					Calendar.JANUARY);
-				calendarFrom.set(
-					Calendar.DAY_OF_MONTH,
+				calendarFrom.set(Calendar.DAY_OF_MONTH,
 					1);
-				calendarTo.setTime(
-					calendarFrom.getTime());
-				calendarTo.add(
-					Calendar.YEAR,
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.YEAR,
 					1);
 				break;
 			case TRIMESTER:
-				calendarFrom.set(
-					Calendar.YEAR,
+				calendarFrom.set(Calendar.YEAR,
 					year);
-				calendarFrom.set(
-					Calendar.MONTH,
+				calendarFrom.set(Calendar.MONTH,
 					trimester * 3);
-				calendarFrom.set(
-					Calendar.DAY_OF_MONTH,
+				calendarFrom.set(Calendar.DAY_OF_MONTH,
 					1);
-				calendarTo.setTime(
-					calendarFrom.getTime());
-				calendarTo.add(
-					Calendar.MONTH,
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH,
 					3);
 				break;
 			case MONTH:
-				calendarFrom.set(
-					Calendar.YEAR,
+				calendarFrom.set(Calendar.YEAR,
 					year);
-				calendarFrom.set(
-					Calendar.MONTH,
+				calendarFrom.set(Calendar.MONTH,
 					month);
-				calendarFrom.set(
-					Calendar.DAY_OF_MONTH,
+				calendarFrom.set(Calendar.DAY_OF_MONTH,
 					1);
-				calendarTo.setTime(
-					calendarFrom.getTime());
-				calendarTo.add(
-					Calendar.MONTH,
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.MONTH,
 					1);
 				break;
 			case DAY:
-				calendarFrom.set(
-					Calendar.YEAR,
+				calendarFrom.set(Calendar.YEAR,
 					year);
-				calendarFrom.set(
-					Calendar.MONTH,
+				calendarFrom.set(Calendar.MONTH,
 					month);
-				calendarFrom.set(
-					Calendar.DAY_OF_MONTH,
+				calendarFrom.set(Calendar.DAY_OF_MONTH,
 					day);
-				calendarTo.setTime(
-					calendarFrom.getTime());
-				calendarTo.add(
-					Calendar.DAY_OF_MONTH,
+				calendarTo.setTime(calendarFrom.getTime());
+				calendarTo.add(Calendar.DAY_OF_MONTH,
 					1);
 				break;
 			default:
@@ -114,33 +99,25 @@ public class DataAccessDataBaseRCRPersonalAnalyze extends DataAccessDataBaseRCRC
 
 			PreparedStatement statement = null;
 			if (periodMode == EnumPeriodMode.ALL) {
-				statement = dataBaseConnection.prepareStatement(
-					"SELECT rcr_game_id.id, rcr_game_id.nb_players, rcr_game_score.ranking, rcr_game_score." + fieldString
-						+ " FROM rcr_game_id, rcr_game_score WHERE rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_score.player_id=? AND rcr_game_id.rcr_tournament_id=? ORDER BY rcr_game_id.id ASC");
-				statement.setShort(
-					1,
+				statement = dataBaseConnection.prepareStatement("SELECT rcr_game_id.id, rcr_game_id.nb_players, rcr_game_score.ranking, rcr_game_score."
+					+ fieldString
+					+ " FROM rcr_game_id, rcr_game_score WHERE rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_score.player_id=? AND rcr_game_id.rcr_tournament_id=? ORDER BY rcr_game_id.id ASC");
+				statement.setShort(1,
 					playerId);
-				statement.setShort(
-					2,
+				statement.setShort(2,
 					tournament.getId());
 			} else {
-				statement = dataBaseConnection.prepareStatement(
-					"SELECT rcr_game_id.id, rcr_game_id.nb_players, rcr_game_score.ranking, rcr_game_score." + fieldString
-						+ " FROM rcr_game_id, rcr_game_score WHERE rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_score.player_id=? AND rcr_game_id.rcr_tournament_id=? AND rcr_game_id.date>=? AND rcr_game_id.date<? ORDER BY rcr_game_id.id ASC");
-				statement.setShort(
-					1,
+				statement = dataBaseConnection.prepareStatement("SELECT rcr_game_id.id, rcr_game_id.nb_players, rcr_game_score.ranking, rcr_game_score."
+					+ fieldString
+					+ " FROM rcr_game_id, rcr_game_score WHERE rcr_game_id.id=rcr_game_score.rcr_game_id AND rcr_game_score.player_id=? AND rcr_game_id.rcr_tournament_id=? AND rcr_game_id.date>=? AND rcr_game_id.date<? ORDER BY rcr_game_id.id ASC");
+				statement.setShort(1,
 					playerId);
-				statement.setShort(
-					2,
+				statement.setShort(2,
 					tournament.getId());
-				statement.setDate(
-					3,
-					new Date(
-						calendarFrom.getTimeInMillis()));
-				statement.setDate(
-					4,
-					new Date(
-						calendarTo.getTimeInMillis()));
+				statement.setDate(3,
+					new Date(calendarFrom.getTimeInMillis()));
+				statement.setDate(4,
+					new Date(calendarTo.getTimeInMillis()));
 			}
 			final ResultSet result = statement.executeQuery();
 
@@ -164,20 +141,14 @@ public class DataAccessDataBaseRCRPersonalAnalyze extends DataAccessDataBaseRCRC
 			int negativeTotal = 0;
 
 			while (result.next()) {
-				final long gameID = result.getLong(
-					1);
-				final short nbPlayers = result.getShort(
-					2);
-				final short ranking = result.getShort(
-					3);
-				final int score = result.getInt(
-					4);
+				final long gameID = result.getLong(1);
+				final short nbPlayers = result.getShort(2);
+				final short ranking = result.getShort(3);
+				final int score = result.getInt(4);
 
-				listGameID.add(
-					numberOfGames,
+				listGameID.add(numberOfGames,
 					gameID);
-				listScore.add(
-					numberOfGames,
+				listScore.add(numberOfGames,
 					score);
 
 				if (score >= 0) {
@@ -187,16 +158,13 @@ public class DataAccessDataBaseRCRPersonalAnalyze extends DataAccessDataBaseRCRC
 					negativeGames++;
 					negativeTotal += score;
 				}
-				maxScore = Math.max(
-					maxScore,
+				maxScore = Math.max(maxScore,
 					score);
-				minScore = Math.min(
-					minScore,
+				minScore = Math.min(minScore,
 					score);
 
 				totalScore += score;
-				listSum.add(
-					numberOfGames,
+				listSum.add(numberOfGames,
 					totalScore);
 
 				if (nbPlayers == 4) {
@@ -211,80 +179,53 @@ public class DataAccessDataBaseRCRPersonalAnalyze extends DataAccessDataBaseRCRC
 			final double averageScore = (double) totalScore / numberOfGames;
 			double deviation = 0.0;
 			for (int index = 0; index < numberOfGames; index++) {
-				deviation += Math.pow(
-					listScore.get(
-						index) - averageScore,
+				deviation += Math.pow(listScore.get(index) - averageScore,
 					2.0);
 			}
-			final long standardDeviation = numberOfGames <= 1 ? 0 : Math.round(
-				Math.sqrt(
-					deviation / numberOfGames));
+			final long standardDeviation = numberOfGames <= 1
+				? 0
+				: Math.round(Math.sqrt(deviation / numberOfGames));
 
 			for (int index = 0; index < 4; index++) {
-				placeFourPlayersPercent[index] = Math.round(
-					placeFourPlayers[index] * 100f / numberOfFourPlayersGames);
+				placeFourPlayersPercent[index] = Math.round(placeFourPlayers[index] * 100f / numberOfFourPlayersGames);
 			}
 			for (int index = 0; index < 5; index++) {
-				placeFivePlayersPercent[index] = Math.round(
-					placeFivePlayers[index] * 100f / numberOfFivePlayersGames);
+				placeFivePlayersPercent[index] = Math.round(placeFivePlayers[index] * 100f / numberOfFivePlayersGames);
 			}
 
-			dataPackage.setLists(
-				listGameID,
+			dataPackage.setLists(listGameID,
 				listScore,
 				listSum);
-			dataPackage.setNumberOfGames(
-				numberOfGames);
+			dataPackage.setNumberOfGames(numberOfGames);
 
-			dataPackage.setMaxScore(
-				maxScore);
-			dataPackage.setMinScore(
-				minScore);
+			dataPackage.setMaxScore(maxScore);
+			dataPackage.setMinScore(minScore);
 
-			dataPackage.setPositiveGames(
-				positiveGames);
-			dataPackage.setPositiveGamesPercent(
-				Math.round(
-					positiveGames * 100f / numberOfGames));
+			dataPackage.setPositiveGames(positiveGames);
+			dataPackage.setPositiveGamesPercent(Math.round(positiveGames * 100f / numberOfGames));
 
-			dataPackage.setNegativeGames(
-				negativeGames);
-			dataPackage.setNegativeGamesPercent(
-				Math.round(
-					negativeGames * 100f / numberOfGames));
+			dataPackage.setNegativeGames(negativeGames);
+			dataPackage.setNegativeGamesPercent(Math.round(negativeGames * 100f / numberOfGames));
 
-			dataPackage.setScoreTotal(
-				totalScore);
-			dataPackage.setScoreMean(
-				(int) Math.round(
-					averageScore));
-			dataPackage.setScoreStandardDeviation(
-				(int) standardDeviation);
+			dataPackage.setScoreTotal(totalScore);
+			dataPackage.setScoreMean((int) Math.round(averageScore));
+			dataPackage.setScoreStandardDeviation((int) standardDeviation);
 
-			dataPackage.setPositiveTotal(
-				positiveTotal);
-			dataPackage.setNegativeTotal(
-				negativeTotal);
+			dataPackage.setPositiveTotal(positiveTotal);
+			dataPackage.setNegativeTotal(negativeTotal);
 
-			dataPackage.setNumberOfFourPlayerGames(
-				numberOfFourPlayersGames);
-			dataPackage.setFourPlayerGamePlaces(
-				placeFourPlayers);
-			dataPackage.setFourPlayerGamePlacePercent(
-				placeFourPlayersPercent);
+			dataPackage.setNumberOfFourPlayerGames(numberOfFourPlayersGames);
+			dataPackage.setFourPlayerGamePlaces(placeFourPlayers);
+			dataPackage.setFourPlayerGamePlacePercent(placeFourPlayersPercent);
 
-			dataPackage.setNumberOfFivePlayerGames(
-				numberOfFivePlayersGames);
-			dataPackage.setFivePlayerGamePlaces(
-				placeFivePlayers);
-			dataPackage.setFivePlayerGamePlacePercent(
-				placeFivePlayersPercent);
+			dataPackage.setNumberOfFivePlayerGames(numberOfFivePlayersGames);
+			dataPackage.setFivePlayerGamePlaces(placeFivePlayers);
+			dataPackage.setFivePlayerGamePlacePercent(placeFivePlayersPercent);
 
 			result.close();
 			statement.close();
 		} catch (final Exception e) {
-			dataPackage.setNumberOfGames(
-				0);
+			dataPackage.setNumberOfGames(0);
 			e.printStackTrace();
 		}
 		return dataPackage;

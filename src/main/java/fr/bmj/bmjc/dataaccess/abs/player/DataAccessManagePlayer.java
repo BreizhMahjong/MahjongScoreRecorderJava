@@ -23,11 +23,17 @@ import fr.bmj.bmjc.dataaccess.abs.UpdateResult;
 
 public interface DataAccessManagePlayer {
 
-	public UpdateResult addPlayer(String name, final String displayName);
+	public UpdateResult addPlayer(String name,
+		final String displayName);
 
 	public List<Player> getAllPlayers();
 
-	public UpdateResult modifyPlayer(final short id, String name, final String displayName, boolean frequent, boolean regular, String license);
+	public UpdateResult modifyPlayer(final short id,
+		String name,
+		final String displayName,
+		boolean frequent,
+		boolean regular,
+		String license);
 
 	public UpdateResult deletePlayer(final short id);
 

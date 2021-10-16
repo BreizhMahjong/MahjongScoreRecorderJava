@@ -16,7 +16,6 @@
  */
 package fr.bmj.bmjc.dataaccess.abs.rcr;
 
-public interface DataAccessRCR
-	extends DataAccessRCRTournament, DataAccessRCRGame, DataAccessRCRRanking, DataAccessRCRTrend, DataAccessRCRPersonalAnalyze, DataAccessRCRScoreAnalyze {
+public interface DataAccessRCR extends DataAccessRCRTournament, DataAccessRCRGame, DataAccessRCRRanking, DataAccessRCRTrend, DataAccessRCRPersonalAnalyze, DataAccessRCRScoreAnalyze {
 
 }

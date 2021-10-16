@@ -20,8 +20,7 @@ public class RCRTotalScoreFieldAccessYear implements RCRTotalScoreFieldAccess {
 
 	@Override
 	public String getDataString(final RCRTotalScore data) {
-		return Integer.toString(
-			data.year);
+		return Integer.toString(data.year);
 	}
 
 }

@@ -27,7 +27,11 @@ public class RCRTotalScore {
 	public final int month;
 	public final int day;
 
-	public RCRTotalScore(final String playerName, final String displayName, final int year, final int month, final int day) {
+	public RCRTotalScore(final String playerName,
+		final String displayName,
+		final int year,
+		final int month,
+		final int day) {
 		super();
 		this.playerName = playerName;
 		this.displayName = displayName;

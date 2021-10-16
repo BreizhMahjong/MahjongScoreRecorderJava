@@ -135,25 +135,19 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	public UITabPanelRCRPersonalAnalyse(final DataAccessRCR dataAccess) {
 		this.dataAccess = dataAccess;
 
-		format = new DecimalFormat(
-			"#,###");
+		format = new DecimalFormat("#,###");
 		final DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
-		symbols.setGroupingSeparator(
-			' ');
-		format.setDecimalFormatSymbols(
-			symbols);
+		symbols.setGroupingSeparator(' ');
+		format.setDecimalFormatSymbols(symbols);
 
-		setLayout(
-			new BorderLayout());
+		setLayout(new BorderLayout());
 		{
 			final JPanel panelNorth = new JPanel();
-			final ProportionalGridLayout northLayout = new ProportionalGridLayout(
-				2,
+			final ProportionalGridLayout northLayout = new ProportionalGridLayout(2,
 				11,
 				8,
 				2);
-			northLayout.setWeightX(
-				4,
+			northLayout.setWeightX(4,
 				5,
 				3,
 				5,
@@ -164,56 +158,42 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				3,
 				5,
 				2);
-			panelNorth.setLayout(
-				northLayout);
-			panelNorth.setBorder(
-				BorderFactory.createLoweredBevelBorder());
-			add(
-				panelNorth,
+			panelNorth.setLayout(northLayout);
+			panelNorth.setBorder(BorderFactory.createLoweredBevelBorder());
+			add(panelNorth,
 				BorderLayout.NORTH);
 
-			final ProportionalGridLayoutConstraint c = new ProportionalGridLayoutConstraint(
-				0,
+			final ProportionalGridLayoutConstraint c = new ProportionalGridLayoutConstraint(0,
 				1,
 				0,
 				1);
 			{
 				c.y = 0;
 				c.x = 0;
-				panelNorth.add(
-					new JLabel(
-						"Nom du joueur :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Nom du joueur :",
+					SwingConstants.RIGHT),
 					c);
 				comboPlayerNames = new JComboBox<String>();
-				comboPlayerNames.setEditable(
-					false);
+				comboPlayerNames.setEditable(false);
 				c.x = 1;
-				panelNorth.add(
-					comboPlayerNames,
+				panelNorth.add(comboPlayerNames,
 					c);
 
 				c.x = 2;
-				panelNorth.add(
-					new JLabel(
-						"Tournoi :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Tournoi :",
+					SwingConstants.RIGHT),
 					c);
 				comboTournament = new JComboBox<String>();
-				comboTournament.setEditable(
-					false);
+				comboTournament.setEditable(false);
 				c.x = 3;
 				c.gridWidth = 5;
-				panelNorth.add(
-					comboTournament,
+				panelNorth.add(comboTournament,
 					c);
 
 				c.x = 8;
 				c.gridWidth = 1;
-				panelNorth.add(
-					new JLabel(
-						"Score :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Score :",
+					SwingConstants.RIGHT),
 					c);
 				scoreModes = new EnumScoreMode[] {
 					EnumScoreMode.FINAL_SCORE,
@@ -223,25 +203,19 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				for (int index = 0; index < scoreModes.length; index++) {
 					scoreModeStrings[index] = scoreModes[index].toString();
 				}
-				comboScoreMode = new JComboBox<String>(
-					scoreModeStrings);
-				comboScoreMode.setEditable(
-					false);
-				comboScoreMode.setSelectedIndex(
-					0);
+				comboScoreMode = new JComboBox<String>(scoreModeStrings);
+				comboScoreMode.setEditable(false);
+				comboScoreMode.setSelectedIndex(0);
 				c.x = 9;
-				panelNorth.add(
-					comboScoreMode,
+				panelNorth.add(comboScoreMode,
 					c);
 			}
 
 			{
 				c.y = 1;
 				c.x = 0;
-				panelNorth.add(
-					new JLabel(
-						"Période :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Période :",
+					SwingConstants.RIGHT),
 					c);
 				periodModes = new EnumPeriodMode[] {
 					EnumPeriodMode.ALL,
@@ -254,36 +228,26 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 				for (int index = 0; index < periodModes.length; index++) {
 					periodModeStrings[index] = periodModes[index].toString();
 				}
-				comboPeriodMode = new JComboBox<String>(
-					periodModeStrings);
-				comboPeriodMode.setEditable(
-					false);
-				comboPeriodMode.setSelectedIndex(
-					2);
+				comboPeriodMode = new JComboBox<String>(periodModeStrings);
+				comboPeriodMode.setEditable(false);
+				comboPeriodMode.setSelectedIndex(2);
 				c.x = 1;
-				panelNorth.add(
-					comboPeriodMode,
+				panelNorth.add(comboPeriodMode,
 					c);
 
 				c.x = 2;
-				panelNorth.add(
-					new JLabel(
-						"Année :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Année :",
+					SwingConstants.RIGHT),
 					c);
 				comboYear = new JComboBox<Integer>();
-				comboYear.setEditable(
-					false);
+				comboYear.setEditable(false);
 				c.x = 3;
-				panelNorth.add(
-					comboYear,
+				panelNorth.add(comboYear,
 					c);
 
 				c.x = 4;
-				panelNorth.add(
-					new JLabel(
-						"Trimestre :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Trimestre :",
+					SwingConstants.RIGHT),
 					c);
 				final String trimesters[] = {
 					EnumTrimester.TRIMESTER_1.toString(),
@@ -291,352 +255,220 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 					EnumTrimester.TRIMESTER_3.toString(),
 					EnumTrimester.TRIMESTER_4.toString()
 				};
-				comboTrimester = new JComboBox<String>(
-					trimesters);
-				comboTrimester.setEditable(
-					false);
-				comboTrimester.setSelectedIndex(
-					(LocalDate.now().get(
-						ChronoField.MONTH_OF_YEAR) - 1) / 3);
+				comboTrimester = new JComboBox<String>(trimesters);
+				comboTrimester.setEditable(false);
+				comboTrimester.setSelectedIndex((LocalDate.now().get(ChronoField.MONTH_OF_YEAR) - 1) / 3);
 				c.x = 5;
-				panelNorth.add(
-					comboTrimester,
+				panelNorth.add(comboTrimester,
 					c);
 
 				c.x = 6;
-				panelNorth.add(
-					new JLabel(
-						"Mois :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Mois :",
+					SwingConstants.RIGHT),
 					c);
 				final String months[] = new String[12];
-				System.arraycopy(
-					DateFormatSymbols.getInstance(
-						Locale.FRANCE).getMonths(),
+				System.arraycopy(DateFormatSymbols.getInstance(Locale.FRANCE).getMonths(),
 					0,
 					months,
 					0,
 					12);
-				comboMonth = new JComboBox<>(
-					months);
-				comboMonth.setEditable(
-					false);
-				comboMonth.setSelectedIndex(
-					0);
+				comboMonth = new JComboBox<>(months);
+				comboMonth.setEditable(false);
+				comboMonth.setSelectedIndex(0);
 				c.x = 7;
-				panelNorth.add(
-					comboMonth,
+				panelNorth.add(comboMonth,
 					c);
 
 				c.x = 8;
-				panelNorth.add(
-					new JLabel(
-						"Jour :",
-						SwingConstants.RIGHT),
+				panelNorth.add(new JLabel("Jour :",
+					SwingConstants.RIGHT),
 					c);
 				comboDay = new JComboBox<Integer>();
-				comboDay.setEditable(
-					false);
-				comboDay.setSelectedIndex(
-					-1);
+				comboDay.setEditable(false);
+				comboDay.setSelectedIndex(-1);
 				c.x = 9;
-				panelNorth.add(
-					comboDay,
+				panelNorth.add(comboDay,
 					c);
 			}
 		}
 
 		{
 			final JPanel panelCenter = new JPanel();
-			panelCenter.setLayout(
-				new GridLayout(
-					2,
-					1,
-					0,
-					1));
-			add(
-				panelCenter,
+			panelCenter.setLayout(new GridLayout(2,
+				1,
+				0,
+				1));
+			add(panelCenter,
 				BorderLayout.CENTER);
 
 			panelBarChart = new JPanel();
-			panelBarChart.setLayout(
-				new BorderLayout());
-			panelBarChart.setBorder(
-				BorderFactory.createLoweredBevelBorder());
-			panelCenter.add(
-				panelBarChart);
+			panelBarChart.setLayout(new BorderLayout());
+			panelBarChart.setBorder(BorderFactory.createLoweredBevelBorder());
+			panelCenter.add(panelBarChart);
 
 			panelLineChart = new JPanel();
-			panelLineChart.setLayout(
-				new BorderLayout());
-			panelLineChart.setBorder(
-				BorderFactory.createLoweredBevelBorder());
-			panelCenter.add(
-				panelLineChart);
+			panelLineChart.setLayout(new BorderLayout());
+			panelLineChart.setBorder(BorderFactory.createLoweredBevelBorder());
+			panelCenter.add(panelLineChart);
 		}
 
 		{
 			final JPanel panelSouth = new JPanel();
-			panelSouth.setLayout(
-				new GridLayout(
-					3,
-					1));
-			add(
-				panelSouth,
+			panelSouth.setLayout(new GridLayout(3,
+				1));
+			add(panelSouth,
 				BorderLayout.SOUTH);
 
 			{
 				final JPanel panelBasicAnalyze = new JPanel();
-				panelBasicAnalyze.setLayout(
-					new GridLayout(
-						4,
-						6));
-				panelBasicAnalyze.setBorder(
-					BorderFactory.createLoweredBevelBorder());
-				panelSouth.add(
-					panelBasicAnalyze);
+				panelBasicAnalyze.setLayout(new GridLayout(4,
+					6));
+				panelBasicAnalyze.setBorder(BorderFactory.createLoweredBevelBorder());
+				panelSouth.add(panelBasicAnalyze);
 
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Nombre de parties",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Score max",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Positif",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Négatif",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Score total",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Total positif",
-						SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Nombre de parties",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Score max",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Positif",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Négatif",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Score total",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Total positif",
+					SwingConstants.CENTER));
 
-				labelNumberOfGames = new JLabel(
-					"",
+				labelNumberOfGames = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelNumberOfGames);
-				labelScoreMax = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelNumberOfGames);
+				labelScoreMax = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelScoreMax);
-				labelPositiveGames = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelScoreMax);
+				labelPositiveGames = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelPositiveGames);
-				labelNegativeGames = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelPositiveGames);
+				labelNegativeGames = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelNegativeGames);
-				labelTotalScore = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelNegativeGames);
+				labelTotalScore = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelTotalScore);
-				labelPositiveTotal = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelTotalScore);
+				labelPositiveTotal = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelPositiveTotal);
+				panelBasicAnalyze.add(labelPositiveTotal);
 
-				panelBasicAnalyze.add(
-					new JLabel(
-						"",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Score min",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Positif %",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Négatif %",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Moyenne",
-						SwingConstants.CENTER));
-				panelBasicAnalyze.add(
-					new JLabel(
-						"Total négatif",
-						SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Score min",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Positif %",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Négatif %",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Moyenne",
+					SwingConstants.CENTER));
+				panelBasicAnalyze.add(new JLabel("Total négatif",
+					SwingConstants.CENTER));
 
-				panelBasicAnalyze.add(
-					new JLabel(
-						"",
-						SwingConstants.CENTER));
-				labelScoreMin = new JLabel(
-					"",
+				panelBasicAnalyze.add(new JLabel("",
+					SwingConstants.CENTER));
+				labelScoreMin = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelScoreMin);
-				labelPositivePercentage = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelScoreMin);
+				labelPositivePercentage = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelPositivePercentage);
-				labelNegativePercentage = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelPositivePercentage);
+				labelNegativePercentage = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelNegativePercentage);
-				labelMeanScore = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelNegativePercentage);
+				labelMeanScore = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelMeanScore);
-				labelNegativeTotal = new JLabel(
-					"",
+				panelBasicAnalyze.add(labelMeanScore);
+				labelNegativeTotal = new JLabel("",
 					SwingConstants.CENTER);
-				panelBasicAnalyze.add(
-					labelNegativeTotal);
+				panelBasicAnalyze.add(labelNegativeTotal);
 			}
 
 			{
 				final JPanel panelPlaceAnalyze = new JPanel();
-				panelPlaceAnalyze.setBorder(
-					BorderFactory.createLoweredBevelBorder());
-				panelPlaceAnalyze.setLayout(
-					new GridLayout(
-						3,
-						6));
-				panelSouth.add(
-					panelPlaceAnalyze);
+				panelPlaceAnalyze.setBorder(BorderFactory.createLoweredBevelBorder());
+				panelPlaceAnalyze.setLayout(new GridLayout(3,
+					6));
+				panelSouth.add(panelPlaceAnalyze);
 
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"Nombre de parties",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"1er",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"2ème",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"3ème",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"4ème",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"-",
-						SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("Nombre de parties",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("1er",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("2ème",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("3ème",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("4ème",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("-",
+					SwingConstants.CENTER));
 
-				labelNumberOfFourPlayersGames = new JLabel(
-					"",
+				labelNumberOfFourPlayersGames = new JLabel("",
 					SwingConstants.CENTER);
-				panelPlaceAnalyze.add(
-					labelNumberOfFourPlayersGames);
+				panelPlaceAnalyze.add(labelNumberOfFourPlayersGames);
 				labelFourPlayersGamePlaces = new JLabel[4];
 				for (int labelIndex = 0; labelIndex < 4; labelIndex++) {
-					labelFourPlayersGamePlaces[labelIndex] = new JLabel(
-						"",
+					labelFourPlayersGamePlaces[labelIndex] = new JLabel("",
 						SwingConstants.CENTER);
-					panelPlaceAnalyze.add(
-						labelFourPlayersGamePlaces[labelIndex]);
+					panelPlaceAnalyze.add(labelFourPlayersGamePlaces[labelIndex]);
 				}
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"-",
-						SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("-",
+					SwingConstants.CENTER));
 
-				panelPlaceAnalyze.add(
-					new JLabel());
+				panelPlaceAnalyze.add(new JLabel());
 				labelFourPlayersGamePlacesPercent = new JLabel[5];
 				for (int labelIndex = 0; labelIndex < 4; labelIndex++) {
-					labelFourPlayersGamePlacesPercent[labelIndex] = new JLabel(
-						"",
+					labelFourPlayersGamePlacesPercent[labelIndex] = new JLabel("",
 						SwingConstants.CENTER);
-					panelPlaceAnalyze.add(
-						labelFourPlayersGamePlacesPercent[labelIndex]);
+					panelPlaceAnalyze.add(labelFourPlayersGamePlacesPercent[labelIndex]);
 				}
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"-",
-						SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("-",
+					SwingConstants.CENTER));
 			}
 
 			{
 				final JPanel panelPlaceAnalyze = new JPanel();
-				panelPlaceAnalyze.setBorder(
-					BorderFactory.createLoweredBevelBorder());
-				panelPlaceAnalyze.setLayout(
-					new GridLayout(
-						3,
-						5));
-				panelSouth.add(
-					panelPlaceAnalyze);
+				panelPlaceAnalyze.setBorder(BorderFactory.createLoweredBevelBorder());
+				panelPlaceAnalyze.setLayout(new GridLayout(3,
+					5));
+				panelSouth.add(panelPlaceAnalyze);
 
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"Nombre de parties",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"1er",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"2ème",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"3ème",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"4ème",
-						SwingConstants.CENTER));
-				panelPlaceAnalyze.add(
-					new JLabel(
-						"5ème",
-						SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("Nombre de parties",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("1er",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("2ème",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("3ème",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("4ème",
+					SwingConstants.CENTER));
+				panelPlaceAnalyze.add(new JLabel("5ème",
+					SwingConstants.CENTER));
 
-				labelNumberOfFivePlayersGames = new JLabel(
-					"",
+				labelNumberOfFivePlayersGames = new JLabel("",
 					SwingConstants.CENTER);
-				panelPlaceAnalyze.add(
-					labelNumberOfFivePlayersGames);
+				panelPlaceAnalyze.add(labelNumberOfFivePlayersGames);
 				labelFivePlayersGamePlaces = new JLabel[5];
 				for (int labelIndex = 0; labelIndex < 5; labelIndex++) {
-					labelFivePlayersGamePlaces[labelIndex] = new JLabel(
-						"",
+					labelFivePlayersGamePlaces[labelIndex] = new JLabel("",
 						SwingConstants.CENTER);
-					panelPlaceAnalyze.add(
-						labelFivePlayersGamePlaces[labelIndex]);
+					panelPlaceAnalyze.add(labelFivePlayersGamePlaces[labelIndex]);
 				}
 
-				panelPlaceAnalyze.add(
-					new JLabel());
+				panelPlaceAnalyze.add(new JLabel());
 				labelFivePlayersGamePlacesPercent = new JLabel[5];
 				for (int labelIndex = 0; labelIndex < 5; labelIndex++) {
-					labelFivePlayersGamePlacesPercent[labelIndex] = new JLabel(
-						"",
+					labelFivePlayersGamePlacesPercent[labelIndex] = new JLabel("",
 						SwingConstants.CENTER);
-					panelPlaceAnalyze.add(
-						labelFivePlayersGamePlacesPercent[labelIndex]);
+					panelPlaceAnalyze.add(labelFivePlayersGamePlacesPercent[labelIndex]);
 				}
 			}
 		}
@@ -644,24 +476,18 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 		listPlayers = new ArrayList<Player>();
 		listTournament = new ArrayList<Tournament>();
 
-		comboPeriodMode.addActionListener(
-			(final ActionEvent e) -> changePeriodParameters(
-				true));
+		comboPeriodMode.addActionListener((final ActionEvent e) -> changePeriodParameters(true));
 
 		tournamentComboBoxActionListener = (final ActionEvent e) -> refreshYear();
 		periodParametersComboBoxHighLevelActionListener = (final ActionEvent e) -> refreshDay();
 		periodParametersComboBoxLowLevelActionListener = (final ActionEvent e) -> display();
 
-		comboScoreMode.addActionListener(
-			periodParametersComboBoxLowLevelActionListener);
-		comboTrimester.addActionListener(
-			periodParametersComboBoxLowLevelActionListener);
-		comboMonth.addActionListener(
-			periodParametersComboBoxHighLevelActionListener);
+		comboScoreMode.addActionListener(periodParametersComboBoxLowLevelActionListener);
+		comboTrimester.addActionListener(periodParametersComboBoxLowLevelActionListener);
+		comboMonth.addActionListener(periodParametersComboBoxHighLevelActionListener);
 
 		comboBoxActivated = new boolean[COMBOBOX_NUMBER];
-		changePeriodParameters(
-			false);
+		changePeriodParameters(false);
 	}
 
 	@Override
@@ -670,7 +496,8 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	}
 
 	@Override
-	public void setDisplayFullName(final boolean displayFullName, final boolean toRefresh) {
+	public void setDisplayFullName(final boolean displayFullName,
+		final boolean toRefresh) {
 		this.displayFullName = displayFullName;
 		if (toRefresh) {
 			refresh();
@@ -720,584 +547,393 @@ public class UITabPanelRCRPersonalAnalyse extends UITabPanel {
 	}
 
 	private void disableComboBoxes() {
-		comboPlayerNames.setEnabled(
-			false);
-		comboTournament.setEnabled(
-			false);
-		comboScoreMode.setEnabled(
-			false);
-		comboPeriodMode.setEnabled(
-			false);
-		comboYear.setEnabled(
-			false);
-		comboTrimester.setEnabled(
-			false);
-		comboMonth.setEnabled(
-			false);
+		comboPlayerNames.setEnabled(false);
+		comboTournament.setEnabled(false);
+		comboScoreMode.setEnabled(false);
+		comboPeriodMode.setEnabled(false);
+		comboYear.setEnabled(false);
+		comboTrimester.setEnabled(false);
+		comboMonth.setEnabled(false);
 	}
 
 	private void enableComboBoxes() {
-		comboPlayerNames.setEnabled(
-			true);
-		comboTournament.setEnabled(
-			true);
-		comboScoreMode.setEnabled(
-			true);
-		comboPeriodMode.setEnabled(
-			true);
-		comboYear.setEnabled(
-			comboBoxActivated[COMBOBOX_YEAR_INDEX]);
-		comboTrimester.setEnabled(
-			comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
-		comboMonth.setEnabled(
-			comboBoxActivated[COMBOBOX_MONTH_INDEX]);
-		comboDay.setEnabled(
-			comboBoxActivated[COMBOBOX_DAY_INDEX]);
+		comboPlayerNames.setEnabled(true);
+		comboTournament.setEnabled(true);
+		comboScoreMode.setEnabled(true);
+		comboPeriodMode.setEnabled(true);
+		comboYear.setEnabled(comboBoxActivated[COMBOBOX_YEAR_INDEX]);
+		comboTrimester.setEnabled(comboBoxActivated[COMBOBOX_TRIMESTER_INDEX]);
+		comboMonth.setEnabled(comboBoxActivated[COMBOBOX_MONTH_INDEX]);
+		comboDay.setEnabled(comboBoxActivated[COMBOBOX_DAY_INDEX]);
 	}
 
 	@Override
 	public void refresh() {
-		new Thread(
-			() -> {
-				try {
-					refreshPlayers();
-					refreshTournament();
-				} catch (final Exception e) {
-					JOptionPane.showMessageDialog(
-						this,
-						e.getMessage(),
-						"Erreur",
-						JOptionPane.ERROR_MESSAGE);
-				}
-			}).start();
+		new Thread(() -> {
+			try {
+				refreshPlayers();
+				refreshTournament();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this,
+					e.getMessage(),
+					"Erreur",
+					JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void refreshPlayers() {
-		comboPlayerNames.removeActionListener(
-			periodParametersComboBoxLowLevelActionListener);
+		comboPlayerNames.removeActionListener(periodParametersComboBoxLowLevelActionListener);
 		comboPlayerNames.removeAllItems();
 		listPlayers.clear();
-		listPlayers.addAll(
-			dataAccess.getRCRPlayers());
+		listPlayers.addAll(dataAccess.getRCRPlayers());
 		if (displayFullName) {
-			Collections.sort(
-				listPlayers,
+			Collections.sort(listPlayers,
 				new ComparatorAscendingPlayerName());
 			for (int index = 0; index < listPlayers.size(); index++) {
-				comboPlayerNames.addItem(
-					listPlayers.get(
-						index).getPlayerName());
+				comboPlayerNames.addItem(listPlayers.get(index).getPlayerName());
 			}
 		} else {
-			Collections.sort(
-				listPlayers,
+			Collections.sort(listPlayers,
 				new ComparatorAscendingPlayerDisplayName());
 			for (int index = 0; index < listPlayers.size(); index++) {
-				comboPlayerNames.addItem(
-					listPlayers.get(
-						index).getDisplayName());
+				comboPlayerNames.addItem(listPlayers.get(index).getDisplayName());
 			}
 		}
 		if (listPlayers.size() > 0) {
-			comboPlayerNames.setSelectedIndex(
-				0);
+			comboPlayerNames.setSelectedIndex(0);
 		}
-		comboPlayerNames.addActionListener(
-			periodParametersComboBoxLowLevelActionListener);
+		comboPlayerNames.addActionListener(periodParametersComboBoxLowLevelActionListener);
 	}
 
 	private void refreshTournament() {
 		listTournament.clear();
-		listTournament.addAll(
-			dataAccess.getRCRTournaments());
+		listTournament.addAll(dataAccess.getRCRTournaments());
 		if (listTournament.size() > 0) {
-			Collections.sort(
-				listTournament,
+			Collections.sort(listTournament,
 				new ComparatorDescendingTournamentID());
 
-			comboTournament.removeActionListener(
-				tournamentComboBoxActionListener);
+			comboTournament.removeActionListener(tournamentComboBoxActionListener);
 			comboTournament.removeAllItems();
 			for (int index = 0; index < listTournament.size(); index++) {
-				final Tournament tournament = listTournament.get(
-					index);
-				comboTournament.addItem(
-					tournament.getName());
+				final Tournament tournament = listTournament.get(index);
+				comboTournament.addItem(tournament.getName());
 			}
-			comboTournament.addActionListener(
-				tournamentComboBoxActionListener);
+			comboTournament.addActionListener(tournamentComboBoxActionListener);
 			if (listTournament.size() > 0) {
-				comboTournament.setSelectedIndex(
-					0);
+				comboTournament.setSelectedIndex(0);
 			}
 		}
 	}
 
 	private void refreshYear() {
-		new Thread(
-			() -> {
-				try {
-					final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-					if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
-						comboYear.removeActionListener(
-							periodParametersComboBoxHighLevelActionListener);
-						comboYear.removeAllItems();
+		new Thread(() -> {
+			try {
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				if (listTournament.size() > 0 && selectedTournamentIndex >= 0) {
+					comboYear.removeActionListener(periodParametersComboBoxHighLevelActionListener);
+					comboYear.removeAllItems();
 
-						final Tournament tournament = listTournament.get(
-							selectedTournamentIndex);
-						final List<Integer> years = new ArrayList<Integer>(
-							dataAccess.getRCRYears(
-								tournament));
-						Collections.sort(
-							years);
-						Collections.reverse(
-							years);
-						for (int index = 0; index < years.size(); index++) {
-							comboYear.addItem(
-								years.get(
-									index));
-						}
-
-						comboYear.addActionListener(
-							periodParametersComboBoxHighLevelActionListener);
-						if (years.size() > 0) {
-							comboYear.setSelectedIndex(
-								0);
-						} else {
-							comboYear.setSelectedIndex(
-								-1);
-						}
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final List<Integer> years = new ArrayList<Integer>(dataAccess.getRCRYears(tournament));
+					Collections.sort(years);
+					Collections.reverse(years);
+					for (int index = 0; index < years.size(); index++) {
+						comboYear.addItem(years.get(index));
 					}
-				} catch (final Exception e) {
-					JOptionPane.showMessageDialog(
-						this,
-						e.getMessage(),
-						"Erreur",
-						JOptionPane.ERROR_MESSAGE);
+
+					comboYear.addActionListener(periodParametersComboBoxHighLevelActionListener);
+					if (years.size() > 0) {
+						comboYear.setSelectedIndex(0);
+					} else {
+						comboYear.setSelectedIndex(-1);
+					}
 				}
-			}).start();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this,
+					e.getMessage(),
+					"Erreur",
+					JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void refreshDay() {
-		new Thread(
-			() -> {
-				try {
-					final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-					final int selectedYearIndex = comboYear.getSelectedIndex();
-					if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
-						comboDay.removeActionListener(
-							periodParametersComboBoxLowLevelActionListener);
-						comboDay.removeAllItems();
+		new Thread(() -> {
+			try {
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				if (selectedTournamentIndex != -1 && selectedYearIndex != -1) {
+					comboDay.removeActionListener(periodParametersComboBoxLowLevelActionListener);
+					comboDay.removeAllItems();
 
-						final Tournament tournament = listTournament.get(
-							selectedTournamentIndex);
-						final int year = (Integer) comboYear.getSelectedItem();
-						final int month = comboMonth.getSelectedIndex();
-						final List<Integer> days = new ArrayList<Integer>(
-							dataAccess.getRCRGameDays(
-								tournament,
-								year,
-								month));
-						Collections.sort(
-							days);
-						for (int index = 0; index < days.size(); index++) {
-							comboDay.addItem(
-								days.get(
-									index));
-						}
-
-						comboDay.addActionListener(
-							periodParametersComboBoxLowLevelActionListener);
-						if (days.size() > 0) {
-							comboDay.setSelectedIndex(
-								0);
-						} else {
-							comboDay.setSelectedIndex(
-								-1);
-						}
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
+					final int month = comboMonth.getSelectedIndex();
+					final List<Integer> days = new ArrayList<Integer>(dataAccess.getRCRGameDays(tournament,
+						year,
+						month));
+					Collections.sort(days);
+					for (int index = 0; index < days.size(); index++) {
+						comboDay.addItem(days.get(index));
 					}
-				} catch (final Exception e) {
-					JOptionPane.showMessageDialog(
-						this,
-						e.getMessage(),
-						"Erreur",
-						JOptionPane.ERROR_MESSAGE);
+
+					comboDay.addActionListener(periodParametersComboBoxLowLevelActionListener);
+					if (days.size() > 0) {
+						comboDay.setSelectedIndex(0);
+					} else {
+						comboDay.setSelectedIndex(-1);
+					}
 				}
-			}).start();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this,
+					e.getMessage(),
+					"Erreur",
+					JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void display() {
-		new Thread(
-			() -> {
-				try {
-					disableComboBoxes();
-					panelBarChart.removeAll();
-					panelLineChart.removeAll();
-					validate();
-					repaint();
+		new Thread(() -> {
+			try {
+				disableComboBoxes();
+				panelBarChart.removeAll();
+				panelLineChart.removeAll();
+				validate();
+				repaint();
 
-					final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
-					final EnumScoreMode scoreMode = scoreModes[comboScoreMode.getSelectedIndex()];
+				final EnumPeriodMode periodMode = periodModes[comboPeriodMode.getSelectedIndex()];
+				final EnumScoreMode scoreMode = scoreModes[comboScoreMode.getSelectedIndex()];
 
-					final int selectedPlayerIndex = comboPlayerNames.getSelectedIndex();
-					final int selectedTournamentIndex = comboTournament.getSelectedIndex();
-					final int selectedYearIndex = comboYear.getSelectedIndex();
-					final int selectedDayIndex = comboDay.getSelectedIndex();
+				final int selectedPlayerIndex = comboPlayerNames.getSelectedIndex();
+				final int selectedTournamentIndex = comboTournament.getSelectedIndex();
+				final int selectedYearIndex = comboYear.getSelectedIndex();
+				final int selectedDayIndex = comboDay.getSelectedIndex();
 
-					if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1
-						&& (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
-						final Player player = listPlayers.get(
-							selectedPlayerIndex);
-						final Tournament tournament = listTournament.get(
-							selectedTournamentIndex);
-						final int year = (Integer) comboYear.getSelectedItem();
-						final int trimester = comboTrimester.getSelectedIndex();
-						final int month = comboMonth.getSelectedIndex();
-						final int day = selectedDayIndex != -1 ? (Integer) comboDay.getSelectedItem() : 0;
-						final RCRDataPackagePersonalAnalyze dataPackage = dataAccess.getRCRDataPackagePersonalAnalyze(
-							tournament,
-							player.getPlayerID(),
-							scoreMode,
-							periodMode,
-							year,
-							trimester,
-							month,
-							day);
+				if (selectedPlayerIndex != -1 && selectedTournamentIndex != -1 && selectedYearIndex != -1 && (periodMode != EnumPeriodMode.DAY || selectedDayIndex != -1)) {
+					final Player player = listPlayers.get(selectedPlayerIndex);
+					final Tournament tournament = listTournament.get(selectedTournamentIndex);
+					final int year = (Integer) comboYear.getSelectedItem();
+					final int trimester = comboTrimester.getSelectedIndex();
+					final int month = comboMonth.getSelectedIndex();
+					final int day = selectedDayIndex != -1
+						? (Integer) comboDay.getSelectedItem()
+						: 0;
+					final RCRDataPackagePersonalAnalyze dataPackage = dataAccess.getRCRDataPackagePersonalAnalyze(tournament,
+						player.getPlayerID(),
+						scoreMode,
+						periodMode,
+						year,
+						trimester,
+						month,
+						day);
 
-						if (dataPackage != null && dataPackage.getNumberOfGames() > 0) {
-							final int numberOfGames = dataPackage.getNumberOfGames();
+					if (dataPackage != null && dataPackage.getNumberOfGames() > 0) {
+						final int numberOfGames = dataPackage.getNumberOfGames();
 
-							// Stats
-							{
-								labelNumberOfGames.setText(
-									format.format(
-										dataPackage.getNumberOfGames()));
-								labelScoreMax.setText(
-									format.format(
-										dataPackage.getMaxScore()));
-								labelScoreMin.setText(
-									format.format(
-										dataPackage.getMinScore()));
-								labelPositiveGames.setText(
-									format.format(
-										dataPackage.getPositiveGames()));
-								labelPositivePercentage.setText(
-									format.format(
-										dataPackage.getPositiveGamesPercent()) + PERCENTAGE_STRING);
-								labelNegativeGames.setText(
-									format.format(
-										dataPackage.getNegativeGames()));
-								labelNegativePercentage.setText(
-									format.format(
-										dataPackage.getNegativeGamesPercent()) + PERCENTAGE_STRING);
-								labelTotalScore.setText(
-									format.format(
-										dataPackage.getScoreTotal()));
-								labelMeanScore.setText(
-									format.format(
-										dataPackage.getScoreMean()) + PLUS_MINUS
-										+ format.format(
-											dataPackage.getScoreStandardDeviation()));
-								labelPositiveTotal.setText(
-									format.format(
-										dataPackage.getPositiveTotal()));
-								labelNegativeTotal.setText(
-									format.format(
-										dataPackage.getNegativeTotal()));
+						// Stats
+						{
+							labelNumberOfGames.setText(format.format(dataPackage.getNumberOfGames()));
+							labelScoreMax.setText(format.format(dataPackage.getMaxScore()));
+							labelScoreMin.setText(format.format(dataPackage.getMinScore()));
+							labelPositiveGames.setText(format.format(dataPackage.getPositiveGames()));
+							labelPositivePercentage.setText(format.format(dataPackage.getPositiveGamesPercent()) + PERCENTAGE_STRING);
+							labelNegativeGames.setText(format.format(dataPackage.getNegativeGames()));
+							labelNegativePercentage.setText(format.format(dataPackage.getNegativeGamesPercent()) + PERCENTAGE_STRING);
+							labelTotalScore.setText(format.format(dataPackage.getScoreTotal()));
+							labelMeanScore.setText(format.format(dataPackage.getScoreMean()) + PLUS_MINUS + format.format(dataPackage.getScoreStandardDeviation()));
+							labelPositiveTotal.setText(format.format(dataPackage.getPositiveTotal()));
+							labelNegativeTotal.setText(format.format(dataPackage.getNegativeTotal()));
 
-								labelNumberOfFourPlayersGames.setText(
-									format.format(
-										dataPackage.getNumberOfFourPlayerGames()));
-								if (dataPackage.getNumberOfFourPlayerGames() > 0) {
-									for (int index = 0; index < 4; index++) {
-										labelFourPlayersGamePlaces[index].setText(
-											format.format(
-												dataPackage.getFourPlayerGamePlaces()[index]));
-										labelFourPlayersGamePlacesPercent[index].setText(
-											format.format(
-												dataPackage.getFourPlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
-									}
-								} else {
-									for (int index = 0; index < 4; index++) {
-										labelFourPlayersGamePlaces[index].setText(
-											ZERO_STRING);
-										labelFourPlayersGamePlacesPercent[index].setText(
-											ZERO_STRING + PERCENTAGE_STRING);
-									}
+							labelNumberOfFourPlayersGames.setText(format.format(dataPackage.getNumberOfFourPlayerGames()));
+							if (dataPackage.getNumberOfFourPlayerGames() > 0) {
+								for (int index = 0; index < 4; index++) {
+									labelFourPlayersGamePlaces[index].setText(format.format(dataPackage.getFourPlayerGamePlaces()[index]));
+									labelFourPlayersGamePlacesPercent[index].setText(format.format(dataPackage.getFourPlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
 								}
-
-								labelNumberOfFivePlayersGames.setText(
-									format.format(
-										dataPackage.getNumberOfFivePlayerGames()));
-								if (dataPackage.getNumberOfFivePlayerGames() > 0) {
-									for (int index = 0; index < 5; index++) {
-										labelFivePlayersGamePlaces[index].setText(
-											format.format(
-												dataPackage.getFivePlayerGamePlaces()[index]));
-										labelFivePlayersGamePlacesPercent[index].setText(
-											format.format(
-												dataPackage.getFivePlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
-									}
-								} else {
-									for (int index = 0; index < 5; index++) {
-										labelFivePlayersGamePlaces[index].setText(
-											ZERO_STRING);
-										labelFivePlayersGamePlacesPercent[index].setText(
-											ZERO_STRING + PERCENTAGE_STRING);
-									}
+							} else {
+								for (int index = 0; index < 4; index++) {
+									labelFourPlayersGamePlaces[index].setText(ZERO_STRING);
+									labelFourPlayersGamePlacesPercent[index].setText(ZERO_STRING + PERCENTAGE_STRING);
 								}
 							}
 
-							// Charts
-							{
-								int tickUnit;
-								if (numberOfGames < MAX_NUMBER_OF_TICKS) {
-									tickUnit = 1;
-								} else {
-									tickUnit = (numberOfGames / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
+							labelNumberOfFivePlayersGames.setText(format.format(dataPackage.getNumberOfFivePlayerGames()));
+							if (dataPackage.getNumberOfFivePlayerGames() > 0) {
+								for (int index = 0; index < 5; index++) {
+									labelFivePlayersGamePlaces[index].setText(format.format(dataPackage.getFivePlayerGamePlaces()[index]));
+									labelFivePlayersGamePlacesPercent[index].setText(format.format(dataPackage.getFivePlayerGamePlacePercent()[index]) + PERCENTAGE_STRING);
 								}
-								// Bar Chart
-								{
-									final XYSeries scoreSeries = new XYSeries(
-										"Score");
-									final List<Integer> listScore = dataPackage.getListScore();
-									final List<Long> listGameID = dataPackage.getListGameID();
-									final List<String> listToolTipText = new ArrayList<String>();
-									for (int index = 0; index < numberOfGames; index++) {
-										scoreSeries.add(
-											index + 1,
-											listScore.get(
-												index));
-										listToolTipText.add(
-											index,
-											"<html>Score : " + Integer.toString(
-												listScore.get(
-													index))
-												+ "<br>ID : " + Long.toString(
-													listGameID.get(
-														index))
-												+ "</html>");
-									}
-									final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
-									toolTip.addToolTipSeries(
-										listToolTipText);
-									final IntervalXYDataset scoreDateSet = new XYSeriesCollection(
-										scoreSeries);
-									final NumberAxis scoreDomainAxis = new NumberAxis();
-									scoreDomainAxis.setRange(
-										0,
-										numberOfGames + 1);
-									scoreDomainAxis.setTickUnit(
-										new NumberTickUnit(
-											tickUnit));
-									scoreDomainAxis.setLowerMargin(
-										0.0);
-									scoreDomainAxis.setUpperMargin(
-										0.0);
-									final ValueAxis scoreRangeAxis = new NumberAxis(
-										"Score");
-									final XYBarRenderer scoreRender = new XYBarRenderer(
-										0.5);
-									scoreRender.setSeriesPaint(
-										0,
-										Color.BLUE);
-									scoreRender.setSeriesToolTipGenerator(
-										0,
-										toolTip);
-									scoreRender.setShadowVisible(
-										false);
-									final XYPlot scorePlot = new XYPlot(
-										scoreDateSet,
-										scoreDomainAxis,
-										scoreRangeAxis,
-										scoreRender);
-									scorePlot.setBackgroundPaint(
-										new Color(
-											255,
-											255,
-											255,
-											0));
-									scorePlot.setDomainGridlinePaint(
-										Color.BLACK);
-									scorePlot.setRangeGridlinePaint(
-										Color.BLACK);
-
-									final ValueMarker marker = new ValueMarker(
-										0.0,
-										Color.RED,
-										new BasicStroke(
-											1),
-										null,
-										null,
-										1.0f);
-									scorePlot.addRangeMarker(
-										marker);
-
-									final ChartPanel chartPanel = new ChartPanel(
-										new JFreeChart(
-											scorePlot));
-									chartPanel.setPopupMenu(
-										null);
-									chartPanel.setMouseZoomable(
-										false);
-									panelBarChart.add(
-										chartPanel,
-										BorderLayout.CENTER);
-								}
-								// Line Chart
-								{
-									final XYSeries sumSeries = new XYSeries(
-										"Score total");
-									sumSeries.add(
-										0,
-										0);
-									final List<Integer> listSum = dataPackage.getListSum();
-									final List<String> listToolTipText = new ArrayList<String>();
-									for (int index = 0; index < numberOfGames; index++) {
-										sumSeries.add(
-											index + 1,
-											listSum.get(
-												index));
-										listToolTipText.add(
-											index,
-											Integer.toString(
-												listSum.get(
-													index)));
-									}
-									final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
-									toolTip.addToolTipSeries(
-										listToolTipText);
-									final IntervalXYDataset sumDataSet = new XYSeriesCollection(
-										sumSeries);
-									final NumberAxis sumDomainAxis = new NumberAxis();
-									sumDomainAxis.setRange(
-										0,
-										numberOfGames + 1);
-									sumDomainAxis.setTickUnit(
-										new NumberTickUnit(
-											tickUnit));
-									sumDomainAxis.setLowerMargin(
-										0.0);
-									sumDomainAxis.setUpperMargin(
-										0.0);
-									final NumberAxis sumRangeAxis = new NumberAxis(
-										"Score total");
-									final XYLineAndShapeRenderer sumRender = new XYLineAndShapeRenderer();
-									sumRender.setSeriesPaint(
-										0,
-										Color.BLUE);
-									sumRender.setSeriesToolTipGenerator(
-										0,
-										toolTip);
-									sumRender.setSeriesShapesVisible(
-										0,
-										false);
-									final XYPlot sumPlot = new XYPlot(
-										sumDataSet,
-										sumDomainAxis,
-										sumRangeAxis,
-										sumRender);
-									sumPlot.setBackgroundPaint(
-										new Color(
-											255,
-											255,
-											255,
-											0));
-									sumPlot.setDomainGridlinePaint(
-										Color.BLACK);
-									sumPlot.setRangeGridlinePaint(
-										Color.BLACK);
-									final ValueMarker marker = new ValueMarker(
-										0.0,
-										Color.RED,
-										new BasicStroke(
-											1),
-										null,
-										null,
-										1.0f);
-									sumPlot.addRangeMarker(
-										marker);
-
-									final ChartPanel chartPanel = new ChartPanel(
-										new JFreeChart(
-											sumPlot));
-									chartPanel.setPopupMenu(
-										null);
-									chartPanel.setMouseZoomable(
-										false);
-									panelLineChart.add(
-										chartPanel,
-										BorderLayout.CENTER);
+							} else {
+								for (int index = 0; index < 5; index++) {
+									labelFivePlayersGamePlaces[index].setText(ZERO_STRING);
+									labelFivePlayersGamePlacesPercent[index].setText(ZERO_STRING + PERCENTAGE_STRING);
 								}
 							}
-						} else {
-							clearGameInfo();
+						}
+
+						// Charts
+						{
+							int tickUnit;
+							if (numberOfGames < MAX_NUMBER_OF_TICKS) {
+								tickUnit = 1;
+							} else {
+								tickUnit = (numberOfGames / (MAX_NUMBER_OF_TICKS * TICK_UNIT_MULTIPLE) + 1) * TICK_UNIT_MULTIPLE;
+							}
+							// Bar Chart
+							{
+								final XYSeries scoreSeries = new XYSeries("Score");
+								final List<Integer> listScore = dataPackage.getListScore();
+								final List<Long> listGameID = dataPackage.getListGameID();
+								final List<String> listToolTipText = new ArrayList<String>();
+								for (int index = 0; index < numberOfGames; index++) {
+									scoreSeries.add(index + 1,
+										listScore.get(index));
+									listToolTipText.add(index,
+										"<html>Score : "
+											+ Integer.toString(listScore.get(index))
+											+ "<br>ID : "
+											+ Long.toString(listGameID.get(index))
+											+ "</html>");
+								}
+								final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
+								toolTip.addToolTipSeries(listToolTipText);
+								final IntervalXYDataset scoreDateSet = new XYSeriesCollection(scoreSeries);
+								final NumberAxis scoreDomainAxis = new NumberAxis();
+								scoreDomainAxis.setRange(0,
+									numberOfGames + 1);
+								scoreDomainAxis.setTickUnit(new NumberTickUnit(tickUnit));
+								scoreDomainAxis.setLowerMargin(0.0);
+								scoreDomainAxis.setUpperMargin(0.0);
+								final ValueAxis scoreRangeAxis = new NumberAxis("Score");
+								final XYBarRenderer scoreRender = new XYBarRenderer(0.5);
+								scoreRender.setSeriesPaint(0,
+									Color.BLUE);
+								scoreRender.setSeriesToolTipGenerator(0,
+									toolTip);
+								scoreRender.setShadowVisible(false);
+								final XYPlot scorePlot = new XYPlot(scoreDateSet,
+									scoreDomainAxis,
+									scoreRangeAxis,
+									scoreRender);
+								scorePlot.setBackgroundPaint(new Color(255,
+									255,
+									255,
+									0));
+								scorePlot.setDomainGridlinePaint(Color.BLACK);
+								scorePlot.setRangeGridlinePaint(Color.BLACK);
+
+								final ValueMarker marker = new ValueMarker(0.0,
+									Color.RED,
+									new BasicStroke(1),
+									null,
+									null,
+									1.0f);
+								scorePlot.addRangeMarker(marker);
+
+								final ChartPanel chartPanel = new ChartPanel(new JFreeChart(scorePlot));
+								chartPanel.setPopupMenu(null);
+								chartPanel.setMouseZoomable(false);
+								panelBarChart.add(chartPanel,
+									BorderLayout.CENTER);
+							}
+							// Line Chart
+							{
+								final XYSeries sumSeries = new XYSeries("Score total");
+								sumSeries.add(0,
+									0);
+								final List<Integer> listSum = dataPackage.getListSum();
+								final List<String> listToolTipText = new ArrayList<String>();
+								for (int index = 0; index < numberOfGames; index++) {
+									sumSeries.add(index + 1,
+										listSum.get(index));
+									listToolTipText.add(index,
+										Integer.toString(listSum.get(index)));
+								}
+								final CustomXYToolTipGenerator toolTip = new CustomXYToolTipGenerator();
+								toolTip.addToolTipSeries(listToolTipText);
+								final IntervalXYDataset sumDataSet = new XYSeriesCollection(sumSeries);
+								final NumberAxis sumDomainAxis = new NumberAxis();
+								sumDomainAxis.setRange(0,
+									numberOfGames + 1);
+								sumDomainAxis.setTickUnit(new NumberTickUnit(tickUnit));
+								sumDomainAxis.setLowerMargin(0.0);
+								sumDomainAxis.setUpperMargin(0.0);
+								final NumberAxis sumRangeAxis = new NumberAxis("Score total");
+								final XYLineAndShapeRenderer sumRender = new XYLineAndShapeRenderer();
+								sumRender.setSeriesPaint(0,
+									Color.BLUE);
+								sumRender.setSeriesToolTipGenerator(0,
+									toolTip);
+								sumRender.setSeriesShapesVisible(0,
+									false);
+								final XYPlot sumPlot = new XYPlot(sumDataSet,
+									sumDomainAxis,
+									sumRangeAxis,
+									sumRender);
+								sumPlot.setBackgroundPaint(new Color(255,
+									255,
+									255,
+									0));
+								sumPlot.setDomainGridlinePaint(Color.BLACK);
+								sumPlot.setRangeGridlinePaint(Color.BLACK);
+								final ValueMarker marker = new ValueMarker(0.0,
+									Color.RED,
+									new BasicStroke(1),
+									null,
+									null,
+									1.0f);
+								sumPlot.addRangeMarker(marker);
+
+								final ChartPanel chartPanel = new ChartPanel(new JFreeChart(sumPlot));
+								chartPanel.setPopupMenu(null);
+								chartPanel.setMouseZoomable(false);
+								panelLineChart.add(chartPanel,
+									BorderLayout.CENTER);
+							}
 						}
 					} else {
 						clearGameInfo();
 					}
-					validate();
-					enableComboBoxes();
-					repaint();
-				} catch (final Exception e) {
-					JOptionPane.showMessageDialog(
-						this,
-						e.getMessage(),
-						"Erreur",
-						JOptionPane.ERROR_MESSAGE);
+				} else {
+					clearGameInfo();
 				}
-			}).start();
+				validate();
+				enableComboBoxes();
+				repaint();
+			} catch (final Exception e) {
+				JOptionPane.showMessageDialog(this,
+					e.getMessage(),
+					"Erreur",
+					JOptionPane.ERROR_MESSAGE);
+			}
+		}).start();
 	}
 
 	private void clearGameInfo() {
-		labelNumberOfGames.setText(
-			ZERO_STRING);
-		labelTotalScore.setText(
-			ZERO_STRING);
-		labelScoreMin.setText(
-			ZERO_STRING);
-		labelPositiveGames.setText(
-			ZERO_STRING);
-		labelPositivePercentage.setText(
-			ZERO_STRING + PERCENTAGE_STRING);
-		labelNegativeGames.setText(
-			ZERO_STRING);
-		labelNegativePercentage.setText(
-			ZERO_STRING + PERCENTAGE_STRING);
-		labelMeanScore.setText(
-			ZERO_STRING);
-		labelScoreMax.setText(
-			ZERO_STRING);
-		labelPositiveTotal.setText(
-			ZERO_STRING);
-		labelNegativeTotal.setText(
-			ZERO_STRING);
+		labelNumberOfGames.setText(ZERO_STRING);
+		labelTotalScore.setText(ZERO_STRING);
+		labelScoreMin.setText(ZERO_STRING);
+		labelPositiveGames.setText(ZERO_STRING);
+		labelPositivePercentage.setText(ZERO_STRING + PERCENTAGE_STRING);
+		labelNegativeGames.setText(ZERO_STRING);
+		labelNegativePercentage.setText(ZERO_STRING + PERCENTAGE_STRING);
+		labelMeanScore.setText(ZERO_STRING);
+		labelScoreMax.setText(ZERO_STRING);
+		labelPositiveTotal.setText(ZERO_STRING);
+		labelNegativeTotal.setText(ZERO_STRING);
 
-		labelNumberOfFourPlayersGames.setText(
-			ZERO_STRING);
+		labelNumberOfFourPlayersGames.setText(ZERO_STRING);
 		for (int index = 0; index < 4; index++) {
-			labelFourPlayersGamePlaces[index].setText(
-				ZERO_STRING);
-			labelFourPlayersGamePlacesPercent[index].setText(
-				ZERO_STRING + PERCENTAGE_STRING);
+			labelFourPlayersGamePlaces[index].setText(ZERO_STRING);
+			labelFourPlayersGamePlacesPercent[index].setText(ZERO_STRING + PERCENTAGE_STRING);
 		}
 
-		labelNumberOfFivePlayersGames.setText(
-			ZERO_STRING);
+		labelNumberOfFivePlayersGames.setText(ZERO_STRING);
 		for (int index = 0; index < 5; index++) {
-			labelFivePlayersGamePlaces[index].setText(
-				ZERO_STRING);
-			labelFivePlayersGamePlacesPercent[index].setText(
-				ZERO_STRING + PERCENTAGE_STRING);
+			labelFivePlayersGamePlaces[index].setText(ZERO_STRING);
+			labelFivePlayersGamePlacesPercent[index].setText(ZERO_STRING + PERCENTAGE_STRING);
 		}
-	}
-
-	@Override
-	public boolean canExport() {
-		return false;
-	}
-
-	@Override
-	public void export() {
 	}
 }

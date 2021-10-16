@@ -14,7 +14,13 @@ public interface DataAccessRCRRanking {
 
 	public void setOnlyRegularPlayers(boolean onlyRegularPlayers);
 
-	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament, final EnumRankingMode rankingMode, final EnumSortingMode sortingMode,
-		final EnumPeriodMode periodMode, final int year, final int trimester, final int month, final int day);
+	public List<RCRTotalScore> getRCRDataPackageRanking(final Tournament tournament,
+		final EnumRankingMode rankingMode,
+		final EnumSortingMode sortingMode,
+		final EnumPeriodMode periodMode,
+		final int year,
+		final int trimester,
+		final int month,
+		final int day);
 
 }

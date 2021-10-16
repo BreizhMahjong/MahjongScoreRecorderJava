@@ -21,7 +21,8 @@ public class Tournament {
 	private final short id;
 	private final String name;
 
-	public Tournament(final short id, final String name) {
+	public Tournament(final short id,
+		final String name) {
 		this.id = id;
 		this.name = name;
 	}

@@ -21,7 +21,8 @@ import java.util.Comparator;
 public class ComparatorAscendingRCRGameID implements Comparator<RCRGame> {
 
 	@Override
-	public int compare(final RCRGame o1, final RCRGame o2) {
+	public int compare(final RCRGame o1,
+		final RCRGame o2) {
 		if (o1 == null) {
 			if (o2 == null) {
 				return 0;
@@ -32,8 +33,7 @@ public class ComparatorAscendingRCRGameID implements Comparator<RCRGame> {
 			if (o2 == null) {
 				return 1;
 			} else {
-				return Long.compare(
-					o1.getId(),
+				return Long.compare(o1.getId(),
 					o2.getId());
 			}
 		}

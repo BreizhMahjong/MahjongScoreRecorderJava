@@ -25,7 +25,8 @@ public class RCRDataPackageTrend {
 	public final SortedMap<String, List<Integer>> dataWithPlayerName;
 	public final SortedMap<String, List<Integer>> dataWithDisplayName;
 
-	public RCRDataPackageTrend(final List<Long> dates, final SortedMap<String, List<Integer>> dataWithPlayerName,
+	public RCRDataPackageTrend(final List<Long> dates,
+		final SortedMap<String, List<Integer>> dataWithPlayerName,
 		final SortedMap<String, List<Integer>> dataWithDisplayName) {
 		this.dates = dates;
 		this.dataWithPlayerName = dataWithPlayerName;

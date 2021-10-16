@@ -25,7 +25,11 @@ public class Player {
 	private final boolean regular;
 	private final String license;
 
-	public Player(final short playerID, final String playerName, final String displayName, final boolean frequent, final boolean regular,
+	public Player(final short playerID,
+		final String playerName,
+		final String displayName,
+		final boolean frequent,
+		final boolean regular,
 		final String license) {
 		this.playerID = playerID;
 		this.playerName = playerName;

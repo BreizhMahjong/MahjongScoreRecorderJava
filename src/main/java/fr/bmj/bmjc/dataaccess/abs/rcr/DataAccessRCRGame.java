@@ -15,9 +15,14 @@ public interface DataAccessRCRGame {
 
 	public List<Integer> getRCRYears(final Tournament tournament);
 
-	public List<Integer> getRCRGameDays(final Tournament tournament, final int year, final int month);
+	public List<Integer> getRCRGameDays(final Tournament tournament,
+		final int year,
+		final int month);
 
-	public List<Long> getRCRGameIds(final Tournament tournament, final int year, final int month, final int day);
+	public List<Long> getRCRGameIds(final Tournament tournament,
+		final int year,
+		final int month,
+		final int day);
 
 	public RCRGame getRCRGame(final long id);
 

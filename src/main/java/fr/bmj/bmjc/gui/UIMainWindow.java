@@ -73,7 +73,6 @@ public class UIMainWindow extends JFrame implements WindowListener {
 
 	private final DataAccess dataAccess;
 
-	private final JMenuItem menuItemExport;
 	private final JRadioButtonMenuItem menuSettingsFullName;
 	private final JRadioButtonMenuItem menuSettingsDisplayName;
 	private final JCheckBoxMenuItem menuSettingsUseMinGame;
@@ -84,178 +83,105 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private final JTabbedPane tabbedPane;
 
 	public UIMainWindow(final DataAccess dataAccess) {
-		super(
-			"Breizh Mahjong Recorder");
+		super("Breizh Mahjong Recorder");
 
 		this.dataAccess = dataAccess;
 		dataAccess.initialize();
-		dataAccess.getRCR().setUseMinimumGame(
-			USE_MIN_GAME);
-		dataAccess.getRCR().setOnlyRegularPlayers(
-			ONLY_REGULAR_PLAYERS);
-		dataAccess.getManagePlayer().setOnlyFrequentPlayers(
-			ONLY_FREQUENT_PLAYERS);
+		dataAccess.getRCR().setUseMinimumGame(USE_MIN_GAME);
+		dataAccess.getRCR().setOnlyRegularPlayers(ONLY_REGULAR_PLAYERS);
+		dataAccess.getManagePlayer().setOnlyFrequentPlayers(ONLY_FREQUENT_PLAYERS);
 
 		try {
-			final URL icon = ClassLoader.getSystemResource(
-				MAIN_LOGO_URL);
-			setIconImage(
-				ImageIO.read(
-					icon));
+			final URL icon = ClassLoader.getSystemResource(MAIN_LOGO_URL);
+			setIconImage(ImageIO.read(icon));
 		} catch (final Exception e) {
 		}
 
 		final Container mainPane = getContentPane();
-		mainPane.setLayout(
-			new BorderLayout());
-		tabbedPane = new JTabbedPane(
-			SwingConstants.TOP,
+		mainPane.setLayout(new BorderLayout());
+		tabbedPane = new JTabbedPane(SwingConstants.TOP,
 			JTabbedPane.SCROLL_TAB_LAYOUT);
-		mainPane.add(
-			tabbedPane,
+		mainPane.add(tabbedPane,
 			BorderLayout.CENTER);
 
 		tabPanels = new UITabPanel[NB_PANELS];
-		tabPanels[INDEX_PANEL_MANAGE_PLAYER] = new UITabPanelManagePlayer(
+		tabPanels[INDEX_PANEL_MANAGE_PLAYER] = new UITabPanelManagePlayer(dataAccess.getManagePlayer());
+		tabPanels[INDEX_PANEL_RCR_MANAGE_GAME] = new UITabPanelRCRManage(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_NEW_GAME] = new UITabPanelRCRNewGame(dataAccess.getRCR(),
 			dataAccess.getManagePlayer());
-		tabPanels[INDEX_PANEL_RCR_MANAGE_GAME] = new UITabPanelRCRManage(
-			dataAccess.getRCR());
-		tabPanels[INDEX_PANEL_RCR_NEW_GAME] = new UITabPanelRCRNewGame(
-			dataAccess.getRCR(),
-			dataAccess.getManagePlayer());
-		tabPanels[INDEX_PANEL_RCR_RANKING] = new UITabPanelRCRRanking(
-			dataAccess.getRCR());
-		tabPanels[INDEX_PANEL_RCR_TREND] = new UITabPanelRCRTrend(
-			dataAccess.getRCR());
-		tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] = new UITabPanelRCRPersonalAnalyse(
-			dataAccess.getRCR());
-		tabPanels[INDEX_PANEL_RCR_SCORE_ANALYZE] = new UITabPanelRCRScoreAnalyze(
-			dataAccess.getRCR());
-		tabPanels[INDEX_PANEL_RCR_GAME_HISTORY] = new UITabPanelRCRGameHistory(
-			dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_RANKING] = new UITabPanelRCRRanking(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_TREND] = new UITabPanelRCRTrend(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] = new UITabPanelRCRPersonalAnalyse(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_SCORE_ANALYZE] = new UITabPanelRCRScoreAnalyze(dataAccess.getRCR());
+		tabPanels[INDEX_PANEL_RCR_GAME_HISTORY] = new UITabPanelRCRGameHistory(dataAccess.getRCR());
 		for (int indexTabPanel = 0; indexTabPanel < tabPanels.length; indexTabPanel++) {
-			tabbedPane.addTab(
-				tabPanels[indexTabPanel].getTabName(),
+			tabbedPane.addTab(tabPanels[indexTabPanel].getTabName(),
 				tabPanels[indexTabPanel]);
 		}
-		tabbedPane.addChangeListener(
-			(final ChangeEvent e) -> changeTab());
+		tabbedPane.addChangeListener((final ChangeEvent e) -> changeTab());
 
 		final JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(
-			menuBar);
+		setJMenuBar(menuBar);
 
-		final JMenu menuFile = new JMenu(
-			"Fichier");
-		menuFile.setMnemonic(
-			KeyEvent.VK_F);
-		menuBar.add(
-			menuFile);
+		final JMenu menuFile = new JMenu("Fichier");
+		menuFile.setMnemonic(KeyEvent.VK_F);
+		menuBar.add(menuFile);
 
-		menuItemExport = new JMenuItem(
-			"Exporter");
-		menuItemExport.setMnemonic(
-			KeyEvent.VK_E);
-		menuItemExport.addActionListener(
-			(final ActionEvent e) -> export());
-		menuFile.add(
-			menuItemExport);
 		menuFile.addSeparator();
 
-		final JMenuItem menuItemFileExit = new JMenuItem(
-			"Quitter");
-		menuItemFileExit.setMnemonic(
-			KeyEvent.VK_X);
-		menuItemFileExit.addActionListener(
-			(final ActionEvent e) -> exit());
-		menuFile.add(
-			menuItemFileExit);
+		final JMenuItem menuItemFileExit = new JMenuItem("Quitter");
+		menuItemFileExit.setMnemonic(KeyEvent.VK_X);
+		menuItemFileExit.addActionListener((final ActionEvent e) -> exit());
+		menuFile.add(menuItemFileExit);
 
-		final JMenu menuSettings = new JMenu(
-			"Paramètres");
-		menuSettings.setMnemonic(
-			KeyEvent.VK_S);
-		menuBar.add(
-			menuSettings);
+		final JMenu menuSettings = new JMenu("Paramètres");
+		menuSettings.setMnemonic(KeyEvent.VK_S);
+		menuBar.add(menuSettings);
 
 		final ButtonGroup nameModeMenuButtonGroup = new ButtonGroup();
 		final ActionListener nameModeActionListener = (final ActionEvent e) -> setDisplayFullName();
-		menuSettingsFullName = new JRadioButtonMenuItem(
-			"Nom prénom");
-		menuSettingsFullName.setMnemonic(
-			KeyEvent.VK_F);
-		menuSettingsFullName.setSelected(
-			DISPLAY_REAL_NAME);
-		menuSettingsFullName.addActionListener(
-			nameModeActionListener);
-		menuSettings.add(
-			menuSettingsFullName);
-		nameModeMenuButtonGroup.add(
-			menuSettingsFullName);
+		menuSettingsFullName = new JRadioButtonMenuItem("Nom prénom");
+		menuSettingsFullName.setMnemonic(KeyEvent.VK_F);
+		menuSettingsFullName.setSelected(DISPLAY_REAL_NAME);
+		menuSettingsFullName.addActionListener(nameModeActionListener);
+		menuSettings.add(menuSettingsFullName);
+		nameModeMenuButtonGroup.add(menuSettingsFullName);
 
-		menuSettingsDisplayName = new JRadioButtonMenuItem(
-			"Pseudo");
-		menuSettingsDisplayName.setMnemonic(
-			KeyEvent.VK_D);
-		menuSettingsDisplayName.setSelected(
-			!DISPLAY_REAL_NAME);
-		menuSettingsDisplayName.addActionListener(
-			nameModeActionListener);
-		menuSettings.add(
-			menuSettingsDisplayName);
-		nameModeMenuButtonGroup.add(
-			menuSettingsDisplayName);
+		menuSettingsDisplayName = new JRadioButtonMenuItem("Pseudo");
+		menuSettingsDisplayName.setMnemonic(KeyEvent.VK_D);
+		menuSettingsDisplayName.setSelected(!DISPLAY_REAL_NAME);
+		menuSettingsDisplayName.addActionListener(nameModeActionListener);
+		menuSettings.add(menuSettingsDisplayName);
+		nameModeMenuButtonGroup.add(menuSettingsDisplayName);
 
 		menuSettings.addSeparator();
 
-		menuSettingsUseMinGame = new JCheckBoxMenuItem(
-			"Min nb de parties");
-		menuSettingsUseMinGame.setMnemonic(
-			KeyEvent.VK_M);
-		menuSettingsUseMinGame.setSelected(
-			USE_MIN_GAME);
-		menuSettingsUseMinGame.addActionListener(
-			(final ActionEvent e) -> setUseMinGame());
-		menuSettings.add(
-			menuSettingsUseMinGame);
+		menuSettingsUseMinGame = new JCheckBoxMenuItem("Min nb de parties");
+		menuSettingsUseMinGame.setMnemonic(KeyEvent.VK_M);
+		menuSettingsUseMinGame.setSelected(USE_MIN_GAME);
+		menuSettingsUseMinGame.addActionListener((final ActionEvent e) -> setUseMinGame());
+		menuSettings.add(menuSettingsUseMinGame);
 
-		menuSettingsOnlyRegularPlayers = new JCheckBoxMenuItem(
-			"Joueurs réguliers");
-		menuSettingsOnlyRegularPlayers.setMnemonic(
-			KeyEvent.VK_R);
-		menuSettingsOnlyRegularPlayers.setSelected(
-			ONLY_REGULAR_PLAYERS);
-		menuSettingsOnlyRegularPlayers.addActionListener(
-			(final ActionEvent e) -> setOnlyRegularPlayers());
-		menuSettings.add(
-			menuSettingsOnlyRegularPlayers);
+		menuSettingsOnlyRegularPlayers = new JCheckBoxMenuItem("Joueurs réguliers");
+		menuSettingsOnlyRegularPlayers.setMnemonic(KeyEvent.VK_R);
+		menuSettingsOnlyRegularPlayers.setSelected(ONLY_REGULAR_PLAYERS);
+		menuSettingsOnlyRegularPlayers.addActionListener((final ActionEvent e) -> setOnlyRegularPlayers());
+		menuSettings.add(menuSettingsOnlyRegularPlayers);
 
-		menuSettingsOnlyFrequentPlayers = new JCheckBoxMenuItem(
-			"Joueurs fréquents");
-		menuSettingsOnlyFrequentPlayers.setMnemonic(
-			KeyEvent.VK_F);
-		menuSettingsOnlyFrequentPlayers.setSelected(
-			ONLY_FREQUENT_PLAYERS);
-		menuSettingsOnlyFrequentPlayers.addActionListener(
-			(final ActionEvent e) -> setOnlyFrequentPlayers());
-		menuSettings.add(
-			menuSettingsOnlyFrequentPlayers);
+		menuSettingsOnlyFrequentPlayers = new JCheckBoxMenuItem("Joueurs fréquents");
+		menuSettingsOnlyFrequentPlayers.setMnemonic(KeyEvent.VK_F);
+		menuSettingsOnlyFrequentPlayers.setSelected(ONLY_FREQUENT_PLAYERS);
+		menuSettingsOnlyFrequentPlayers.addActionListener((final ActionEvent e) -> setOnlyFrequentPlayers());
+		menuSettings.add(menuSettingsOnlyFrequentPlayers);
 
-		addWindowListener(
-			this);
-		setMinimumSize(
-			new Dimension(
-				WINDOW_WIDTH,
-				WINDOW_HEIGHT));
-		setPreferredSize(
-			new Dimension(
-				WINDOW_WIDTH,
-				WINDOW_HEIGHT));
-		setDefaultCloseOperation(
-			WindowConstants.DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
+		setMinimumSize(new Dimension(WINDOW_WIDTH,
+			WINDOW_HEIGHT));
+		setPreferredSize(new Dimension(WINDOW_WIDTH,
+			WINDOW_HEIGHT));
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		pack();
-		setVisible(
-			true);
+		setVisible(true);
 
 		changeTab();
 		setUseMinGame();
@@ -274,16 +200,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	private void changeTab() {
 		final UITabPanel tab = getCurrentTab();
 		if (tab != null) {
-			menuItemExport.setEnabled(
-				tab.canExport());
 			tab.refresh();
-		}
-	}
-
-	private void export() {
-		final UITabPanel tab = getCurrentTab();
-		if (tab.canExport()) {
-			tab.export();
 		}
 	}
 
@@ -296,15 +213,13 @@ public class UIMainWindow extends JFrame implements WindowListener {
 		final boolean displayFullName = menuSettingsFullName.isSelected();
 		final UITabPanel tab = getCurrentTab();
 		for (int index = 0; index < tabPanels.length; index++) {
-			tabPanels[index].setDisplayFullName(
-				displayFullName,
+			tabPanels[index].setDisplayFullName(displayFullName,
 				tabPanels[index] == tab);
 		}
 	}
 
 	private void setUseMinGame() {
-		dataAccess.getRCR().setUseMinimumGame(
-			menuSettingsUseMinGame.isSelected());
+		dataAccess.getRCR().setUseMinimumGame(menuSettingsUseMinGame.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING]) {
 			tab.refresh();
@@ -312,8 +227,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	}
 
 	private void setOnlyRegularPlayers() {
-		dataAccess.getRCR().setOnlyRegularPlayers(
-			menuSettingsOnlyRegularPlayers.isSelected());
+		dataAccess.getRCR().setOnlyRegularPlayers(menuSettingsOnlyRegularPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		if (tab == tabPanels[INDEX_PANEL_RCR_RANKING] || tab == tabPanels[INDEX_PANEL_RCR_PERSONAL_ANALYZE] || tab == tabPanels[INDEX_PANEL_RCR_TREND]) {
 			tab.refresh();
@@ -321,8 +235,7 @@ public class UIMainWindow extends JFrame implements WindowListener {
 	}
 
 	private void setOnlyFrequentPlayers() {
-		dataAccess.getManagePlayer().setOnlyFrequentPlayers(
-			menuSettingsOnlyFrequentPlayers.isSelected());
+		dataAccess.getManagePlayer().setOnlyFrequentPlayers(menuSettingsOnlyFrequentPlayers.isSelected());
 		final UITabPanel tab = getCurrentTab();
 		if (tab == tabPanels[INDEX_PANEL_RCR_NEW_GAME]) {
 			tab.refresh();
